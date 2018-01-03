@@ -1,6 +1,7 @@
 # xMZ-Plattform
 Meta Repository für die xMZ-Plattform
 
+[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server)
 
 ## Quellcode auschecken
 

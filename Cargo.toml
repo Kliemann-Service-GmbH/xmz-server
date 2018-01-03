@@ -13,6 +13,5 @@ license = "GPL-2.0"
 
 [badges]
 travis-ci = { repository = "Kliemann-Service-GmbH/xmz-server" }
-appveyor = { repository = "Kliemann-Service-GmbH/xmz-server" }
 
 [dependencies]
