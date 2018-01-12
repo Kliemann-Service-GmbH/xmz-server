@@ -16,3 +16,6 @@ travis-ci = { repository = "Kliemann-Service-GmbH/xmz-server" }
 
 [dependencies]
 config = "0.6"
+failure = "0.1"
+serde = "1"
+toml = "0.4" # Konfigurationsdatei Format
