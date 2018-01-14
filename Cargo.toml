@@ -1,6 +1,6 @@
 [package]
 name = "xmz-server"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "Serverteil der xMZ-Plattform"
 documentation = "https://kliemann-service-gmbh.github.io/xmz-server/"
@@ -15,7 +15,8 @@ license = "GPL-2.0"
 travis-ci = { repository = "Kliemann-Service-GmbH/xmz-server" }
 
 [dependencies]
-config = "0.6"
-failure = "0.1"
+config = "^0.7"
+failure = "^0.1"
 serde = "1"
-toml = "0.4" # Konfigurationsdatei Format
+serde_derive = "1"
+toml = "^0.4" # Konfigurationsdatei Format
