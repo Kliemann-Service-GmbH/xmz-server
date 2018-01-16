@@ -7,11 +7,16 @@ html_root_url = "https://gaswarnanlagen.com/")]
 //! Sensoren sowie deren Auswertung und das Schalten der diversen Ausgänge, wie Relais und IO Module.
 //!
 
+#[macro_use] extern crate failure;
+#[macro_use] extern crate serde_derive;
+
 extern crate config;
 extern crate serde;
 
-#[macro_use] extern crate serde_derive;
-
+mod error;
 mod settings;
+mod server;
 
+pub use error::Error;
 pub use settings::Settings;
+pub use server::Server;
