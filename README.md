@@ -29,3 +29,4 @@ git clone https://github.com/Kliemann-Service-GmbH/xmz-server.git
 
 
 [xmz]: https://github.com/Kliemann-Service-GmbH/xMZ-Plattform
+[xmz-server]: https://github.com/Kliemann-Service-GmbH/xmz-server

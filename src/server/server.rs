@@ -1,67 +1,5 @@
 use std::thread;
-
-
-trait Sensor {
-    fn value(&self) -> f32;
-    fn average(&self, min: u32) -> f32;
-    fn update(&mut self);
-}
-
-
-struct CONO2 {
-    values: Vec<f32>,
-}
-impl CONO2 {
-    fn new() -> Self {
-        CONO2 {
-            values: vec![],
-        }
-    }
-}
-
-struct Analog420 {
-    values: Vec<f32>,
-}
-impl Analog420 {
-    fn new() -> Self {
-        Analog420 {
-            values: vec![],
-        }
-    }
-}
-
-impl Sensor for CONO2 {
-    fn value(&self) -> f32 {
-        match self.values.last() {
-            None => 0.0,
-            Some(value) => *value,
-        }
-    }
-
-    fn average(&self, min: u32) -> f32 {
-        0.0
-    }
-
-    fn update(&mut self) {
-        self.values.push(1.0);
-    }
-}
-impl Sensor for Analog420 {
-    fn value(&self) -> f32 {
-        match self.values.last() {
-            None => 0.0,
-            Some(value) => *value,
-        }
-    }
-
-    fn average(&self, min: u32) -> f32 {
-        0.0
-    }
-
-    fn update(&mut self) {
-        self.values.push(1.0);
-    }
-}
+use server::sensor::Sensor;
 
 
 pub struct Server {
@@ -99,6 +37,7 @@ impl Server {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use server::sensor::{Analog420, CONO2};
 
     #[test]
     fn create_server() {
@@ -135,7 +74,12 @@ mod tests {
     }
 
     #[test]
-    fn create_cono2() {
+    fn create_sensor_cono2() {
         let sensor1 = CONO2::new();
+    }
+
+    #[test]
+    fn create_sensor_analog420() {
+        let sensor2 = Analog420::new();
     }
 }
