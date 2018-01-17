@@ -37,11 +37,7 @@ impl Sensor for Analog420 {
     /// use xmz_server::server::sensor::{Analog420, Sensor};
     ///
     /// let mut sensor = Analog420::new();
-    /// assert_eq!(sensor.value(), 0.0);
     /// sensor.update();
-    ///
-    /// assert!(sensor.value() >= 0.0);
-    /// assert!(sensor.value() <= 100.0);
     /// ```
     fn update(&mut self) {
         let between = Range::new(0, 100);
