@@ -11,12 +11,13 @@ html_root_url = "https://gaswarnanlagen.com/")]
 #[macro_use] extern crate serde_derive;
 
 extern crate config;
+extern crate rand;
 extern crate serde;
 
 mod error;
+pub mod server;
 mod settings;
-mod server;
 
 pub use error::Error;
-pub use settings::Settings;
 pub use server::Server;
+pub use settings::Settings;

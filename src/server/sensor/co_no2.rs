@@ -14,15 +14,12 @@ impl CONO2 {
 }
 
 impl Sensor for CONO2 {
-    fn value(&self) -> f64 {
-        match self.values.last() {
-            None => 0.0,
-            Some(&(time, value)) => value,
-        }
+    fn value(&self) -> Option<&(SystemTime, f64)> {
+        self.values.last()
     }
 
-    fn average(&self, min: u32) -> f64 {
-        0.0
+    fn average(&self, min: u32) -> Option<f64> {
+        None
     }
 
     fn update(&mut self) {

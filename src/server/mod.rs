@@ -1,4 +1,5 @@
+
 mod server;
-mod sensor;
+pub mod sensor;
 
 pub use self::server::Server;
