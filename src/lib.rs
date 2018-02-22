@@ -4,7 +4,8 @@ html_root_url = "https://gaswarnanlagen.com/")]
 //! Server Komponente der **xMZ-Plattform**.
 //!
 //! Der Server ist die Kern Komponente. Zu seinen Aufgaben zählen zum Beispiel das Auslesen der
-//! Sensoren sowie deren Auswertung und das Schalten der diversen Ausgänge, wie Relais und IO Module.
+//! Sensoren sowie deren Auswertung und das Schalten der diversen Ausgänge, wie etwa Relais, LEDs
+//! und angeschlossene IO Module.
 //!
 
 #[macro_use] extern crate serde_derive;
@@ -15,8 +16,11 @@ extern crate serde;
 
 mod error;
 mod settings;
+/// Ausgänge die vom Server Prozess geschalten werden können (LEDs, Relais, IO Module)
 pub mod output;
+/// Sensoren die vom Server unterstützt werden
 pub mod sensor;
+/// Kern der Anwendung
 pub mod server;
 
 pub use error::ServerError;

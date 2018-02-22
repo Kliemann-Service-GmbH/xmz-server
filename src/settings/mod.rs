@@ -3,10 +3,15 @@ use config::{Config, ConfigError, File};
 use std::fmt;
 use std::fmt::Display;
 
+// Type Alias für besser lesbare Konfigurationsparameter
+type Days = u32;
 
+
+/// Serverkonfigurations Parameter
 #[derive(Debug, Deserialize)]
 pub struct Settings {
-    service_interval: u32,
+    /// Wartungsintervall in Tagen
+    service_interval: Days,
 }
 
 impl Settings {
@@ -14,7 +19,6 @@ impl Settings {
         let mut s = Config::new();
 
         s.merge(File::with_name("/boot/xmz.hjson").required(false))?;
-
         s.merge(File::with_name("xmz.hjson").required(false))?;
 
         s.try_into()

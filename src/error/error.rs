@@ -8,7 +8,9 @@ use std::fmt;
 ///
 #[derive(Debug)]
 pub enum ServerError {
+    /// Fehler in der Konfiguration
     Config(ConfigError),
+    /// Fehler beim Schalten eines Ausgangs
     Output(OutputError),
 }
 
