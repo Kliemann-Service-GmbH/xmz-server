@@ -6,9 +6,9 @@ use std::time::SystemTime;
 pub trait Sensor {
     /// Aktueller Sensor Wert und Timestamp der Ermittlung
     ///
-    /// Jeder Sensor verfügt über ein Liste mit einem oder mehreren Paaren von Messwerten und
-    /// Timestamps deren Ermittlung. Die Implementierung dieser Funktion muss den letzten dieser
-    /// Werte ausgeben.
+    /// Jeder Sensor verfügt über ein Liste mit einem oder mehreren Paaren von Messwerten und den
+    /// Timestamps die bei der Ermittlung des Wertes erstellt werden.
+    /// Die Implementierung dieser Funktion muss den letzten dieser Wertepaare ausgeben.
     /// Ist kein Wert vorhanden wird `None` zurückgegeben.
     fn value(&self) -> Option<&(SystemTime, f64)>;
 

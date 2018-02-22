@@ -1,9 +1,9 @@
 use rand::distributions::{IndependentSample, Range};
-use server::sensor::Sensor;
+use sensor::Sensor;
 use std::time::SystemTime;
 
 
-/// Sensor an einer 4-20mA Meßschleife.
+/// Sensor an einer 4-20mA Meßschleife
 ///
 /// Diese Sensoren sind an einer Meßschleife angeschlossen. Werte unter 4mA signalisieren
 /// Kabelbruch. 4mA Werte stehen für den minimalen Messwert des Sensors, 20mA für den max.
@@ -34,7 +34,7 @@ impl Sensor for Analog420 {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::server::sensor::{Analog420, Sensor};
+    /// use xmz_server::sensor::{Analog420, Sensor};
     ///
     /// let mut sensor = Analog420::new();
     /// sensor.update();
