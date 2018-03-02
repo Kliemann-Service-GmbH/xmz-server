@@ -3,7 +3,6 @@ use output::OutputError;
 use std::error::Error;
 use std::fmt;
 
-
 /// Mögliche Server Fehler
 ///
 #[derive(Debug)]

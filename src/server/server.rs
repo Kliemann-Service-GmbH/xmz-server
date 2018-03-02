@@ -9,20 +9,8 @@ pub struct Server {
 }
 
 impl Server {
-    pub fn new(config: Settings) -> Self {
-        Server {
-            sensors: vec![],
-        }
-    }
-
-    fn add_sensor(&mut self, sensor: Box<Sensor>) {
-        self.sensors.push(sensor);
-    }
-
-    fn update_sensors(&mut self) {
-        for sensor in &mut self.sensors {
-            sensor.update();
-        }
+    pub fn new(_config: &Settings) -> Self {
+        Server { sensors: vec![] }
     }
 
     pub fn start(self) -> Result<(), ServerError> {
@@ -41,15 +29,4 @@ impl Server {
 
         Ok(())
     }
-}
-
-
-
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use sensor::{Analog420, CONO2};
-
 }

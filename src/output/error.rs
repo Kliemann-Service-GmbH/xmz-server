@@ -1,7 +1,6 @@
 use std::error::Error;
 use std::fmt;
 
-
 /// Output Error
 ///
 /// Fehler die beim Schalten der Ausgänge auftreten können.

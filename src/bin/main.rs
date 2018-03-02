@@ -1,13 +1,12 @@
 extern crate xmz_server;
 
-use xmz_server::{Settings, Server, ServerError};
-
+use xmz_server::{Server, ServerError, Settings};
 
 fn run() -> Result<(), ServerError> {
     println!("xmz-server: {}", env!("CARGO_PKG_VERSION"));
 
     let settings = Settings::new()?;
-    let server = Server::new(settings);
+    let server = Server::new(&settings);
 
     server.start()?;
 

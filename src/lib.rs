@@ -1,6 +1,6 @@
 #![doc(html_logo_url = "https://zzeroo.github.io/share/zzeroo-logo.png",
        html_favicon_url = "https://zzeroo.github.io/share/favicon.ico",
-html_root_url = "https://gaswarnanlagen.com/")]
+       html_root_url = "https://gaswarnanlagen.com/")]
 //! Server Komponente der **xMZ-Plattform**.
 //!
 //! Der Server ist die Kern Komponente. Zu seinen Aufgaben zählen zum Beispiel das Auslesen der
@@ -8,7 +8,8 @@ html_root_url = "https://gaswarnanlagen.com/")]
 //! und angeschlossene IO Module.
 //!
 
-#[macro_use] extern crate serde_derive;
+#[macro_use]
+extern crate serde_derive;
 
 extern crate config;
 extern crate rand;

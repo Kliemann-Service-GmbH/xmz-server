@@ -1,11 +1,7 @@
 use config::{Config, ConfigError, File};
 
-use std::fmt;
-use std::fmt::Display;
-
 // Type Alias für besser lesbare Konfigurationsparameter
 type Days = u32;
-
 
 /// Serverkonfigurations Parameter
 #[derive(Debug, Deserialize)]
