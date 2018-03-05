@@ -2,30 +2,39 @@ use std::thread;
 use sensor::Sensor;
 use settings::Settings;
 use error::ServerError;
+use std::sync::{Arc, Mutex};
+
+
+type SensorsList = Vec<Arc<Mutex<Box<Sensor + Send + 'static>>>>;
 
 /// Struktur der Server Komponente
 pub struct Server {
-    sensors: Vec<Box<Sensor>>,
+    sensors: SensorsList,
 }
 
 impl Server {
     pub fn new(_config: &Settings) -> Self {
-        Server { sensors: vec![] }
+        Server {
+            sensors: vec![],
+            // zones: vec![],
+        }
     }
 
-    pub fn start(self) -> Result<(), ServerError> {
-        let guard = thread::spawn(move || {
+    fn update_sensors(&self) {
+        let sensors = self.sensors.clone();
+        thread::spawn(move || {
             loop {
-                // self.update_sensors();
-
-                print!(".");
-                use std::io::{self, Write};
-                io::stdout().flush().unwrap();
-                ::std::thread::sleep(::std::time::Duration::from_millis(1000));
+                for sensor in sensors.clone() {
+                    if let Ok(mut sensor) = sensor.lock() {
+                        sensor.update();
+                    }
+                }
             }
-        }).join();
+        });
+    }
 
-        drop(guard);
+    pub fn start(&self) -> Result<(), ServerError> {
+        self.update_sensors();
 
         Ok(())
     }

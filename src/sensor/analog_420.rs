@@ -8,6 +8,7 @@ use std::time::SystemTime;
 ///
 /// Kombisensor für Kohlenmonoxid (CO) und Stickstoffdioxid (NO₂) mit Modbus Interface.
 /// Diese Kombigeräte mit 2 Messzellen werden über ein Modbus RTU BUS abgefragt.
+#[derive(Clone)]
 #[derive(Debug)]
 #[derive(Default)]
 pub struct Analog420 {
