@@ -1,68 +1,107 @@
-//! Trait der generellen Sensor Funktionen
+//! Trait der eine Sensorplatine beschreibt
 //!
-use std::any::Any;
-use std::fmt::Debug;
-use std::io::Error;
-use std::time::SystemTime;
+use std::fmt;
+use std::sync::{Arc, Mutex};
+
+use ::messzelle::BoxedMesszelle;
+
+pub type BoxedSensor = Box<Sensor + Send + 'static>;
+pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 
 
-/// Dieser Trait ist für das Upcasting der SensorTypen nötig
-pub trait AsAny: Any {
-    fn as_any(&self) -> &Any;
+// Sensoren
+pub trait Sensor: fmt::Debug {
+    fn update(&self);
+    fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>>;
 }
 
-/// Implementiere AsAny für alle (Sensor)Typen
-impl<T: Any> AsAny for T {
-    fn as_any(&self) -> &Any {
-        self
-    }
-}
-
-/// Basis Trait das die Eigenschaften der Sensoren beschreibt
-///
-/// Jeder Sensor hat einen Direktwert (`value()`) sowie ein Mittelwert (`average(minutes)`).
-/// Der Mittelwert Funktion kann ein Parameter übergeben werden mit dem die Dauer des zu
-/// berechnendem Mittelwertes angegeben werden kann.
-pub trait Sensor: AsAny + Debug {
-    /// Aktueller Sensor Wert und Timestamp der Ermittlung
-    ///
-    /// Jeder Sensor verfügt über ein Liste mit einem oder mehreren Paaren, Messwerten und den
-    /// Timestamps die bei der Ermittlung dieses Messwertes erstellt werden.
-    /// Die Implementierung der `value()` Funktion muss den letzten dieser Wertepaare ausgeben.
-    /// Ist kein Messwert vorhanden wird `None` zurückgegeben.
-    fn value(&self) -> Option<&(f64, SystemTime)>;
-
-    /// Mittelwert der letzten `min` Minuten
-    ///
-    /// Die Implementation dieser Funktion berechnet den Mittelwert aus den Werte.- Zeitstempel-
-    /// paaren des Sensors.
-    /// Sind keine Werte vorhanden wird `None` zurück gegeben.
-    ///
-    /// # Parameters
-    /// * `min`     - Minuten aus denen der Mittelwert berechnet werden soll
-    ///
-    fn average(&self, minutes: u64) -> Result<f64, Error>;
-
-    /// Aktuellen Sensorwert ermitteln und speichern.
-    ///
-    /// Die Implementation dieser Funktion muss den aktuellen Sensor Wert ermitteln (BUS Abfrage,
-    /// Berechnung bie Simulationssensoren, usw.).
-    ///
-    /// **Gleichzeitig muss in dieser Implementation die Länge der Werteliste `values`
-    /// angepasst werden. Gemäß den Vorgaben der Funktionsbeschreibung sind nur Werte
-    /// der letzten Stunde (max. Stundenmittelwert) nötig.**
-    fn update(&mut self);
-
-    /// Entfernt alle Wert/Zeistempel Paare die älter als `Sensor::max_values_for_n_minutes` sind.
-    ///
-    /// Diese Funktion besteht aus 2 Tests. Der erste Spezialfall tritt ein wenn nur ein
-    /// Wert/Zeitstempel Paar vorhanden ist. Hier muss getestet werden ob dieses veraltete Daten
-    /// enthält. Ist dem so werden alle Werte/Zeitstempel gelöscht.
-    /// Der zweite Test sucht aus der Liste den Index Wert ab dem veraltet Wert/Zeitstempel
-    /// Paare auftreten. Anschließend wird dieser Index Wert verwendet um den Wert/Zeitstempel
-    /// Vector an dieser Stelle zu teilen. Altere Werte werden dabei verworfen.
-    ///
-    /// Diese Funktion wird in aller Regel in der Implementierung der `update()` Funktion
-    /// aufgerufen.
-    fn shrink_values(&mut self);
-}
+// #[derive(Debug)]
+// struct MetzCI4 {
+//     messzellen: MesszellenList,
+// }
+// impl MetzCI4 {
+//     fn new() -> Self {
+//         Default::default()
+//     }
+// }
+// impl Default for MetzCI4 {
+//     fn default() -> Self {
+//         let messzelle1 = Analog420MetzCI4::new();
+//         let messzelle2 = Analog420MetzCI4::new();
+//         let messzelle3 = Analog420MetzCI4::new();
+//         let messzelle4 = Analog420MetzCI4::new();
+//
+//         MetzCI4 {
+//             messzellen: vec![
+//                 Arc::new(Mutex::new(Box::new(messzelle1))),
+//                 Arc::new(Mutex::new(Box::new(messzelle2))),
+//                 Arc::new(Mutex::new(Box::new(messzelle3))),
+//                 Arc::new(Mutex::new(Box::new(messzelle4))),
+//             ],
+//         }
+//     }
+// }
+// impl fmt::Display for MetzCI4 {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         write!(f, "Metz Connect CI4 Modul")
+//     }
+// }
+// impl Sensor for MetzCI4 {
+//     // Update Sensor Platine via BUS
+//     fn update(&self) {
+//         println!("\nUpdate Sensor: '{}'", &self);
+//         let messzellen = &self.messzellen.clone();
+//         for messzelle in messzellen {
+//             if let Ok(messzelle) = messzelle.lock() {
+//                 messzelle.update()
+//             }
+//         }
+//     }
+//     fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
+//         self.messzellen.get(num)
+//     }
+// }
+//
+// #[derive(Debug)]
+// struct RaGasCONO2Mod {
+//     messzellen: MesszellenList,
+// }
+// impl RaGasCONO2Mod {
+//     fn new() -> Self {
+//         Default::default()
+//     }
+// }
+// impl Default for RaGasCONO2Mod {
+//     fn default() -> Self {
+//         let co_messzelle = RaGasCO::new();
+//         let no2_messzelle = RaGasNO2::new();
+//
+//         RaGasCONO2Mod {
+//             messzellen: vec![
+//                 Arc::new(Mutex::new(Box::new(co_messzelle))),
+//                 Arc::new(Mutex::new(Box::new(no2_messzelle))),
+//             ],
+//         }
+//     }
+// }
+// impl fmt::Display for RaGasCONO2Mod {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         write!(f, "RA-GAS CO/NO2 Kombisensor mit Modbus Interface")
+//     }
+// }
+// impl Sensor for RaGasCONO2Mod {
+//     // Update Sensor Platine via BUS
+//     fn update(&self) {
+//         println!("\nUpdate Sensor: '{}'", &self);
+//         let messzellen = &self.messzellen.clone();
+//         for messzelle in messzellen {
+//             if let Ok(messzelle) = messzelle.lock() {
+//                 messzelle.update()
+//             }
+//         }
+//     }
+//     fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
+//         self.messzellen.get(num)
+//     }
+// }
+//
