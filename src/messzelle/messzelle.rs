@@ -1,28 +1,16 @@
 //! Trait das eine einzelne Messzelle beschreibt
 //!
+use std::fmt::Debug;
 use std::sync::{Arc, Mutex};
+use std::time::SystemTime;
+use ::prelude::*;
+use messzelle::MesszelleError;
 
 pub type BoxedMesszelle = Box<Messzelle + Send + 'static>;
 pub type MesszellenList = Vec<Arc<Mutex<BoxedMesszelle>>>;
 pub type MesszellenRefList<'a> = Vec<&'a Messzelle>;
 
-use std::any::Any;
-use std::fmt::Debug;
-use std::io::Error;
-use std::time::SystemTime;
 
-
-/// Dieser Trait ist für das Upcasting nötig
-pub trait AsAny: Any {
-    fn as_any(&self) -> &Any;
-}
-
-/// Implementiere AsAny für alle Typen
-impl<T: Any> AsAny for T {
-    fn as_any(&self) -> &Any {
-        self
-    }
-}
 
 /// Basis Trait das die Eigenschaften einer Messzelle beschreibt
 ///
@@ -47,7 +35,7 @@ pub trait Messzelle: AsAny + Debug {
     /// # Parameters
     /// * `min`     - Minuten aus denen der Mittelwert berechnet werden soll
     ///
-    fn average(&self, minutes: u64) -> Result<f64, Error>;
+    fn average(&self, minutes: u64) -> Result<f64, MesszelleError>;
 
     /// Aktuellen Messzellewert ermitteln und speichern.
     ///

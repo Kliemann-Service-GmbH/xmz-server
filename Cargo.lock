@@ -498,7 +498,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "xmz-server"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "clippy 0.0.187 (registry+https://github.com/rust-lang/crates.io-index)",
  "config 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",

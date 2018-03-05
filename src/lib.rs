@@ -27,6 +27,7 @@ extern crate rand;
 extern crate serde;
 
 
+pub mod prelude;
 mod error;
 mod settings;
 /// Ausgänge die vom Server Prozess geschalten werden können (LEDs, Relais, IO Module)
