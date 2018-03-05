@@ -1,4 +1,4 @@
-//! Prelude Modul mit nützlichen Traits und Funktionen.
+//! Prelude Modul mit nützlichen Traits und Funktionen
 //!
 //! # Examples
 //! ```
