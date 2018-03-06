@@ -76,4 +76,18 @@ mod tests {
     }
 
     // TODO: Siehe RaGasCONO2Mod für `new_420_with_len(len: usize)` Funktion
+
+    #[test]
+    #[ignore]
+    fn update() {
+        let sensor = MetzConnectCI4::new();
+        assert_eq!(sensor.messzellen.len(), 4);
+    }
+
+    #[test]
+    #[ignore]
+    fn get_messzelle() {
+        let sensor = MetzConnectCI4::new();
+        assert_eq!(sensor.messzellen.len(), 4);
+    }
 }

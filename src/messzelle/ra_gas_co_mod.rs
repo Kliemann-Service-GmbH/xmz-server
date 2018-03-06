@@ -156,9 +156,33 @@ mod tests {
     use super::*;
 
     #[test]
-    fn create() {
+    fn new() {
         let messzelle = RaGasCO::new();
         assert_eq!(messzelle.values.len(), 0);
         assert_eq!(messzelle.max_values_for_n_minutes, 5);
+    }
+
+    #[test]
+    fn value() {
+        let messzelle = RaGasCO::new();
+        assert!(messzelle.value().is_none());
+    }
+
+    #[test]
+    #[ignore]
+    fn average() {
+        let messzelle = RaGasCO::new();
+    }
+
+    #[test]
+    #[ignore]
+    fn update() {
+        let messzelle = RaGasCO::new();
+    }
+
+    #[test]
+    #[ignore]
+    fn shrink_values() {
+        let messzelle = RaGasCO::new();
     }
 }

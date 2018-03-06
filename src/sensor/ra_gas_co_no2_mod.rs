@@ -84,19 +84,33 @@ mod tests {
     use super::*;
 
     #[test]
-    fn create() {
+    fn new() {
         let sensor = RaGasCONO2Mod::new();
         assert_eq!(sensor.messzellen.len(), 2);
     }
 
     #[test]
-    fn create_co() {
+    fn new_co() {
         let sensor = RaGasCONO2Mod::new_co();
         assert_eq!(sensor.messzellen.len(), 1);
     }
 
     #[test]
-    fn create_no2() {
+    fn new_no2() {
+        let sensor = RaGasCONO2Mod::new_no2();
+        assert_eq!(sensor.messzellen.len(), 1);
+    }
+
+    #[test]
+    #[ignore]
+    fn update() {
+        let sensor = RaGasCONO2Mod::new_no2();
+        assert_eq!(sensor.messzellen.len(), 1);
+    }
+
+    #[test]
+    #[ignore]
+    fn get_messzelle() {
         let sensor = RaGasCONO2Mod::new_no2();
         assert_eq!(sensor.messzellen.len(), 1);
     }

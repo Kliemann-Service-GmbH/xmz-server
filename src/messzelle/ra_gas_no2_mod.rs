@@ -26,8 +26,12 @@ impl Messzelle for RaGasNO2 {
     /// Aktueller Messzelle Wert und Timestamp der Ermittlung
     ///
     /// # Examples
-    /// ```
-    /// assert!(true);
+    ///
+    /// ```rust
+    /// use xmz_server::messzelle::{Messzelle, RaGasNO2};
+    ///
+    /// let messzelle = RaGasNO2::new();
+    /// assert!(messzelle.value().is_none());
     /// ```
     fn value(&self) -> Option<&(f64, SystemTime)> {
         self.values.last()
@@ -36,8 +40,12 @@ impl Messzelle for RaGasNO2 {
     /// Mittelwert der letzten `min` Minuten
     ///
     /// # Examples
-    /// ```
-    /// assert!(true);
+    ///
+    /// ```rust
+    /// use xmz_server::messzelle::{Messzelle, RaGasNO2};
+    ///
+    /// let messzelle = RaGasNO2::new();
+    /// assert!(messzelle.value().is_none());
     /// ```
     fn average(&self, minutes: u64) -> Result<f64, MesszelleError> {
         let mut values = self.values.clone();
@@ -80,8 +88,12 @@ impl Messzelle for RaGasNO2 {
     /// Aktuellen Messzellewert ermitteln und speichern.
     ///
     /// # Examples
-    /// ```
-    /// assert!(true);
+    ///
+    /// ```rust
+    /// use xmz_server::messzelle::{Messzelle, RaGasNO2};
+    ///
+    /// let messzelle = RaGasNO2::new();
+    /// assert!(messzelle.value().is_none());
     /// ```
     fn update(&mut self)  {
         let last_value = match self.value() {
@@ -104,8 +116,12 @@ impl Messzelle for RaGasNO2 {
     ///
     ///
     /// # Examples
-    /// ```
-    /// assert!(true);
+    ///
+    /// ```rust
+    /// use xmz_server::messzelle::{Messzelle, RaGasNO2};
+    ///
+    /// let messzelle = RaGasNO2::new();
+    /// assert!(messzelle.value().is_none());
     /// ```
     fn shrink_values(&mut self) {
         // 1. Spezialfall, ist nur ein Wert/Zeitstempel Paar vorhanden muss dieses zuerst
@@ -155,9 +171,33 @@ mod tests {
     use super::*;
 
     #[test]
-    fn create() {
+    fn new() {
         let messzelle = RaGasNO2::new();
         assert_eq!(messzelle.values.len(), 0);
         assert_eq!(messzelle.max_values_for_n_minutes, 5);
+    }
+
+    #[test]
+    fn value() {
+        let messzelle = RaGasNO2::new();
+        assert!(messzelle.value().is_none());
+    }
+
+    #[test]
+    #[ignore]
+    fn average() {
+        let messzelle = RaGasNO2::new();
+    }
+
+    #[test]
+    #[ignore]
+    fn update() {
+        let messzelle = RaGasNO2::new();
+    }
+
+    #[test]
+    #[ignore]
+    fn shrink_values() {
+        let messzelle = RaGasNO2::new();
     }
 }

@@ -1,8 +1,8 @@
-#![allow(dead_code)]
-#![allow(unused_variables)]
+    #![allow(dead_code)]
+    #![allow(unused_variables)]
 
-use std::fmt;
-use std::sync::{Arc, Mutex};
+    use std::fmt;
+    use std::sync::{Arc, Mutex};
 
     type BoxedMesszelle = Box<Messzelle + Send + 'static>;
     type MesszellenList = Vec<Arc<Mutex<BoxedMesszelle>>>;
@@ -76,35 +76,35 @@ use std::sync::{Arc, Mutex};
             println!("|-- Update Messzelle: '{}'", &self);
         }
     }
-#[derive(Debug)]
-struct Analog420MetzCI4 {
-    value: f64,
-}
-impl Analog420MetzCI4 {
-    fn new() -> Self {
-        Analog420MetzCI4 {
-            value: 0.0,
+    #[derive(Debug)]
+    struct Analog420MetzCI4 {
+        value: f64,
+    }
+    impl Analog420MetzCI4 {
+        fn new() -> Self {
+            Analog420MetzCI4 {
+                value: 0.0,
+            }
         }
     }
-}
-impl fmt::Display for Analog420MetzCI4 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Analog 4-20mA an Metz Connect CI4 Modul")
+    impl fmt::Display for Analog420MetzCI4 {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "Analog 4-20mA an Metz Connect CI4 Modul")
+        }
     }
-}
-impl Messzelle for Analog420MetzCI4 {
-    fn value(&self) -> f64 {
-        0.0
-    }
+    impl Messzelle for Analog420MetzCI4 {
+        fn value(&self) -> f64 {
+            0.0
+        }
 
-    fn average(&self, minutes: u32) -> f64 {
-        0.0
-    }
+        fn average(&self, minutes: u32) -> f64 {
+            0.0
+        }
 
-    fn update(&self) {
-        println!("|-- Update Messzelle: '{}'", &self);
+        fn update(&self) {
+            println!("|-- Update Messzelle: '{}'", &self);
+        }
     }
-}
 
     // Sensoren
     trait Sensor: fmt::Debug {
@@ -201,17 +201,17 @@ impl Messzelle for Analog420MetzCI4 {
         }
     }
 
-// Zone
-struct Zone<'a> {
-    messzellen: MesszellenRefList<'a>,
-}
-impl<'a> Zone<'a> {
-    fn new() -> Self {
-        Zone {
-            messzellen: vec![],
+    // Zone
+    struct Zone<'a> {
+        messzellen: MesszellenRefList<'a>,
+    }
+    impl<'a> Zone<'a> {
+        fn new() -> Self {
+            Zone {
+                messzellen: vec![],
+            }
         }
     }
-}
 
     // Server
     #[derive(Debug)]
@@ -251,71 +251,4 @@ fn main() {
     server.add_sensor(Arc::new(Mutex::new(Box::new(sensor2))));
 
     server.update_sensors();
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn ragas_co_create() {
-        let messzelle = RaGasCO::new();
-        assert_eq!(messzelle.value(), 0.0);
-    }
-    #[test]
-    fn ragas_co_value() {
-        let messzelle = RaGasCO::new();
-        assert_eq!(messzelle.value(), 0.0);
-    }
-    #[test]
-    fn ragas_co_average() {
-        let messzelle = RaGasCO::new();
-        assert_eq!(messzelle.average(15), 0.0);
-    }
-    #[test]
-    fn ragas_no2_create() {
-        let messzelle = RaGasNO2::new();
-        assert_eq!(messzelle.value(), 0.0);
-    }
-    #[test]
-    fn ragas_no2_value() {
-        let messzelle = RaGasNO2::new();
-        assert_eq!(messzelle.value(), 0.0);
-    }
-    #[test]
-    fn ragas_no2_average() {
-        let messzelle = RaGasNO2::new();
-        assert_eq!(messzelle.average(15), 0.0);
-    }
-    #[test]
-    fn metz_ci4_create() {
-        let messzelle = Analog420MetzCI4::new();
-        assert_eq!(messzelle.value(), 0.0);
-    }
-    #[test]
-    fn metz_ci4_value() {
-        let messzelle = Analog420MetzCI4::new();
-        assert_eq!(messzelle.value(), 0.0);
-    }
-    #[test]
-    fn metz_ci4_average() {
-        let messzelle = Analog420MetzCI4::new();
-        assert_eq!(messzelle.average(15), 0.0);
-    }
-
-    #[test]
-    fn zone_create() {
-        let zone = Zone::new();
-        assert_eq!(zone.messzellen.len(), 0);
-    }
-    #[test]
-    fn zone_add_messzelle() {
-        let mut server = Server::new();
-        let sensor = RaGasCONO2Mod::new();
-        server.add_sensor(Arc::new(Mutex::new(Box::new(sensor))));
-
-        let mut zone = Zone::new();
-        assert_eq!(zone.messzellen.len(), 0);
-
-    }
 }

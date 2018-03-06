@@ -3,16 +3,16 @@ use sensor::{BoxedSensor, Sensor};
 use settings::Settings;
 use error::ServerError;
 use std::sync::{Arc, Mutex};
-
-
-type SensorsList = Vec<Arc<Mutex<Box<Sensor + Send + 'static>>>>;
+use server::SensorsList;
 
 /// Struktur der Server Komponente
 pub struct Server {
+    /// Liste der Sensoren die dieser Server verwaltet
     pub sensors: SensorsList,
 }
 
 impl Server {
+    /// Erstellt eine neue Server Instanz
     pub fn new(settings: &Settings) -> Self {
         Server {
             sensors: vec![],
@@ -20,6 +20,8 @@ impl Server {
         }
     }
 
+    /// Aktualisiert der Reihe nach jeden Sensor
+    ///
     pub fn update_sensors(&self) {
         let sensors = self.sensors.clone();
         thread::spawn(move || {
