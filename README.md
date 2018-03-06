@@ -2,6 +2,10 @@
 
 [![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server)
 
+## Dokumentation
+
+- [API Dokumentation master][api-doc-master]
+
 ## Quellcode auschecken
 
 Dieses Repository ist Teil der [xMZ-Plattform][xmz]. Es wird empfohlen alle Komponenten
@@ -25,8 +29,10 @@ git clone https://github.com/Kliemann-Service-GmbH/xmz-server.git
 
 # Links
 
-* https://github.com/Kliemann-Service-GmbH/xMZ-Plattform
+- [https://github.com/Kliemann-Service-GmbH/xMZ-Plattform][xmz]
+- [https://kliemann-service-gmbh.github.io/xmz-server/xmz_server/index.html][apt-doc-master]
 
 
 [xmz]: https://github.com/Kliemann-Service-GmbH/xMZ-Plattform
 [xmz-server]: https://github.com/Kliemann-Service-GmbH/xmz-server
+[apt-doc-master]: https://kliemann-service-gmbh.github.io/xmz-server/xmz_server/index.html

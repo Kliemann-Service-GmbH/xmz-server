@@ -1,85 +1,66 @@
 use std::thread;
-use server::sensor::Sensor;
+use sensor::{BoxedSensor, Sensor};
+use settings::Settings;
+use error::ServerError;
+use std::sync::{Arc, Mutex};
+use server::SensorsList;
 
-
+/// Struktur der Server Komponente
 pub struct Server {
-    sensors: Vec<Box<Sensor>>,
+    /// Liste der Sensoren die dieser Server verwaltet
+    pub sensors: SensorsList,
 }
 
 impl Server {
-    fn new() -> Self {
+    /// Erstellt eine neue Server Instanz
+    pub fn new(settings: &Settings) -> Self {
         Server {
             sensors: vec![],
+            // zones: vec![],
         }
     }
 
-    fn add_sensor(&mut self, sensor: Box<Sensor>) {
+    /// Aktualisiert der Reihe nach jeden Sensor
+    ///
+    pub fn update_sensors(&self) {
+        let sensors = self.sensors.clone();
+        thread::spawn(move || {
+            loop {
+                for sensor in sensors.clone() {
+                    if let Ok(mut sensor) = sensor.lock() {
+                        sensor.update();
+                    }
+                }
+            }
+        });
+    }
+
+
+    pub fn get_sensor(&self, num: usize) -> Option<&Arc<Mutex<BoxedSensor>>> {
+        self.sensors.get(num)
+    }
+
+    pub fn add_sensor(&mut self, sensor: Arc<Mutex<BoxedSensor>>) {
         self.sensors.push(sensor);
     }
 
-    fn update_sensors(&mut self) {
-        for sensor in &mut self.sensors {
-            sensor.update();
-        }
+    pub fn start(&self) -> Result<(), ServerError> {
+        self.update_sensors();
+
+        Ok(())
     }
 
-    fn start(self) {
-        thread::spawn(move || {
 
-        });
-    }
 }
-
-
-
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use server::sensor::{Analog420, CONO2};
 
     #[test]
-    fn create_server() {
-        let server = Server::new();
-    }
-
-    #[test]
-    fn add_sensor() {
-        let mut server = Server::new();
-        let sensor1 = CONO2::new();
-
-        server.add_sensor(Box::new(sensor1));
-    }
-
-    #[test]
-    fn add_two_different_sensors() {
-        let mut server = Server::new();
-        let sensor1 = CONO2::new();
-        let sensor2 = Analog420::new();
-
-        server.add_sensor(Box::new(sensor1));
-        server.add_sensor(Box::new(sensor2));
-    }
-
-    #[test]
-    fn update_sensors() {
-        let mut server = Server::new();
-        let sensor1 = CONO2::new();
-        server.add_sensor(Box::new(sensor1));
-        assert_eq!(None, server.sensors.last().unwrap().value());
-        server.update_sensors();
-        //
-        // assert_eq!(1.0, server.sensors.last().unwrap().value());
-    }
-
-    #[test]
-    fn create_sensor_cono2() {
-        let sensor1 = CONO2::new();
-    }
-
-    #[test]
-    fn create_sensor_analog420() {
-        let sensor2 = Analog420::new();
+    fn create() {
+        let settings = Settings::new();
+        let server = Server::new(&settings.unwrap());
+        assert_eq!(server.sensors.len(), 0);
     }
 }
