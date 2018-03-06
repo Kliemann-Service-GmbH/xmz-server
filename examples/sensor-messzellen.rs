@@ -213,32 +213,32 @@ impl<'a> Zone<'a> {
     }
 }
 
-// Server
-#[derive(Debug)]
-struct Server {
-    sensors: SensorsList,
-}
-impl Server {
-    fn new() -> Self {
-        Server {
-            sensors: vec![],
+    // Server
+    #[derive(Debug)]
+    struct Server {
+        sensors: SensorsList,
+    }
+    impl Server {
+        fn new() -> Self {
+            Server {
+                sensors: vec![],
+            }
         }
-    }
-    fn get_sensor(&self, num: usize) -> Option<&Arc<Mutex<BoxedSensor>>> {
-        self.sensors.get(num)
-    }
-    fn add_sensor(&mut self, sensor: Arc<Mutex<BoxedSensor>>) {
-        self.sensors.push(sensor);
-    }
-    fn update_sensors(&self) {
-        let sensors = &self.sensors.clone();
-        for sensor in sensors {
-            if let Ok(sensor) = sensor.lock() {
-                sensor.update();
+        fn get_sensor(&self, num: usize) -> Option<&Arc<Mutex<BoxedSensor>>> {
+            self.sensors.get(num)
+        }
+        fn add_sensor(&mut self, sensor: Arc<Mutex<BoxedSensor>>) {
+            self.sensors.push(sensor);
+        }
+        fn update_sensors(&self) {
+            let sensors = &self.sensors.clone();
+            for sensor in sensors {
+                if let Ok(sensor) = sensor.lock() {
+                    sensor.update();
+                }
             }
         }
     }
-}
 
 
 fn main() {
@@ -256,15 +256,6 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn sensor_get_messzelle() {
-        let mut server = Server::new();
-        let sensor = RaGasCONO2Mod::new();
-        assert!(server.get_sensor(0).is_none());
-        server.add_sensor(Arc::new(Mutex::new(Box::new(sensor))));
-        assert!(server.get_sensor(0).is_some());
-    }
 
     #[test]
     fn ragas_co_create() {

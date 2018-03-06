@@ -1,5 +1,5 @@
 use std::thread;
-use sensor::Sensor;
+use sensor::{BoxedSensor, Sensor};
 use settings::Settings;
 use error::ServerError;
 use std::sync::{Arc, Mutex};
@@ -20,7 +20,7 @@ impl Server {
         }
     }
 
-    fn update_sensors(&self) {
+    pub fn update_sensors(&self) {
         let sensors = self.sensors.clone();
         thread::spawn(move || {
             loop {
@@ -33,15 +33,26 @@ impl Server {
         });
     }
 
+
+    pub fn get_sensor(&self, num: usize) -> Option<&Arc<Mutex<BoxedSensor>>> {
+        self.sensors.get(num)
+    }
+
+    pub fn add_sensor(&mut self, sensor: Arc<Mutex<BoxedSensor>>) {
+        self.sensors.push(sensor);
+    }
+
     pub fn start(&self) -> Result<(), ServerError> {
         self.update_sensors();
 
         Ok(())
     }
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
 
 }
+
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//
+// }

@@ -45,6 +45,7 @@ pub mod messzelle;
 pub mod server;
 
 pub use error::ServerError;
+pub use messzelle::Messzelle;
 pub use server::Server;
 pub use settings::Settings;
-pub use self::messzelle::Messzelle;
+pub use sensor::Sensor;
