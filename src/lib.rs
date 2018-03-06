@@ -3,15 +3,15 @@
        html_root_url = "https://gaswarnanlagen.com/")]
 //! Server Komponente der **xMZ-Plattform**
 //!
-//! |&nbsp;[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server) <sub>**master**</sub>
-//! |&nbsp;[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=development)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server) <sub>**development**</sub>
+//! |&nbsp;[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server)&nbsp;<sub>**master**</sub>
+//! |&nbsp;[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=development)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server)&nbsp;<sub>**development**</sub>
 //!
 //! Der Server ist die Kern Komponente. Zu seinen Aufgaben zählen zum Beispiel das Auslesen der
 //! Sensoren sowie der Auswertung der Sensor-Messzellen und das Schalten der diversen Ausgänge (Outputs),
 //! wie etwa Relais, LEDs und angeschlossene IO Module.
 //!
-//! * **Dokumentation:** https://kliemann-service-gmbh.github.io/xmz-server/xmz-server/index.html
-//! * **Quellcode:** https://github.com/Kliemann-Service-GmbH/xmz-server
+//! * **Dokumentation:** (https://kliemann-service-gmbh.github.io/xmz-server)[https://kliemann-service-gmbh.github.io/xmz-server]
+//! * **Quellcode:** (https://github.com/Kliemann-Service-GmbH/xmz-server)[https://github.com/Kliemann-Service-GmbH/xmz-server]
 //!
 //! # Struktur des Servers
 //!
