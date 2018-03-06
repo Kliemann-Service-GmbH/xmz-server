@@ -16,8 +16,8 @@ impl Settings {
     pub fn new() -> Result<Self, ConfigError> {
         let mut s = Config::new();
 
-        s.merge(File::with_name("/boot/xmz.hjson").required(false))?;
-        s.merge(File::with_name("xmz.hjson").required(false))?;
+        s.merge(File::with_name("/boot/xmz.toml").required(false))?;
+        s.merge(File::with_name("xmz.toml").required(false))?;
 
         s.try_into()
     }
