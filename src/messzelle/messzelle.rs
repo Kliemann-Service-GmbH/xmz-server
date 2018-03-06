@@ -1,5 +1,11 @@
 //! Trait das eine einzelne Messzelle beschreibt
 //!
+
+// TODO:
+// - `get_values()` implementieren
+// - `value()` default Implementation, evtl. auch für die anderen Trait Funktionen
+
+
 use std::fmt::Debug;
 use std::sync::{Arc, Mutex};
 use std::time::SystemTime;

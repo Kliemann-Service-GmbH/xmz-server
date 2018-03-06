@@ -4,11 +4,11 @@
 use std::fmt;
 use std::sync::{Arc, Mutex};
 
-type BoxedMesszelle = Box<Messzelle + Send + 'static>;
-type MesszellenList = Vec<Arc<Mutex<BoxedMesszelle>>>;
-type BoxedSensor = Box<Sensor + Send + 'static>;
-type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
-type MesszellenRefList<'a> = Vec<&'a Messzelle>;
+    type BoxedMesszelle = Box<Messzelle + Send + 'static>;
+    type MesszellenList = Vec<Arc<Mutex<BoxedMesszelle>>>;
+    type BoxedSensor = Box<Sensor + Send + 'static>;
+    type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
+    type MesszellenRefList<'a> = Vec<&'a Messzelle>;
 
 
     // Messzellen
@@ -18,64 +18,64 @@ type MesszellenRefList<'a> = Vec<&'a Messzelle>;
         fn update(&self);
     }
 
-#[derive(Debug)]
-struct RaGasCO {
-    value: f64,
-}
-impl RaGasCO {
-    fn new() -> Self {
-        RaGasCO {
-            value: 0.0,
+    #[derive(Debug)]
+    struct RaGasCO {
+        value: f64,
+    }
+    impl RaGasCO {
+        fn new() -> Self {
+            RaGasCO {
+                value: 0.0,
+            }
         }
     }
-}
-impl fmt::Display for RaGasCO {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "CO")
-    }
-}
-impl Messzelle for RaGasCO {
-    fn value(&self) -> f64 {
-        0.0
-    }
-
-    fn average(&self, minutes: u32) -> f64 {
-        0.0
-    }
-
-    fn update(&self) {
-        println!("|-- Update Messzelle: '{}'", &self);
-    }
-}
-#[derive(Debug)]
-struct RaGasNO2 {
-    value: f64,
-}
-impl RaGasNO2 {
-    fn new() -> Self {
-        RaGasNO2 {
-            value: 0.0,
+    impl fmt::Display for RaGasCO {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "CO")
         }
     }
-}
-impl fmt::Display for RaGasNO2 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "NO2")
-    }
-}
-impl Messzelle for RaGasNO2 {
-    fn value(&self) -> f64 {
-        0.0
-    }
+    impl Messzelle for RaGasCO {
+        fn value(&self) -> f64 {
+            0.0
+        }
 
-    fn average(&self, minutes: u32) -> f64 {
-        0.0
-    }
+        fn average(&self, minutes: u32) -> f64 {
+            0.0
+        }
 
-    fn update(&self) {
-        println!("|-- Update Messzelle: '{}'", &self);
+        fn update(&self) {
+            println!("|-- Update Messzelle: '{}'", &self);
+        }
     }
-}
+    #[derive(Debug)]
+    struct RaGasNO2 {
+        value: f64,
+    }
+    impl RaGasNO2 {
+        fn new() -> Self {
+            RaGasNO2 {
+                value: 0.0,
+            }
+        }
+    }
+    impl fmt::Display for RaGasNO2 {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "NO2")
+        }
+    }
+    impl Messzelle for RaGasNO2 {
+        fn value(&self) -> f64 {
+            0.0
+        }
+
+        fn average(&self, minutes: u32) -> f64 {
+            0.0
+        }
+
+        fn update(&self) {
+            println!("|-- Update Messzelle: '{}'", &self);
+        }
+    }
 #[derive(Debug)]
 struct Analog420MetzCI4 {
     value: f64,
@@ -256,40 +256,6 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn server_create() {
-        let server = Server::new();
-        assert_eq!(server.sensors.len(), 0);
-    }
-    #[test]
-    fn server_update_sensors() {
-        let server = Server::new();
-        server.update_sensors();
-    }
-    #[test]
-    fn server_add_sensor() {
-        let mut server = Server::new();
-        let sensor = RaGasCONO2Mod::new();
-        assert_eq!(server.sensors.len(), 0);
-        server.add_sensor(Arc::new(Mutex::new(Box::new(sensor))));
-        assert_eq!(server.sensors.len(), 1);
-    }
-    #[test]
-    fn server_add_two_sensor() {
-        let mut server = Server::new();
-        let sensor1 = RaGasCONO2Mod::new();
-        let sensor2 = MetzCI4::new();
-        assert_eq!(server.sensors.len(), 0);
-        server.add_sensor(Arc::new(Mutex::new(Box::new(sensor1))));
-        server.add_sensor(Arc::new(Mutex::new(Box::new(sensor2))));
-        assert_eq!(server.sensors.len(), 2);
-    }
-    #[test]
-    fn server_get_sensor() {
-        let server = Server::new();
-        assert!(server.get_sensor(0).is_none());
-    }
 
     #[test]
     fn sensor_get_messzelle() {

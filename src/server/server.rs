@@ -9,7 +9,7 @@ type SensorsList = Vec<Arc<Mutex<Box<Sensor + Send + 'static>>>>;
 
 /// Struktur der Server Komponente
 pub struct Server {
-    sensors: SensorsList,
+    pub sensors: SensorsList,
 }
 
 impl Server {
@@ -38,4 +38,10 @@ impl Server {
 
         Ok(())
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
 }
