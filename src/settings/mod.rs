@@ -4,6 +4,8 @@ use config::{Config, ConfigError, File};
 type Days = u32;
 
 /// Serverkonfigurations Parameter
+///
+/// Die Settings werden mit dem `config` crate gebildet.
 #[derive(Debug, Deserialize)]
 pub struct Settings {
     /// Wartungsintervall in Tagen
@@ -18,5 +20,17 @@ impl Settings {
         s.merge(File::with_name("xmz.hjson").required(false))?;
 
         s.try_into()
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn create() {
+        let settings = Settings::new();
+        assert!(settings.is_ok());
     }
 }

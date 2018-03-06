@@ -13,7 +13,7 @@ pub struct Server {
 }
 
 impl Server {
-    pub fn new(_config: &Settings) -> Self {
+    pub fn new(settings: &Settings) -> Self {
         Server {
             sensors: vec![],
             // zones: vec![],
@@ -51,8 +51,14 @@ impl Server {
 
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//
-// }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn create() {
+        let settings = Settings::new();
+        let server = Server::new(&settings.unwrap());
+        assert_eq!(server.sensors.len(), 0);
+    }
+}

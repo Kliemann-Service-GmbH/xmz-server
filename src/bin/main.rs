@@ -2,6 +2,7 @@ extern crate xmz_server;
 
 use xmz_server::{Server, ServerError, Settings};
 
+
 fn run() -> Result<(), ServerError> {
     println!("xmz-server: {}", env!("CARGO_PKG_VERSION"));
 

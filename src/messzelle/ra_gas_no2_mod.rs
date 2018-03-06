@@ -149,6 +149,7 @@ impl fmt::Display for RaGasNO2 {
     }
 }
 
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -159,5 +160,4 @@ mod tests {
         assert_eq!(messzelle.values.len(), 0);
         assert_eq!(messzelle.max_values_for_n_minutes, 5);
     }
-
 }

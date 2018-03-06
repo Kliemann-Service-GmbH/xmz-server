@@ -4,12 +4,20 @@ use std::fmt;
 use std::sync::{Arc, Mutex};
 
 
+/// Metz Connect CI4 Modul
+///
+/// Das Metz Connect CI4 Modul für die Hutschiene verfügt über ein Modbus Interface. An das Modul
+/// können 4 analog Sensoren angeschlossen werden. Für die 4-20mA Messtechnik wird die Messzelle
+/// `MetzConnectCI4Analog420` verwendet.
+///
 #[derive(Debug)]
 pub struct MetzConnectCI4 {
-    messzellen: MesszellenList,
+    /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
+    pub messzellen: MesszellenList,
 }
 
 impl MetzConnectCI4 {
+    /// Erzeut einen neuen Sensor mit view 4-20mA Messzellen.
     pub fn new() -> Self {
         Default::default()
     }
@@ -53,4 +61,19 @@ impl Sensor for MetzConnectCI4 {
     fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
         self.messzellen.get(num)
     }
+}
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn create() {
+        let sensor = MetzConnectCI4::new();
+        assert_eq!(sensor.messzellen.len(), 4);
+    }
+
+    // TODO: Siehe RaGasCONO2Mod für `new_420_with_len(len: usize)` Funktion
 }

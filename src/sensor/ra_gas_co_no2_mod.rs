@@ -14,8 +14,31 @@ pub struct RaGasCONO2Mod {
 }
 
 impl RaGasCONO2Mod {
+    /// Standardmäßig wird der Sensor mit CO und NO₂ Messzelle erzeugt.
     pub fn new() -> Self {
         Default::default()
+    }
+
+    /// Erzeugt einen Sensor nur mit CO Messzelle
+    pub fn new_co() -> Self {
+        let co_messzelle = RaGasCO::new();
+
+        RaGasCONO2Mod {
+            messzellen: vec![
+                Arc::new(Mutex::new(Box::new(co_messzelle))),
+            ],
+        }
+    }
+
+    /// Erzeugt einen Sensor nur mit NO₂ Messzelle
+    pub fn new_no2() -> Self {
+        let no2_messzelle = RaGasNO2::new();
+
+        RaGasCONO2Mod {
+            messzellen: vec![
+                Arc::new(Mutex::new(Box::new(no2_messzelle))),
+            ],
+        }
     }
 }
 
@@ -52,5 +75,29 @@ impl Sensor for RaGasCONO2Mod {
     }
     fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
         self.messzellen.get(num)
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn create() {
+        let sensor = RaGasCONO2Mod::new();
+        assert_eq!(sensor.messzellen.len(), 2);
+    }
+
+    #[test]
+    fn create_co() {
+        let sensor = RaGasCONO2Mod::new_co();
+        assert_eq!(sensor.messzellen.len(), 1);
+    }
+
+    #[test]
+    fn create_no2() {
+        let sensor = RaGasCONO2Mod::new_no2();
+        assert_eq!(sensor.messzellen.len(), 1);
     }
 }
