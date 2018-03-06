@@ -10,8 +10,8 @@
 //! Sensoren sowie der Auswertung der Sensor-Messzellen und das Schalten der diversen Ausgänge (Outputs),
 //! wie etwa Relais, LEDs und angeschlossene IO Module.
 //!
-//! * **Dokumentation:** (https://kliemann-service-gmbh.github.io/xmz-server)[https://kliemann-service-gmbh.github.io/xmz-server]
-//! * **Quellcode:** (https://github.com/Kliemann-Service-GmbH/xmz-server)[https://github.com/Kliemann-Service-GmbH/xmz-server]
+//! * **Dokumentation:** [https://kliemann-service-gmbh.github.io/xmz-server](https://kliemann-service-gmbh.github.io/xmz-server)
+//! * **Quellcode:** [https://github.com/Kliemann-Service-GmbH/xmz-server](https://github.com/Kliemann-Service-GmbH/xmz-server)
 //!
 //! # Struktur des Servers
 //!
