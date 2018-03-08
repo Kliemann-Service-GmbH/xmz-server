@@ -33,19 +33,21 @@ extern crate rand;
 extern crate serde;
 
 
-pub mod prelude;
-mod error;
-mod settings;
-/// Ausgänge die vom Server Prozess geschalten werden können (LEDs, Relais, IO Module)
-pub mod output;
-/// Sensoren die vom Server unterstützt werden
-pub mod sensor;
-pub mod messzelle;
-/// Kern der Anwendung
-pub mod server;
+mod error;              // Mögliche Fehler die im Serverbetrieb auftreten können
+mod settings;           // Einstellungen die beim Serverstart ausgewertet werden, Wrapper um Config crate
+pub mod action;         // Liste von zu schaltenden Ausgängen (`output`)
+pub mod messzelle;      // Einzelne Sensor Messzelle, sitzt in der Regel auf einer Sensor Platine (`sensor`)
+pub mod output;         // Ausgänge die vom Server Prozess geschalten werden können (z.B. LEDs, Relais, IO Module)
+pub mod prelude;        // Nützliche Traits und Funktionen die alle Teile dieses Projekts verwenden
+pub mod schaltpunkt;    // Liste von Schwellwerten (`schwellwert`) und Aktionen (`aktion`)
+pub mod schwellwert;    // Regel die wenn erfüllt zumeist Ausgänge schaltet
+pub mod sensor;         // Sensoren die vom Server unterstützt werden
+pub mod server;         // Kern der Anwendung
+pub mod zone;           // Zonen die vom Server überwacht werden
 
 pub use error::ServerError;
 pub use messzelle::Messzelle;
 pub use server::Server;
 pub use settings::Settings;
 pub use sensor::Sensor;
+pub use zone::Zone;

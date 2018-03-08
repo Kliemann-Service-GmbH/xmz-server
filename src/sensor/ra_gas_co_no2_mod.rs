@@ -42,6 +42,7 @@ impl RaGasCONO2Mod {
     }
 }
 
+/// Standardmäßig ist ein Kombisenor mit einer NO2 und einer CO Messzelle betückt.
 impl Default for RaGasCONO2Mod {
     fn default() -> Self {
         let co_messzelle = RaGasCO::new();

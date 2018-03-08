@@ -1,18 +1,19 @@
-use messzellen::MesszellenRefList;
+use prelude::*;
+use schaltpunkt::Schaltpunkt;
 
 
-/// Zonen
+/// Zonen, die Bereiche die der Server überwacht
 ///
-/// Zonen sind die Bereiche die der Server überwacht. Jeder Zone können n `Messzellen` zugeordnet
+/// Jeder Zone können n `Schaltpunkte` zugeordnet
 /// werden. Diese Messzellen werden gegen
-struct Zone<'a> {
-    messzellen: MesszellenRefList<'a>,
+pub struct Zone {
+    schaltpunkte: Vec<Schaltpunkt>,
 }
 
-impl<'a> Zone<'a> {
-    fn new() -> Self {
+impl Zone {
+    pub fn new() -> Self {
         Zone {
-            messzellen: vec![],
+            schaltpunkte: vec![],
         }
     }
 }
@@ -24,17 +25,13 @@ mod tests {
     #[test]
     fn new() {
         let zone = Zone::new();
-        assert_eq!(zone.messzellen.len(), 0);
+        assert_eq!(zone.schaltpunkte.len(), 0);
     }
-    
+
     #[test]
+    #[ignore]
     fn add_messzelle() {
-        let mut server = Server::new();
-        let sensor = RaGasCONO2Mod::new();
-        server.add_sensor(Arc::new(Mutex::new(Box::new(sensor))));
-
-        let mut zone = Zone::new();
-        assert_eq!(zone.messzellen.len(), 0);
-
+        let settings = Settings::new();
+        let _server = Server::new(&settings.unwrap());
     }
 }
