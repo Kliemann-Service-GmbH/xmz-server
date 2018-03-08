@@ -1,19 +1,29 @@
-use messzellen::MesszellenRefList;
+use prelude::*;
+use schaltpunkt::Schaltpunkt;
+use messzelle::{Messzelle, RaGasNO2Mod, RaGasCOMod};
 
 
-/// Zonen
+/// Zonen, die Bereiche die der Server überwacht
 ///
-/// Zonen sind die Bereiche die der Server überwacht. Jeder Zone können n `Messzellen` zugeordnet
+/// Jeder Zone können n `Schaltpunkte` zugeordnet
 /// werden. Diese Messzellen werden gegen
-struct Zone<'a> {
-    messzellen: MesszellenRefList<'a>,
+pub struct Zone {
+    messzellen: Vec<Box<Messzelle>>,
+    schaltpunkte: Vec<Schaltpunkt>,
 }
 
-impl<'a> Zone<'a> {
-    fn new() -> Self {
+impl Zone {
+    pub fn new() -> Self {
         Zone {
             messzellen: vec![],
+            schaltpunkte: vec![],
         }
+    }
+
+    /// Fügt eine Referenz auf eine Messzelle hinzu
+    ///
+    fn add_messzelle(&mut self, messzelle: Box<Messzelle>) {
+        self.messzellen.push(messzelle)
     }
 }
 
@@ -25,16 +35,27 @@ mod tests {
     fn new() {
         let zone = Zone::new();
         assert_eq!(zone.messzellen.len(), 0);
+        assert_eq!(zone.schaltpunkte.len(), 0);
     }
-    
+
     #[test]
+    #[ignore]
     fn add_messzelle() {
-        let mut server = Server::new();
-        let sensor = RaGasCONO2Mod::new();
-        server.add_sensor(Arc::new(Mutex::new(Box::new(sensor))));
-
+        let messzelle = RaGasNO2Mod::new();
         let mut zone = Zone::new();
-        assert_eq!(zone.messzellen.len(), 0);
+        zone.add_messzelle(Box::new(messzelle));
+        assert_eq!(zone.messzellen.len(), 1);
+    }
 
+
+    #[test]
+    #[ignore]
+    fn add_more_messzellen() {
+        let messzelle1 = RaGasNO2Mod::new();
+        let messzelle2 = RaGasCOMod::new();
+        let mut zone = Zone::new();
+        zone.add_messzelle(Box::new(messzelle1));
+        zone.add_messzelle(Box::new(messzelle2));
+        assert_eq!(zone.messzellen.len(), 2);
     }
 }

@@ -1,9 +1,9 @@
 use std::thread;
-use sensor::{BoxedSensor, Sensor};
-use settings::Settings;
+use sensor::BoxedSensor;
 use error::ServerError;
-use std::sync::{Arc, Mutex};
 use server::SensorsList;
+use prelude::*;
+
 
 /// Struktur der Server Komponente
 pub struct Server {
@@ -35,6 +35,20 @@ impl Server {
         });
     }
 
+    /// Liefert eine Referenz auf die Liste der Sensoren
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let settings = Settings::new().unwrap();
+    /// let server = Server::new(&settings);
+    /// assert_eq!(server.get_sensors().len(), 0);
+    /// ```
+    pub fn get_sensors(&self) -> &SensorsList {
+        &self.sensors
+    }
 
     pub fn get_sensor(&self, num: usize) -> Option<&Arc<Mutex<BoxedSensor>>> {
         self.sensors.get(num)

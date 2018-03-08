@@ -245,6 +245,14 @@ table td {
   vertical-align: top;
 }
 
+table tr.odd {
+  background-color: #EEE;
+}
+
+/*table tr.even {
+  background-color: #EEE;
+}*/
+
 .author {
   font-size: 1.2em;
   text-align: center;

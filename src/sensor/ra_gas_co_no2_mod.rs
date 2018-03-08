@@ -1,4 +1,4 @@
-use messzelle::{BoxedMesszelle, MesszellenList, RaGasCO, RaGasNO2};
+use messzelle::{BoxedMesszelle, MesszellenList, RaGasCOMod, RaGasNO2Mod};
 use sensor::Sensor;
 use std::fmt;
 use std::sync::{Arc, Mutex};
@@ -21,7 +21,7 @@ impl RaGasCONO2Mod {
 
     /// Erzeugt einen Sensor nur mit CO Messzelle
     pub fn new_co() -> Self {
-        let co_messzelle = RaGasCO::new();
+        let co_messzelle = RaGasCOMod::new();
 
         RaGasCONO2Mod {
             messzellen: vec![
@@ -32,7 +32,7 @@ impl RaGasCONO2Mod {
 
     /// Erzeugt einen Sensor nur mit NO₂ Messzelle
     pub fn new_no2() -> Self {
-        let no2_messzelle = RaGasNO2::new();
+        let no2_messzelle = RaGasNO2Mod::new();
 
         RaGasCONO2Mod {
             messzellen: vec![
@@ -42,10 +42,11 @@ impl RaGasCONO2Mod {
     }
 }
 
+/// Standardmäßig ist ein Kombisenor mit einer NO2 und einer CO Messzelle betückt.
 impl Default for RaGasCONO2Mod {
     fn default() -> Self {
-        let co_messzelle = RaGasCO::new();
-        let no2_messzelle = RaGasNO2::new();
+        let co_messzelle = RaGasCOMod::new();
+        let no2_messzelle = RaGasNO2Mod::new();
 
         RaGasCONO2Mod {
             messzellen: vec![
