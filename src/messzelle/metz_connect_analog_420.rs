@@ -175,9 +175,11 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn update() {
-        let messzelle = MetzConnectCI4Analog420::new();
+        let mut messzelle = MetzConnectCI4Analog420::new();
+        assert_eq!(messzelle.values.len(), 0);
+        messzelle.update();
+        assert_eq!(messzelle.values.len(), 1);
     }
 
     #[test]

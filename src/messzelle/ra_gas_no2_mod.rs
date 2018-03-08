@@ -7,14 +7,14 @@ use std::time::SystemTime;
 /// NO2 Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
 ///
 #[derive(Debug)]
-pub struct RaGasNO2 {
+pub struct RaGasNO2Mod {
     values: Vec<(f64, SystemTime)>,
     max_values_for_n_minutes: u64, // in Sekunden
 }
 
-impl RaGasNO2 {
+impl RaGasNO2Mod {
     pub fn new() -> Self {
-        RaGasNO2 {
+        RaGasNO2Mod {
             values: vec![],
             // max_values_for_n_minutes: 5 * 60 * 60,    // Normale Messzellen arbeiten mit Minuten Werten
             max_values_for_n_minutes: 5,    // Simulator Messzellen arbeiten mit Sekunden Werten
@@ -22,15 +22,15 @@ impl RaGasNO2 {
     }
 }
 
-impl Messzelle for RaGasNO2 {
+impl Messzelle for RaGasNO2Mod {
     /// Aktueller Messzelle Wert und Timestamp der Ermittlung
     ///
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::messzelle::{Messzelle, RaGasNO2};
+    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
     ///
-    /// let messzelle = RaGasNO2::new();
+    /// let messzelle = RaGasNO2Mod::new();
     /// assert!(messzelle.value().is_none());
     /// ```
     fn value(&self) -> Option<&(f64, SystemTime)> {
@@ -42,9 +42,9 @@ impl Messzelle for RaGasNO2 {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::messzelle::{Messzelle, RaGasNO2};
+    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
     ///
-    /// let messzelle = RaGasNO2::new();
+    /// let messzelle = RaGasNO2Mod::new();
     /// assert!(messzelle.value().is_none());
     /// ```
     fn average(&self, minutes: u64) -> Result<f64, MesszelleError> {
@@ -90,9 +90,9 @@ impl Messzelle for RaGasNO2 {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::messzelle::{Messzelle, RaGasNO2};
+    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
     ///
-    /// let messzelle = RaGasNO2::new();
+    /// let messzelle = RaGasNO2Mod::new();
     /// assert!(messzelle.value().is_none());
     /// ```
     fn update(&mut self)  {
@@ -118,9 +118,9 @@ impl Messzelle for RaGasNO2 {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::messzelle::{Messzelle, RaGasNO2};
+    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
     ///
-    /// let messzelle = RaGasNO2::new();
+    /// let messzelle = RaGasNO2Mod::new();
     /// assert!(messzelle.value().is_none());
     /// ```
     fn shrink_values(&mut self) {
@@ -159,7 +159,7 @@ impl Messzelle for RaGasNO2 {
     }
 }
 
-impl fmt::Display for RaGasNO2 {
+impl fmt::Display for RaGasNO2Mod {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "CO")
     }
@@ -172,32 +172,34 @@ mod tests {
 
     #[test]
     fn new() {
-        let messzelle = RaGasNO2::new();
+        let messzelle = RaGasNO2Mod::new();
         assert_eq!(messzelle.values.len(), 0);
         assert_eq!(messzelle.max_values_for_n_minutes, 5);
     }
 
     #[test]
     fn value() {
-        let messzelle = RaGasNO2::new();
+        let messzelle = RaGasNO2Mod::new();
         assert!(messzelle.value().is_none());
     }
 
     #[test]
     #[ignore]
     fn average() {
-        let messzelle = RaGasNO2::new();
+        let messzelle = RaGasNO2Mod::new();
     }
 
     #[test]
-    #[ignore]
     fn update() {
-        let messzelle = RaGasNO2::new();
+        let mut messzelle = RaGasNO2Mod::new();
+        assert_eq!(messzelle.values.len(), 0);
+        messzelle.update();
+        assert_eq!(messzelle.values.len(), 1);
     }
 
     #[test]
     #[ignore]
     fn shrink_values() {
-        let messzelle = RaGasNO2::new();
+        let messzelle = RaGasNO2Mod::new();
     }
 }

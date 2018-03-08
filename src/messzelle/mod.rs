@@ -10,5 +10,5 @@ mod ra_gas_no2_mod;
 pub use self::error::MesszelleError;
 pub use self::messzelle::{BoxedMesszelle, Messzelle, MesszellenList, MesszellenRefList};
 pub use self::metz_connect_analog_420::MetzConnectCI4Analog420;
-pub use self::ra_gas_co_mod::RaGasCO;
-pub use self::ra_gas_no2_mod::RaGasNO2;
+pub use self::ra_gas_co_mod::RaGasCOMod;
+pub use self::ra_gas_no2_mod::RaGasNO2Mod;

@@ -8,14 +8,14 @@ use std::time::SystemTime;
 /// CO Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
 ///
 #[derive(Debug)]
-pub struct RaGasCO {
+pub struct RaGasCOMod {
     values: Vec<(f64, SystemTime)>,
     max_values_for_n_minutes: u64, // in Sekunden
 }
 
-impl RaGasCO {
+impl RaGasCOMod {
     pub fn new() -> Self {
-        RaGasCO {
+        RaGasCOMod {
             values: vec![],
             // max_values_for_n_minutes: 5 * 60 * 60,    // Normale Messzellen arbeiten mit Minuten Werten
             max_values_for_n_minutes: 5,    // Simulator Messzellen arbeiten mit Sekunden Werten
@@ -23,7 +23,7 @@ impl RaGasCO {
     }
 }
 
-impl Messzelle for RaGasCO {
+impl Messzelle for RaGasCOMod {
     /// Aktueller Messzelle Wert und Timestamp der Ermittlung
     ///
     /// # Examples
@@ -144,7 +144,7 @@ impl Messzelle for RaGasCO {
     }
 }
 
-impl fmt::Display for RaGasCO {
+impl fmt::Display for RaGasCOMod {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "CO")
     }
@@ -157,32 +157,34 @@ mod tests {
 
     #[test]
     fn new() {
-        let messzelle = RaGasCO::new();
+        let messzelle = RaGasCOMod::new();
         assert_eq!(messzelle.values.len(), 0);
         assert_eq!(messzelle.max_values_for_n_minutes, 5);
     }
 
     #[test]
     fn value() {
-        let messzelle = RaGasCO::new();
+        let messzelle = RaGasCOMod::new();
         assert!(messzelle.value().is_none());
     }
 
     #[test]
     #[ignore]
     fn average() {
-        let messzelle = RaGasCO::new();
+        let messzelle = RaGasCOMod::new();
     }
 
     #[test]
-    #[ignore]
     fn update() {
-        let messzelle = RaGasCO::new();
+        let mut messzelle = RaGasCOMod::new();
+        assert_eq!(messzelle.values.len(), 0);
+        messzelle.update();
+        assert_eq!(messzelle.values.len(), 1);
     }
 
     #[test]
     #[ignore]
     fn shrink_values() {
-        let messzelle = RaGasCO::new();
+        let messzelle = RaGasCOMod::new();
     }
 }
