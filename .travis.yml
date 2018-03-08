@@ -1,6 +1,7 @@
 language: rust
 
-sudo: false
+# sudo: false
+sudo: required
 
 matrix:
   include:
