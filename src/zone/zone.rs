@@ -8,8 +8,8 @@ use messzelle::{Messzelle, RaGasNO2Mod, RaGasCOMod};
 /// Jeder Zone können n `Schaltpunkte` zugeordnet
 /// werden. Diese Messzellen werden gegen
 pub struct Zone {
-    messzellen: Vec<Box<Messzelle>>,
-    schaltpunkte: Vec<Schaltpunkt>,
+    pub messzellen: Vec<Arc<Mutex<Box<Messzelle>>>>,
+    pub schaltpunkte: Vec<Schaltpunkt>,
 }
 
 impl Zone {
@@ -20,9 +20,25 @@ impl Zone {
         }
     }
 
-    /// Fügt eine Referenz auf eine Messzelle hinzu
+    /// Fügt eine eine Messzelle hinzu
     ///
-    fn add_messzelle(&mut self, messzelle: Box<Messzelle>) {
+    /// Die Messzellen des Servers sind in `Arc`, `Mutex` und `Box` gekapselt.
+    /// Dadurch sind die Messzellen in den unterschiedlichen Server Threads `Server::update_sensors()`
+    /// und `Server::check_zones()` verfügbar (geteilt, veränderlich).
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    /// use xmz_server::Zone;
+    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
+    /// let messzelle1 = Arc::new(Mutex::new(Box::new( RaGasNO2Mod::new() ) as Box<Messzelle>));
+    /// let mut zone = Zone::new();
+    ///
+    /// zone.add_messzelle(messzelle1);
+    /// assert_eq!(zone.messzellen.len(), 1);
+    /// ```
+    pub fn add_messzelle(&mut self, messzelle: Arc<Mutex<Box<Messzelle>>>) {
         self.messzellen.push(messzelle)
     }
 }
@@ -39,23 +55,22 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn add_messzelle() {
-        let messzelle = RaGasNO2Mod::new();
+        let messzelle1 = Arc::new(Mutex::new(Box::new( RaGasNO2Mod::new() ) as Box<Messzelle>));
         let mut zone = Zone::new();
-        zone.add_messzelle(Box::new(messzelle));
+
+        zone.add_messzelle(messzelle1);
         assert_eq!(zone.messzellen.len(), 1);
     }
 
-
     #[test]
-    #[ignore]
     fn add_more_messzellen() {
-        let messzelle1 = RaGasNO2Mod::new();
-        let messzelle2 = RaGasCOMod::new();
+        let messzelle1 = Arc::new(Mutex::new(Box::new( RaGasNO2Mod::new() ) as Box<Messzelle>));
+        let messzelle2 = Arc::new(Mutex::new(Box::new( RaGasCOMod::new()  ) as Box<Messzelle>));
         let mut zone = Zone::new();
-        zone.add_messzelle(Box::new(messzelle1));
-        zone.add_messzelle(Box::new(messzelle2));
+
+        zone.add_messzelle(messzelle1);
+        zone.add_messzelle(messzelle2);
         assert_eq!(zone.messzellen.len(), 2);
     }
 }

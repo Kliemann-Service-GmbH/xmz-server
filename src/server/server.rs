@@ -24,7 +24,7 @@ impl Server {
     ///
     pub fn update_sensors(&self) {
         let sensors = self.sensors.clone();
-        thread::spawn(move || {
+        let _guard = thread::spawn(move || {
             loop {
                 for sensor in sensors.clone() {
                     if let Ok(mut sensor) = sensor.lock() {
@@ -32,7 +32,7 @@ impl Server {
                     }
                 }
             }
-        });
+        }).join();
     }
 
     /// Liefert eine Referenz auf die Liste der Sensoren
