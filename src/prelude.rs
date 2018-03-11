@@ -7,9 +7,10 @@
 
 use std::any::Any;
 // Reexports
-pub use std::sync::{Arc, Mutex};
 pub use server::Server;
 pub use settings::Settings;
+pub use std::sync::{Arc, Mutex};
+pub use zone::Zone;
 
 
 /// Die `id` Funktion liefert genau den Wert zurück der auch in die Funktion gegeben wurde.
