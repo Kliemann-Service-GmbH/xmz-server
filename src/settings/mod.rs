@@ -9,7 +9,7 @@ type Days = u32;
 #[derive(Debug, Deserialize)]
 pub struct Settings {
     /// Wartungsintervall in Tagen
-    service_interval: Days,
+    pub service_interval: Days,
 }
 
 impl Settings {

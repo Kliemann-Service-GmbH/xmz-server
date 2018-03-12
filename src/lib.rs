@@ -30,13 +30,15 @@ extern crate iron;
 extern crate rand;
 extern crate router;
 extern crate serde;
+extern crate serde_json;
 #[macro_use] extern crate serde_derive;
 
 
-pub mod json_api;       // json Api
+pub mod external;           // Externe Darstellung der einzelnen Komponenten
 mod error;              // Mögliche Fehler die im Serverbetrieb auftreten können
 mod settings;           // Einstellungen die beim Serverstart ausgewertet werden, Wrapper um Config crate
 pub mod action;         // Liste von zu schaltenden Ausgängen (`output`)
+pub mod json_api;       // json Api
 pub mod messzelle;      // Einzelne Sensor Messzelle, sitzt in der Regel auf einer Sensor Platine (`sensor`)
 pub mod output;         // Ausgänge die vom Server Prozess geschalten werden können (z.B. LEDs, Relais, IO Module)
 pub mod prelude;        // Nützliche Traits und Funktionen die alle Teile dieses Projekts verwenden
