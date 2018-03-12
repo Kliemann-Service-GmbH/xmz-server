@@ -1,22 +1,30 @@
-use std::thread;
-use sensor::BoxedSensor;
 use error::ServerError;
-use server::SensorsList;
+use external::server::Server as ExternalServer;
+use json_api::JsonApi;
 use prelude::*;
+use sensor::BoxedSensor;
+use server::SensorsList;
+use std::thread;
 
 
 /// Struktur der Server Komponente
+#[derive(Clone)]
 pub struct Server {
+    /// Wartungsintervall
+    pub service_interval: u32,
     /// Liste der Sensoren die dieser Server verwaltet
     pub sensors: SensorsList,
+    json_api: JsonApi,
 }
 
 impl Server {
     /// Erstellt eine neue Server Instanz
     pub fn new(settings: &Settings) -> Self {
         Server {
+            service_interval: settings.server.service_interval.clone(),
             sensors: vec![],
             // zones: vec![],
+            json_api: JsonApi::new(settings.server.api_url.clone()),
         }
     }
 
@@ -32,7 +40,7 @@ impl Server {
                     }
                 }
             }
-        }).join();
+        });
     }
 
     /// Liefert eine Referenz auf die Liste der Sensoren
@@ -61,11 +69,13 @@ impl Server {
     pub fn start(&self) -> Result<(), ServerError> {
         self.update_sensors();
 
+        self.json_api.start(From::from(self.clone()));
+
         Ok(())
     }
-
-
 }
+
+
 
 #[cfg(test)]
 mod tests {
