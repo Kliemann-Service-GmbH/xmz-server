@@ -11,6 +11,10 @@ keywords = ["xmz", "modbus", "libmodbus"]
 categories = ["concurrency", "embedded"]
 license = "GPL-2.0"
 
+[[bin]]
+path = "src/bin/main.rs"
+name = "xmz-server"
+
 [badges]
 travis-ci = { repository = "Kliemann-Service-GmbH/xmz-server" }
 
