@@ -1,6 +1,6 @@
 [package]
 name = "xmz-server"
-version = "0.4.1"
+version = "0.4.2"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "Serverteil der xMZ-Plattform"
 documentation = "https://kliemann-service-gmbh.github.io/xmz-server/"
@@ -10,6 +10,10 @@ readme = "README.md"
 keywords = ["xmz", "modbus", "libmodbus"]
 categories = ["concurrency", "embedded"]
 license = "GPL-2.0"
+
+[[bin]]
+path = "src/bin/main.rs"
+name = "xmz-server"
 
 [badges]
 travis-ci = { repository = "Kliemann-Service-GmbH/xmz-server" }
