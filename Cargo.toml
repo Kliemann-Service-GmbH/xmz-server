@@ -1,6 +1,6 @@
 [package]
 name = "xmz-server"
-version = "0.3.2"
+version = "0.4.0"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
 description = "Serverteil der xMZ-Plattform"
 documentation = "https://kliemann-service-gmbh.github.io/xmz-server/"
@@ -21,3 +21,5 @@ rand = "0.4"
 serde = "1"
 serde_derive = "1"
 toml = "^0.4" # Konfigurationsdatei Format
+router = "0.6"
+iron = "0.6"
