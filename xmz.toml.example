@@ -1,2 +1,5 @@
-
+[Server]
+# Wartungsintervall in Tagen
 service_interval = 1
+# URL der json API
+api_url = "0.0.0.0:3000"

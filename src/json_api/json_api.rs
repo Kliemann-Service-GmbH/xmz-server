@@ -6,8 +6,10 @@ use server::Server;
 use external::server::Server as ExternalServer;
 use serde_json;
 
-
-pub struct JsonApi {}
+#[derive(Clone)]
+pub struct JsonApi {
+    api_url: String,
+}
 
 struct ServerHandler {
     server: ExternalServer,
@@ -27,12 +29,18 @@ impl Handler for ServerHandler {
 }
 
 impl JsonApi {
-    pub fn start(server: ExternalServer) {
+    pub fn new(api_url: String) -> Self {
+        JsonApi {
+            api_url,
+        }
+    }
+
+    pub fn start(&self, server: ExternalServer) {
         let handler = ServerHandler::new(server);
         let mut router = Router::new();
         router.get("/", handler, "index");
 
-        println!("Starte json API: http://localhost:3000");
-        Iron::new(router).http("localhost:3000").unwrap();
+        println!("Starte json API: http://{}", &self.api_url);
+        Iron::new(router).http(&self.api_url).unwrap();
     }
 }
