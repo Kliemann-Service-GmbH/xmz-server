@@ -14,15 +14,17 @@ pub struct Server {
     pub service_interval: u32,
     /// Liste der Sensoren die dieser Server verwaltet
     pub sensors: SensorsList,
+    json_api: JsonApi,
 }
 
 impl Server {
     /// Erstellt eine neue Server Instanz
     pub fn new(settings: &Settings) -> Self {
         Server {
-            service_interval: settings.service_interval,
+            service_interval: settings.server.service_interval.clone(),
             sensors: vec![],
             // zones: vec![],
+            json_api: JsonApi::new(settings.server.api_url.clone()),
         }
     }
 
@@ -67,7 +69,7 @@ impl Server {
     pub fn start(&self) -> Result<(), ServerError> {
         self.update_sensors();
 
-        JsonApi::start(From::from(self.clone()));
+        self.json_api.start(From::from(self.clone()));
 
         Ok(())
     }
