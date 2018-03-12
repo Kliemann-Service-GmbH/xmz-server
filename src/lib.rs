@@ -25,14 +25,15 @@
 //!             * `<Aktion>` (n Aktionen)
 //!
 
-#[macro_use]
-extern crate serde_derive;
-
 extern crate config;
+extern crate iron;
 extern crate rand;
+extern crate router;
 extern crate serde;
+#[macro_use] extern crate serde_derive;
 
 
+pub mod json_api;       // json Api
 mod error;              // Mögliche Fehler die im Serverbetrieb auftreten können
 mod settings;           // Einstellungen die beim Serverstart ausgewertet werden, Wrapper um Config crate
 pub mod action;         // Liste von zu schaltenden Ausgängen (`output`)

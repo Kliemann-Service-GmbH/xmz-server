@@ -1,8 +1,9 @@
-use std::thread;
-use sensor::BoxedSensor;
 use error::ServerError;
-use server::SensorsList;
+use json_api::JsonApi;
 use prelude::*;
+use sensor::BoxedSensor;
+use server::SensorsList;
+use std::thread;
 
 
 /// Struktur der Server Komponente
@@ -32,7 +33,7 @@ impl Server {
                     }
                 }
             }
-        }).join();
+        });
     }
 
     /// Liefert eine Referenz auf die Liste der Sensoren
@@ -60,6 +61,8 @@ impl Server {
 
     pub fn start(&self) -> Result<(), ServerError> {
         self.update_sensors();
+
+        JsonApi::start();
 
         Ok(())
     }
