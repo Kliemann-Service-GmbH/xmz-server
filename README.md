@@ -1,4 +1,4 @@
-# Serverteil der xMZ-Plattform
+# Serverteil der 'xMZ-Plattform'
 
 |&nbsp;[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server)
 &nbsp;[![Code Coverage](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server/branch/master/graph/badge.svg)](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server)
@@ -24,7 +24,7 @@ ebenfalls herunter geladen werden.
 git clone --recursive https://github.com/Kliemann-Service-GmbH/xMZ-Plattform.git
 ```
 
-Alternative kann der Serverteil Standalone herunter geladen werden.
+Alternative kann dieser Teil auch einzeln heruntergeladen werden.
 
 ```bash
 git clone https://github.com/Kliemann-Service-GmbH/xmz-server.git

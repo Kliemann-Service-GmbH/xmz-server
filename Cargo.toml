@@ -2,7 +2,7 @@
 name = "xmz-server"
 version = "0.4.2"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
-description = "Serverteil der xMZ-Plattform"
+description = "Serverteil der 'xMZ-Plattform'"
 documentation = "https://kliemann-service-gmbh.github.io/xmz-server/"
 repository = "https://github.com/Kliemann-Service-GmbH/xmz-server.git"
 homepage = "https://kliemann-service-gmbh.github.io/xmz-server/"
