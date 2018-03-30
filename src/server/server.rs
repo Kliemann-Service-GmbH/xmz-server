@@ -1,6 +1,4 @@
 use error::ServerError;
-use external::server::Server as ExternalServer;
-use json_api::JsonApi;
 use prelude::*;
 use sensor::BoxedSensor;
 use server::SensorsList;
@@ -14,7 +12,6 @@ pub struct Server {
     pub service_interval: u32,
     /// Liste der Sensoren die dieser Server verwaltet
     pub sensors: SensorsList,
-    json_api: JsonApi,
 }
 
 impl Server {
@@ -24,7 +21,6 @@ impl Server {
             service_interval: settings.server.service_interval.clone(),
             sensors: vec![],
             // zones: vec![],
-            json_api: JsonApi::new(settings.server.api_url.clone()),
         }
     }
 
@@ -68,8 +64,6 @@ impl Server {
 
     pub fn start(&self) -> Result<(), ServerError> {
         self.update_sensors();
-
-        self.json_api.start(From::from(self.clone()));
 
         Ok(())
     }
