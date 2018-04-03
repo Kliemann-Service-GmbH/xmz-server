@@ -6,9 +6,10 @@ use messzelle::{Messzelle, MesszelleError};
 /// CO Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
 ///
 #[derive(Debug)]
+#[derive(Default)]
 pub struct MetzConnectCI4Analog420 {
-    values: Vec<(f64, SystemTime)>,
-    max_values_for_n_minutes: u64, // in Sekunden
+    pub values: Vec<(f64, SystemTime)>,
+    pub max_values_for_n_minutes: u64, // in Sekunden
 }
 
 impl MetzConnectCI4Analog420 {
@@ -142,7 +143,7 @@ impl Messzelle for MetzConnectCI4Analog420 {
 
 impl fmt::Display for MetzConnectCI4Analog420 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "CO")
+        write!(f, "Analog 4-20mA")
     }
 }
 
@@ -164,9 +165,9 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn average() {
         let messzelle = MetzConnectCI4Analog420::new();
+        assert!(messzelle.average(15).is_err());
     }
 
     #[test]
@@ -177,9 +178,4 @@ mod tests {
         assert_eq!(messzelle.values.len(), 1);
     }
 
-    #[test]
-    #[ignore]
-    fn shrink_values() {
-        let messzelle = MetzConnectCI4Analog420::new();
-    }
 }

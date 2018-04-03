@@ -6,9 +6,10 @@ use messzelle::{Messzelle, MesszelleError};
 /// NO2 Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
 ///
 #[derive(Debug)]
+#[derive(Default)]
 pub struct RaGasNO2Mod {
-    values: Vec<(f64, SystemTime)>,
-    max_values_for_n_minutes: u64, // in Sekunden
+    pub values: Vec<(f64, SystemTime)>,
+    pub max_values_for_n_minutes: u64, // in Sekunden
 }
 
 impl RaGasNO2Mod {
@@ -158,7 +159,7 @@ impl Messzelle for RaGasNO2Mod {
 
 impl fmt::Display for RaGasNO2Mod {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "CO")
+        write!(f, "NO2")
     }
 }
 
@@ -180,9 +181,9 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn average() {
         let messzelle = RaGasNO2Mod::new();
+        assert!(messzelle.average(15).is_err());
     }
 
     #[test]
@@ -193,9 +194,4 @@ mod tests {
         assert_eq!(messzelle.values.len(), 1);
     }
 
-    #[test]
-    #[ignore]
-    fn shrink_values() {
-        let messzelle = RaGasNO2Mod::new();
-    }
 }

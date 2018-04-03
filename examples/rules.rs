@@ -27,7 +27,7 @@ impl Sensor for A {
     fn value(&self) -> f64 {
         self.value
     }
-    fn average(&self, minutes: i32) -> f64 {
+    fn average(&self, _minutes: i32) -> f64 {
         self.value
     }
 }
@@ -39,7 +39,7 @@ impl Sensor for B {
     fn value(&self) -> f64 {
         self.value
     }
-    fn average(&self, minutes: i32) -> f64 {
+    fn average(&self, _minutes: i32) -> f64 {
         self.value
     }
 }
@@ -74,14 +74,14 @@ impl Schwellwert {
     fn check(&self, thing: &(Sensor + Send + 'static)) -> bool {
         match self.sensor_type {
             SensorType::A => {
-                if let Some(ref A) = thing.as_any().downcast_ref::<A>() {
+                if let Some(_) = thing.as_any().downcast_ref::<A>() {
                     (self.fun)(thing) >= self.threshold
                 } else {
                     false
                 }
             }
             SensorType::B => {
-                if let Some(ref B) = thing.as_any().downcast_ref::<B>() {
+                if let Some(_) = thing.as_any().downcast_ref::<B>() {
                     (self.fun)(thing) >= self.threshold
                 } else {
                     false
