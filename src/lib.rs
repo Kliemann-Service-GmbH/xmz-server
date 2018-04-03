@@ -1,6 +1,10 @@
 #![doc(html_logo_url = "https://zzeroo.github.io/share/zzeroo-logo.png",
        html_favicon_url = "https://zzeroo.github.io/share/favicon.ico",
        html_root_url = "https://gaswarnanlagen.com/")]
+
+#![feature(plugin)]
+#![plugin(rocket_codegen)]
+
 //! Server Komponente der **xMZ-Plattform**
 //!
 //! |&nbsp;[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server)&nbsp;<sub>**master**</sub>
@@ -25,13 +29,14 @@
 //!             * `<Aktion>` (n Aktionen)
 //!
 
+#[macro_use] extern crate serde_derive;
 extern crate config;
 extern crate rand;
-extern crate serde;
+extern crate rocket;
 extern crate serde_json;
-#[macro_use]
-extern crate serde_derive;
+extern crate serde;
 
+mod api;
 pub mod action;      // Liste von zu schaltenden Ausgängen (`output`)
 mod error;           // Mögliche Fehler die im Serverbetrieb auftreten können
 pub mod messzelle; // Einzelne Sensor Messzelle, sitzt in der Regel auf einer Sensor Platine (`sensor`)

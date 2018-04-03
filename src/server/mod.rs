@@ -1,3 +1,4 @@
+use api;
 use error::ServerError;
 use prelude::*;
 use sensor::BoxedSensor;
@@ -34,15 +35,23 @@ impl Server {
 
     /// Aktualisiert der Reihe nach jeden Sensor
     ///
-    pub fn update_sensors(&self) {
+    pub fn update_sensors(&self) -> thread::JoinHandle<bool> {
         let sensors = self.sensors.clone();
-        let _guard = thread::spawn(move || loop {
+        let guard = thread::spawn(move || loop {
             for sensor in sensors.clone() {
                 if let Ok(mut sensor) = sensor.lock() {
                     sensor.update();
                 }
             }
         });
+
+        guard
+    }
+
+    /// Startet die Api (Json, Web)
+    ///
+    pub fn launch_api(&self) {
+        api::launch();
     }
 
     /// Liefert eine Referenz auf die Liste der Sensoren
@@ -69,7 +78,11 @@ impl Server {
     }
 
     pub fn start(&self) -> Result<(), ServerError> {
-        self.update_sensors();
+        let server_update_guard = self.update_sensors();
+
+        self.launch_api();
+
+        server_update_guard.join().expect("Fehler im Sensor Update Guard");
 
         Ok(())
     }
