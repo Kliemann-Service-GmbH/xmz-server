@@ -5,18 +5,15 @@
 // - `get_values()` implementieren
 // - `value()` default Implementation, evtl. auch für die anderen Trait Funktionen
 
-
+use messzelle::MesszelleError;
 use std::fmt::Debug;
 use std::sync::{Arc, Mutex};
 use std::time::SystemTime;
-use ::prelude::*;
-use messzelle::MesszelleError;
+use prelude::*;
 
 pub type BoxedMesszelle = Box<Messzelle + Send + 'static>;
 pub type MesszellenList = Vec<Arc<Mutex<BoxedMesszelle>>>;
 pub type MesszellenRefList<'a> = Vec<&'a Messzelle>;
-
-
 
 /// Basis Trait das die Eigenschaften einer Messzelle beschreibt
 ///

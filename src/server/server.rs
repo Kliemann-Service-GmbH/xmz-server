@@ -4,7 +4,6 @@ use sensor::BoxedSensor;
 use server::SensorsList;
 use std::thread;
 
-
 /// Struktur der Server Komponente
 #[derive(Clone)]
 pub struct Server {
@@ -28,12 +27,10 @@ impl Server {
     ///
     pub fn update_sensors(&self) {
         let sensors = self.sensors.clone();
-        let _guard = thread::spawn(move || {
-            loop {
-                for sensor in sensors.clone() {
-                    if let Ok(mut sensor) = sensor.lock() {
-                        sensor.update();
-                    }
+        let _guard = thread::spawn(move || loop {
+            for sensor in sensors.clone() {
+                if let Ok(mut sensor) = sensor.lock() {
+                    sensor.update();
                 }
             }
         });
@@ -68,8 +65,6 @@ impl Server {
         Ok(())
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

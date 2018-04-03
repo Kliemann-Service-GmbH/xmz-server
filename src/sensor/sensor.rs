@@ -3,8 +3,7 @@
 use std::fmt;
 use std::sync::{Arc, Mutex};
 
-use ::messzelle::BoxedMesszelle;
-
+use messzelle::BoxedMesszelle;
 
 /// Trait das die Eigenschaften aller Sensoren beschreibt.
 ///

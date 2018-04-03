@@ -1,8 +1,7 @@
-use ::messzelle::{Messzelle, MesszelleError};
 use std::fmt;
 use std::time::Duration;
 use std::time::SystemTime;
-
+use messzelle::{Messzelle, MesszelleError};
 
 /// NO2 Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
 ///
@@ -17,7 +16,7 @@ impl RaGasNO2Mod {
         RaGasNO2Mod {
             values: vec![],
             // max_values_for_n_minutes: 5 * 60 * 60,    // Normale Messzellen arbeiten mit Minuten Werten
-            max_values_for_n_minutes: 5,    // Simulator Messzellen arbeiten mit Sekunden Werten
+            max_values_for_n_minutes: 5, // Simulator Messzellen arbeiten mit Sekunden Werten
         }
     }
 }
@@ -50,10 +49,9 @@ impl Messzelle for RaGasNO2Mod {
     fn average(&self, minutes: u64) -> Result<f64, MesszelleError> {
         let mut values = self.values.clone();
         // Index ermitteln
-        if let Some(index) = values.iter()
-            .position(|&(_value, timestamp)| {
-                timestamp.elapsed().unwrap() < Duration::from_secs(minutes)
-            }) {
+        if let Some(index) = values.iter().position(|&(_value, timestamp)| {
+            timestamp.elapsed().unwrap() < Duration::from_secs(minutes)
+        }) {
             values = values.split_off(index);
             println!("index: {:?}", index);
         }
@@ -61,20 +59,21 @@ impl Messzelle for RaGasNO2Mod {
         // Spezialfall, nur noch ein Wert vorhanden. Hier muss nun geprüft werden ob dieser
         // veraltet ist.
         if values.len() == 1 {
-            if let Some( &(_value, timestamp) ) = values.get(0) {
+            if let Some(&(_value, timestamp)) = values.get(0) {
                 if let Ok(duration) = timestamp.elapsed() {
                     if duration > Duration::from_secs(minutes) {
                         values.clear();
                     }
                 }
             }
-
         }
 
         // Anzahl der verbleibenden Wertepaare
         let len = values.len() as f64;
         // Addieren
-        let sum = values.iter().fold(0.0, |acc, &(value, _timestamp)| acc + value);
+        let sum = values
+            .iter()
+            .fold(0.0, |acc, &(value, _timestamp)| acc + value);
         // durch Anzahl teilen um Mittelwert zu erhalten
         let avg = sum / len;
         // Floting Point kann NaN (Not a Number) ergeben, in diesem Fall Fehler zurück
@@ -95,9 +94,9 @@ impl Messzelle for RaGasNO2Mod {
     /// let messzelle = RaGasNO2Mod::new();
     /// assert!(messzelle.value().is_none());
     /// ```
-    fn update(&mut self)  {
+    fn update(&mut self) {
         let last_value = match self.value() {
-            Some( &(value, _timestamp) ) => value,
+            Some(&(value, _timestamp)) => value,
             None => 0.0,
         };
         self.values.push((last_value + 1.0, SystemTime::now()));
@@ -129,14 +128,13 @@ impl Messzelle for RaGasNO2Mod {
         // Paar entfernt, der `values` Vector ist dann leer. Der folgende Test wird in diesem
         // Falle nicht ausgeführt, da kein Index mehr gefunden werden kann.
         if self.values.len() == 1 {
-            if let Some( &(_value, timestamp) ) = self.values.get(0) {
+            if let Some(&(_value, timestamp)) = self.values.get(0) {
                 if let Ok(duration) = timestamp.elapsed() {
                     if duration > Duration::from_secs(self.max_values_for_n_minutes) {
                         self.values.clear();
                     }
                 }
             }
-
         }
 
         // 2. Test, mind. ein aktuelles Wert/Zeitstempel Paar ist vorhanden.
@@ -146,10 +144,9 @@ impl Messzelle for RaGasNO2Mod {
         // Dieser Index wird benutzt um die Liste der Liste der Wert/Zeitstempel Paare
         // mit der Funktion [`split_off()`](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_off)
         // zu teilen.
-        if let Some(index) = self.values.iter()
-                                        .position(|&(_value, timestamp)| {
-                                            timestamp.elapsed().unwrap() < Duration::from_secs(self.max_values_for_n_minutes)
-                                        }) {
+        if let Some(index) = self.values.iter().position(|&(_value, timestamp)| {
+            timestamp.elapsed().unwrap() < Duration::from_secs(self.max_values_for_n_minutes)
+        }) {
             // Mit `split_off()` wird der Vector geteilt, es bleiben nur noch die
             // Wert/Zeitstempel Paare der letzten `max_values_for_n_minutes` Minuten übrig.
             //
@@ -164,7 +161,6 @@ impl fmt::Display for RaGasNO2Mod {
         write!(f, "CO")
     }
 }
-
 
 #[cfg(test)]
 mod tests {

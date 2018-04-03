@@ -1,7 +1,6 @@
+use messzelle::{Messzelle, RaGasCOMod, RaGasNO2Mod};
 use prelude::*;
 use schaltpunkt::Schaltpunkt;
-use messzelle::{Messzelle, RaGasNO2Mod, RaGasCOMod};
-
 
 /// Zonen, die Bereiche die der Server überwacht
 ///
@@ -56,7 +55,7 @@ mod tests {
 
     #[test]
     fn add_messzelle() {
-        let messzelle1 = Arc::new(Mutex::new(Box::new( RaGasNO2Mod::new() ) as Box<Messzelle>));
+        let messzelle1 = Arc::new(Mutex::new(Box::new(RaGasNO2Mod::new()) as Box<Messzelle>));
         let mut zone = Zone::new();
 
         zone.add_messzelle(messzelle1);
@@ -65,8 +64,8 @@ mod tests {
 
     #[test]
     fn add_more_messzellen() {
-        let messzelle1 = Arc::new(Mutex::new(Box::new( RaGasNO2Mod::new() ) as Box<Messzelle>));
-        let messzelle2 = Arc::new(Mutex::new(Box::new( RaGasCOMod::new()  ) as Box<Messzelle>));
+        let messzelle1 = Arc::new(Mutex::new(Box::new(RaGasNO2Mod::new()) as Box<Messzelle>));
+        let messzelle2 = Arc::new(Mutex::new(Box::new(RaGasCOMod::new()) as Box<Messzelle>));
         let mut zone = Zone::new();
 
         zone.add_messzelle(messzelle1);

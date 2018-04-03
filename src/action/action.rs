@@ -1,6 +1,4 @@
-pub struct Action {
-
-}
+pub struct Action {}
 
 impl Action {
     fn new() -> Self {

@@ -1,8 +1,4 @@
-
-
-pub struct Schwellwert {
-
-}
+pub struct Schwellwert {}
 
 impl Schwellwert {
     fn new() -> Self {

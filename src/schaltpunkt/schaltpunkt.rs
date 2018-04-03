@@ -1,8 +1,4 @@
-
-
-pub struct Schaltpunkt {
-
-}
+pub struct Schaltpunkt {}
 
 impl Schaltpunkt {
     fn new() -> Self {

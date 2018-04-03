@@ -1,5 +1,5 @@
-use std::sync::{Arc, Mutex};
 use sensor::BoxedSensor;
+use std::sync::{Arc, Mutex};
 
 mod server;
 
