@@ -12,8 +12,6 @@ use std::thread;
 /// Sensor Trait Objekten (`BoxedSensor`).
 pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 
-
-
 /// Struktur der Server Komponente
 #[derive(Clone)]
 pub struct Server {

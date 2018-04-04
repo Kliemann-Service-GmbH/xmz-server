@@ -11,8 +11,6 @@ pub use self::ra_gas_co_no2_mod::RaGasCONO2Mod;
 pub type BoxedSensor = Box<Sensor + Send + 'static>;
 pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 
-
-
 /// Trait das die Eigenschaften aller Sensoren beschreibt.
 ///
 /// Jeder Sensor kann meherer Messzellen besitzen. So verfügt beispielsweise der
