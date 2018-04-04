@@ -1,12 +1,12 @@
 language: rust
 
 # sudo: false
-sudo: required
+sudo: required  # workaround https://github.com/travis-ci/travis-ci/issues/9061
 
 matrix:
   include:
-  - rust: stable
-  - rust: beta
+      #- rust: stable
+      #- rust: beta
   - rust: nightly
     after_success: |
       [ $TRAVIS_BRANCH = master ] &&
@@ -55,6 +55,6 @@ after_success: |
   make install DESTDIR=../../kcov-build &&
   cd ../.. &&
   rm -rf kcov-master &&
-  for file in target/debug/xmz_server-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
+  for file in target/debug/xmz-server-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
   bash <(curl -s https://codecov.io/bash) &&
   echo "Uploaded code coverage"

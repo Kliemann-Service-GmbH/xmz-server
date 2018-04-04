@@ -32,7 +32,7 @@ impl Error for OutputError {
             OutputError::CouldNotUnset => "Could not unset Output",
         }
     }
-    
+
     fn cause(&self) -> Option<&Error> {
         match *self {
             OutputError::CouldNotSet => None,

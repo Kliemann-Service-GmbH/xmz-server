@@ -20,21 +20,32 @@ trait Sensor: AsAny {
     fn average(&self, minutes: i32) -> f64;
 }
 #[derive(Debug)]
-struct A { value: f64 }
+struct A {
+    value: f64,
+}
 impl Sensor for A {
-    fn value(&self) -> f64 { self.value }
-    fn average(&self, minutes: i32) -> f64 { self.value }
+    fn value(&self) -> f64 {
+        self.value
+    }
+    fn average(&self, _minutes: i32) -> f64 {
+        self.value
+    }
 }
 #[derive(Debug)]
-struct B { value: f64 }
+struct B {
+    value: f64,
+}
 impl Sensor for B {
-    fn value(&self) -> f64 { self.value }
-    fn average(&self, minutes: i32) -> f64 { self.value }
+    fn value(&self) -> f64 {
+        self.value
+    }
+    fn average(&self, _minutes: i32) -> f64 {
+        self.value
+    }
 }
 
 // Schwellwerte
 use std::fmt;
-
 
 type FnType = fn(&(Sensor + Send + 'static)) -> f64;
 struct Schwellwert {
@@ -43,26 +54,34 @@ struct Schwellwert {
     fun: FnType,
 }
 impl fmt::Debug for Schwellwert {
-   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       write!(f, "Schwellwert {{ SensorType: {:?}, Schwellwert: {:.02} }}", self.sensor_type, self.threshold)
-   }
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "Schwellwert {{ SensorType: {:?}, Schwellwert: {:.02} }}",
+            self.sensor_type, self.threshold
+        )
+    }
 }
 impl Schwellwert {
     fn new(sensor_type: SensorType, threshold: f64, fun: FnType) -> Self {
-        Schwellwert { sensor_type, threshold, fun, }
+        Schwellwert {
+            sensor_type,
+            threshold,
+            fun,
+        }
     }
 
     fn check(&self, thing: &(Sensor + Send + 'static)) -> bool {
         match self.sensor_type {
             SensorType::A => {
-                if let Some(ref A) = thing.as_any().downcast_ref::<A>() {
+                if let Some(_) = thing.as_any().downcast_ref::<A>() {
                     (self.fun)(thing) >= self.threshold
                 } else {
                     false
                 }
             }
             SensorType::B => {
-                if let Some(ref B) = thing.as_any().downcast_ref::<B>() {
+                if let Some(_) = thing.as_any().downcast_ref::<B>() {
                     (self.fun)(thing) >= self.threshold
                 } else {
                     false

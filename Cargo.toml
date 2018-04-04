@@ -1,8 +1,8 @@
 [package]
 name = "xmz-server"
-version = "0.4.2"
+version = "2.0.0"
 authors = ["Stefan Müller <s.mueller@it.kls-glt.de>"]
-description = "Serverteil der xMZ-Plattform"
+description = "Serverteil der 'xMZ-Plattform'"
 documentation = "https://kliemann-service-gmbh.github.io/xmz-server/"
 repository = "https://github.com/Kliemann-Service-GmbH/xmz-server.git"
 homepage = "https://kliemann-service-gmbh.github.io/xmz-server/"
@@ -21,10 +21,10 @@ travis-ci = { repository = "Kliemann-Service-GmbH/xmz-server" }
 [dependencies]
 clippy = { version = "*", optional = true }
 config = "^0.8"
-iron = "0.6"
 rand = "0.4"
-router = "0.6"
 serde = "1"
 serde_derive = "1"
 serde_json = "1"
 toml = "^0.4" # Konfigurationsdatei Format
+rocket = "0.3.6"
+rocket_codegen = "0.3.6"

@@ -1,9 +1,8 @@
 extern crate xmz_server;
 
 use std::sync::{Arc, Mutex};
-use xmz_server::{Server, Settings};
 use xmz_server::sensor::RaGasCONO2Mod;
-
+use xmz_server::{Server, Settings};
 
 #[test]
 fn sensor_get_messzelle() {

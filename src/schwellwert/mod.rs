@@ -1,5 +1,31 @@
-//! Regel die wenn erfüllt zumeist Ausgänge schaltet
+//! Regel die wenn erfüllt, Ausgänge schaltet
 //!
-mod schwellwert;
 
-pub use self::schwellwert::Schwellwert;
+#[derive(Debug)]
+#[derive(Default)]
+pub struct Schwellwert {}
+
+impl Schwellwert {
+    /// Erstellt ein neuen Schwellwert
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::schwellwert::Schwellwert;
+    ///
+    /// let _schwellwert = Schwellwert::new();
+    /// ```
+    pub fn new() -> Self {
+        Schwellwert {}
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new() {
+        let _schwellwert = Schwellwert::new();
+    }
+}
