@@ -9,10 +9,8 @@
 //!
 //! |||
 //! |:---|:------|
-//! |**master:**|[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server)
-//! &nbsp;[![Code Coverage](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server/branch/master/graph/badge.svg)](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server)|
-//! |**development:**|[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=development)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server)
-//! &nbsp;[![Code Coverage](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server/branch/development/graph/badge.svg)](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server)|
+//! |**master:**|[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server)&nbsp;[![Code Coverage](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server/branch/master/graph/badge.svg)](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server)|
+//! |**development:**|[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=development)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server)&nbsp;[![Code Coverage](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server/branch/development/graph/badge.svg)](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server)|
 //!
 //! Der Server ist die Kern Komponente. Zu seinen Aufgaben zählen zum Beispiel das Auslesen der
 //! Sensoren sowie der Auswertung der Sensor-Messzellen und das Schalten der diversen Ausgänge (Outputs),
