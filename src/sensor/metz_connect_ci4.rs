@@ -3,7 +3,6 @@ use sensor::Sensor;
 use std::fmt;
 use std::sync::{Arc, Mutex};
 
-
 /// Metz Connect CI4 Modul
 ///
 /// Das Metz Connect CI4 Modul für die Hutschiene verfügt über ein Modbus Interface. An das Modul
@@ -62,8 +61,6 @@ impl Sensor for MetzConnectCI4 {
         self.messzellen.get(num)
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

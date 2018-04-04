@@ -3,7 +3,6 @@ use sensor::Sensor;
 use std::fmt;
 use std::sync::{Arc, Mutex};
 
-
 /// RA-GAS GmbH CO/ NO₂ Kombisensor mit Modbus Interface
 ///
 /// Kombisensor für Kohlenmonoxid (CO) und Stickstoffdioxid (NO₂) mit Modbus Interface.
@@ -24,9 +23,7 @@ impl RaGasCONO2Mod {
         let co_messzelle = RaGasCOMod::new();
 
         RaGasCONO2Mod {
-            messzellen: vec![
-                Arc::new(Mutex::new(Box::new(co_messzelle))),
-            ],
+            messzellen: vec![Arc::new(Mutex::new(Box::new(co_messzelle)))],
         }
     }
 
@@ -35,9 +32,7 @@ impl RaGasCONO2Mod {
         let no2_messzelle = RaGasNO2Mod::new();
 
         RaGasCONO2Mod {
-            messzellen: vec![
-                Arc::new(Mutex::new(Box::new(no2_messzelle))),
-            ],
+            messzellen: vec![Arc::new(Mutex::new(Box::new(no2_messzelle)))],
         }
     }
 }
@@ -78,7 +73,6 @@ impl Sensor for RaGasCONO2Mod {
         self.messzellen.get(num)
     }
 }
-
 
 #[cfg(test)]
 mod tests {

@@ -12,7 +12,6 @@ pub use settings::Settings;
 pub use std::sync::{Arc, Mutex};
 pub use zone::Zone;
 
-
 /// Die `id` Funktion liefert genau den Wert zurück der auch in die Funktion gegeben wurde.
 ///
 /// https://bluss.github.io/rust/fun/2015/10/11/stuff-the-identity-function-does/
@@ -23,8 +22,9 @@ pub use zone::Zone;
 ///
 /// assert_eq!(1, id(1));
 /// ```
-pub fn id<T>(x: T) -> T { x }
-
+pub fn id<T>(x: T) -> T {
+    x
+}
 
 /// Dieser Trait ist für das Upcasting nötig
 ///
