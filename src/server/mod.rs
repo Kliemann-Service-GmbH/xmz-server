@@ -1,3 +1,5 @@
+//! Kernkomponente dieser Anwendung
+//!
 use api;
 use error::ServerError;
 use prelude::*;
@@ -49,7 +51,7 @@ impl Server {
     /// Startet die Api (Json, Web)
     ///
     pub fn launch_api(&self) {
-        api::launch();
+        api::launch(self.clone());
     }
 
     /// Liefert eine Referenz auf die Liste der Sensoren

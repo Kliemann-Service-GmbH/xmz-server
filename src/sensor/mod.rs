@@ -1,3 +1,5 @@
+//! Trait das die Eigenschaften aller vom Server unterstützten Sensoren beschreibt.
+//! 
 use messzelle::BoxedMesszelle;
 use std::fmt;
 use std::sync::{Arc, Mutex};
