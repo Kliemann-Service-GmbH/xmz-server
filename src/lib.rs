@@ -34,21 +34,22 @@
 #[macro_use] extern crate serde_derive;
 extern crate config;
 extern crate rand;
+extern crate rocket_contrib;
 extern crate rocket;
 extern crate serde_json;
 extern crate serde;
 
 mod api;
-pub mod action;      // Liste von zu schaltenden Ausgängen (`output`)
 mod error;           // Mögliche Fehler die im Serverbetrieb auftreten können
+mod settings;   // Einstellungen die beim Serverstart ausgewertet werden, Wrapper um Config crate
+pub mod action;      // Liste von zu schaltenden Ausgängen (`output`)
 pub mod messzelle; // Einzelne Sensor Messzelle, sitzt in der Regel auf einer Sensor Platine (`sensor`)
 pub mod output; // Ausgänge die vom Server Prozess geschalten werden können (z.B. LEDs, Relais, IO Module)
 pub mod prelude; // Nützliche Traits und Funktionen die alle Teile dieses Projekts verwenden
 pub mod schaltpunkt; // Liste von Schwellwerten (`schwellwert`) und Aktionen (`aktion`)
 pub mod schwellwert; // Regel die wenn erfüllt zumeist Ausgänge schaltet
-pub mod sensor; // Sensoren die vom Server unterstützt werden
-pub mod server; // Kern der Anwendung
-mod settings;   // Einstellungen die beim Serverstart ausgewertet werden, Wrapper um Config crate
+pub mod sensor; // Trait das die Eigenschaften aller vom Server unterstützten Sensoren beschreibt.
+pub mod server; // Kernkomponente dieser Anwendung
 pub mod zone; // Zonen die vom Server überwacht werden
 
 pub use error::ServerError;
