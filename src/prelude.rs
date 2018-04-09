@@ -8,7 +8,6 @@
 use std::any::Any;
 // Reexports
 pub use server::Server;
-pub use settings::Settings;
 pub use std::sync::{Arc, Mutex};
 pub use zone::Zone;
 

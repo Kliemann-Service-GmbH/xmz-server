@@ -32,7 +32,6 @@
 //!
 
 #[macro_use] extern crate serde_derive;
-extern crate config;
 extern crate rand;
 extern crate rocket_contrib;
 extern crate rocket;
@@ -41,7 +40,6 @@ extern crate serde;
 
 mod api;
 mod error;           // Mögliche Fehler die im Serverbetrieb auftreten können
-mod settings;   // Einstellungen die beim Serverstart ausgewertet werden, Wrapper um Config crate
 pub mod action;      // Liste von zu schaltenden Ausgängen (`output`)
 pub mod messzelle; // Einzelne Sensor Messzelle, sitzt in der Regel auf einer Sensor Platine (`sensor`)
 pub mod output; // Ausgänge die vom Server Prozess geschalten werden können (z.B. LEDs, Relais, IO Module)
@@ -56,5 +54,4 @@ pub use error::ServerError;
 pub use messzelle::Messzelle;
 pub use sensor::Sensor;
 pub use server::Server;
-pub use settings::Settings;
 pub use zone::Zone;
