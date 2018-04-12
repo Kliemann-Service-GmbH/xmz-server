@@ -23,14 +23,20 @@ pub struct Server {
     pub sensors: SensorsList,
 }
 
-impl Server {
-    /// Erstellt eine neue Server Instanz
-    pub fn new(settings: &Settings) -> Self {
+impl Default for Server {
+    fn default() -> Self {
         Server {
-            service_interval: settings.server.service_interval,
+            service_interval: 1,
             sensors: vec![],
             // zones: vec![],
         }
+    }
+}
+
+impl Server {
+    /// Erstellt eine neue Server Instanz
+    pub fn new() -> Self {
+        Default::default()
     }
 
     /// Aktualisiert der Reihe nach jeden Sensor
@@ -61,8 +67,8 @@ impl Server {
     /// ```rust
     /// use xmz_server::prelude::*;
     ///
-    /// let settings = Settings::new().unwrap();
-    /// let server = Server::new(&settings);
+    /// let server = Server::new();
+    /// assert_eq!(server.service_interval, 1);
     /// assert_eq!(server.get_sensors().len(), 0);
     /// ```
     pub fn get_sensors(&self) -> &SensorsList {
@@ -88,14 +94,15 @@ impl Server {
     }
 }
 
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn create() {
-        let settings = Settings::new();
-        let server = Server::new(&settings.unwrap());
+        let server = Server::new();
+        assert_eq!(server.service_interval, 1);
         assert_eq!(server.sensors.len(), 0);
     }
 }
