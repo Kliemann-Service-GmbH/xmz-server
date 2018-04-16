@@ -27,7 +27,9 @@ impl Default for Server {
     fn default() -> Self {
         Server {
             service_interval: 1,
-            sensors: vec![],
+            sensors: vec![
+                Arc::new(Mutex::new(Box::new(RaGasCONO2Mod::new()))),
+            ],
             // zones: vec![],
         }
     }
@@ -69,7 +71,7 @@ impl Server {
     ///
     /// let server = Server::new();
     /// assert_eq!(server.service_interval, 1);
-    /// assert_eq!(server.get_sensors().len(), 0);
+    /// assert_eq!(server.get_sensors().len(), 1);
     /// ```
     pub fn get_sensors(&self) -> &SensorsList {
         &self.sensors
@@ -103,6 +105,6 @@ mod tests {
     fn create() {
         let server = Server::new();
         assert_eq!(server.service_interval, 1);
-        assert_eq!(server.sensors.len(), 0);
+        assert_eq!(server.sensors.len(), 1);
     }
 }
