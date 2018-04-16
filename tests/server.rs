@@ -8,7 +8,7 @@ fn server_create() {
     let server = Server::new();
 
     assert_eq!(server.service_interval, 1);
-    assert_eq!(server.sensors.len(), 1);
+    assert_eq!(server.sensors.len(), 2);
 }
 //
 // #[test]

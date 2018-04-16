@@ -8,7 +8,11 @@
 use std::any::Any;
 // Reexports
 pub use server::Server;
-pub use sensor::{Sensor, RaGasCONO2Mod};
+pub use sensor::{
+    MetzConnectCI4,
+    RaGasCONO2Mod,
+    Sensor,
+};
 pub use std::sync::{Arc, Mutex};
 pub use zone::Zone;
 
