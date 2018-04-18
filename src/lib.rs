@@ -31,6 +31,7 @@
 //!             * `<Aktion>` (n Aktionen)
 //!
 
+#[macro_use] extern crate log;
 #[macro_use] extern crate serde_derive;
 extern crate rand;
 extern crate rocket_contrib;

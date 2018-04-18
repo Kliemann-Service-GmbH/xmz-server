@@ -49,7 +49,7 @@ impl fmt::Display for MetzConnectCI4 {
 impl Sensor for MetzConnectCI4 {
     // Update Sensor Platine via BUS
     fn update(&self) {
-        println!("\nUpdate Sensor: '{}'", &self);
+        info!("Update Sensor: '{}'", &self);
         let messzellen = &self.messzellen.clone();
         for messzelle in messzellen {
             if let Ok(mut messzelle) = messzelle.lock() {
@@ -66,6 +66,7 @@ impl Sensor for MetzConnectCI4 {
         self.messzellen.get(num)
     }
 }
+
 
 #[cfg(test)]
 mod tests {

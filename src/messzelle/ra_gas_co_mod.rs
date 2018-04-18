@@ -50,7 +50,6 @@ impl Messzelle for RaGasCOMod {
             timestamp.elapsed().unwrap() < Duration::from_secs(minutes)
         }) {
             values = values.split_off(index);
-            println!("index: {:?}", index);
         }
 
         // Spezialfall, nur noch ein Wert vorhanden. Hier muss nun geprüft werden ob dieser
@@ -94,7 +93,7 @@ impl Messzelle for RaGasCOMod {
         };
         self.values.push((last_value + 1.0, SystemTime::now()));
         self.shrink_values();
-        println!("|-- Update Messzelle: '{}'", &self);
+        info!("|-- Update Messzelle: '{}'", &self);
     }
 
     /// Entfernt alle Wert/Zeistempel Paare die älter als `Messzelle::max_values_for_n_minutes` sind.

@@ -7,6 +7,13 @@ use rocket::State;
 use std::time::SystemTime;
 
 
+pub enum MesszelleTypes {
+    RaGasNO2Mod,
+    RaGasCOMod,
+    MetzConnectCI4Analog420,
+}
+
+
 #[derive(Clone, Debug)]
 #[derive(Serialize)]
 pub struct Messzelle {
@@ -21,10 +28,14 @@ pub struct Messzelle {
 
 impl<'a> From<&'a Box<MesszelleIntern + Send>> for Messzelle {
     fn from(messzelle: &'a Box<MesszelleIntern + Send>) -> Self {
+        // Wert aus der Referenz auspacken
         let value = match messzelle.value() {
             Some(ref x) => Some(**x),
             None => None,
         };
+        // Type finden
+        // ...
+
         Messzelle {
             value: value,
             max_values_for_n_minutes: 0,
