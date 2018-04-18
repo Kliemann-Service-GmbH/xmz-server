@@ -1,5 +1,5 @@
 //! Trait das die Eigenschaften aller vom Server unterstützten Sensoren beschreibt.
-//! 
+//!
 use messzelle::BoxedMesszelle;
 use std::fmt;
 use std::sync::{Arc, Mutex};
@@ -23,6 +23,10 @@ pub trait Sensor: fmt::Debug {
     ///
     /// In dieser Funktion sollten auch die Werte (`values`) der Messzellen aktualisiert werden.
     fn update(&self);
+
+    /// Liefert eine Referenz auf den Vector der Messzellen
+    ///
+    fn get_messzellen(&self) -> &Vec<Arc<Mutex<BoxedMesszelle>>>;
 
     /// Liefert Optional eine Messzelle (wenn vorhanden)
     ///

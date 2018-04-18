@@ -10,7 +10,7 @@ use std::time::SystemTime;
 use prelude::*;
 
 mod error;
-mod metz_connect_analog_420;
+pub mod metz_connect_analog_420;
 pub mod ra_gas_co_mod;
 pub mod ra_gas_no2_mod;
 
@@ -36,6 +36,8 @@ pub trait Messzelle: AsAny + Debug {
     /// Die Implementierung der `value()` Funktion muss den letzten dieser Wertepaare ausgeben.
     /// Ist kein Messwert vorhanden wird `None` zurückgegeben.
     fn value(&self) -> Option<&(f64, SystemTime)>;
+
+    fn get_values(&self) -> Vec<(f64, SystemTime)>;
 
     /// Mittelwert der letzten `min` Minuten
     ///

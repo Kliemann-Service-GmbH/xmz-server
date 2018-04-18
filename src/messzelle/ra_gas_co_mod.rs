@@ -33,6 +33,10 @@ impl Messzelle for RaGasCOMod {
         self.values.last()
     }
 
+    fn get_values(&self) -> Vec<(f64, SystemTime)> {
+        self.values.clone()
+    }
+
     /// Mittelwert der letzten `min` Minuten
     ///
     /// # Examples

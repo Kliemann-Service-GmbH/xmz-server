@@ -1,28 +1,43 @@
-use rocket::State;
+use ::api::messzelle::Messzelle as MesszelleExtern;
+use ::api::sensor::Sensor as SensorExtern;
 use ::api::server::Server as ServerExtern;
-use ::server::Server as ServerIntern;
 use ::sensor::Sensor as SensorIntern;
+use ::server::Server as ServerIntern;
+use rocket_contrib::Json;
+use rocket::State;
 
 
 #[derive(Clone, Debug)]
 #[derive(Serialize)]
 pub struct Sensor {
-
+    messzellen: Vec<MesszelleExtern>,
+}
+impl Sensor {
+    pub fn get_messzellen(&self) -> &Vec<MesszelleExtern> {
+        &self.messzellen
+    }
 }
 
 
 #[get("/")]
-fn index(server: State<ServerExtern>) -> String {
-    // let sensors = server.get_sensors().lock().unwrap();
-    // Json(sensors)
-    format!("{:?}", server.clone())
+fn index(server: State<ServerExtern>) -> Json<Vec<Sensor>> {
+    Json(server.clone().get_sensors().clone())
 }
 
 
 
-impl From<Box<SensorIntern>> for Sensor {
-    fn from(sensor: Box<SensorIntern>) -> Self {
-        Sensor {}
+impl<'a> From<&'a Box<SensorIntern + Send>> for Sensor {
+    fn from(sensor: &'a Box<SensorIntern + Send>) -> Self {
+        let mut messzellen: Vec<MesszelleExtern> = vec![];
+        for messzelle in sensor.get_messzellen() {
+            if let Ok(messzelle) = messzelle.lock() {
+                messzellen.push((&*messzelle).into())
+            }
+        }
+
+        Sensor {
+            messzellen: messzellen,
+        }
     }
 }
 

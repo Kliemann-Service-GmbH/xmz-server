@@ -57,6 +57,11 @@ impl Sensor for MetzConnectCI4 {
             }
         }
     }
+
+    fn get_messzellen(&self) -> &Vec<Arc<Mutex<BoxedMesszelle>>> {
+        &self.messzellen
+    }
+
     fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
         self.messzellen.get(num)
     }

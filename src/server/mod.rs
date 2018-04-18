@@ -17,7 +17,7 @@ pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 /// Struktur der Server Komponente
 #[derive(Clone)]
 pub struct Server {
-    /// Wartungsintervall
+    /// Wartungsintervall in Tagen
     pub service_interval: u32,
     /// Liste der Sensoren die dieser Server verwaltet
     pub sensors: SensorsList,
@@ -26,7 +26,7 @@ pub struct Server {
 impl Default for Server {
     fn default() -> Self {
         Server {
-            service_interval: 1,
+            service_interval: 365,
             sensors: vec![
                 Arc::new(Mutex::new(Box::new(RaGasCONO2Mod::new()))),
                 Arc::new(Mutex::new(Box::new(MetzConnectCI4::new()))),
@@ -71,7 +71,7 @@ impl Server {
     /// use xmz_server::prelude::*;
     ///
     /// let server = Server::new();
-    /// assert_eq!(server.service_interval, 1);
+    /// assert_eq!(server.service_interval, 365);
     /// assert_eq!(server.get_sensors().len(), 2);
     /// ```
     pub fn get_sensors(&self) -> &SensorsList {
@@ -105,7 +105,7 @@ mod tests {
     #[test]
     fn create() {
         let server = Server::new();
-        assert_eq!(server.service_interval, 1);
+        assert_eq!(server.service_interval, 365);
         assert_eq!(server.sensors.len(), 2);
     }
 }
