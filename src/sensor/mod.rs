@@ -18,7 +18,7 @@ pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 /// Jeder Sensor kann meherer Messzellen besitzen. So verfügt beispielsweise der
 /// "CO/NO2 Kombisensor mit Modbus Interface" der Firma RA-GAS GmbH über 2 Messzellen, je eine
 /// für CO (Kohlenmonoxid) und NO2 (Stickstoffdioxid).
-pub trait Sensor: fmt::Debug {
+pub trait Sensor: fmt::Debug + fmt::Display {
     /// In der Update Funktion werden die Sensoren ausgelesen
     ///
     /// In dieser Funktion sollten auch die Werte (`values`) der Messzellen aktualisiert werden.

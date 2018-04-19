@@ -40,11 +40,6 @@ impl From<ServerIntern> for Server {
 }
 
 
-// #[get("/", rank = 2)]
-// fn index(server: State<ServerExtern>) -> String {
-//     format!("{:?}", server)
-// }
-
 #[get("/")]
 fn index(server: State<ServerExtern>) -> Json<ServerExtern> {
     Json(server.clone())

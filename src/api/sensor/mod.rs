@@ -10,6 +10,7 @@ use rocket::State;
 #[derive(Clone, Debug)]
 #[derive(Serialize)]
 pub struct Sensor {
+    sensor_type: String,
     messzellen: Vec<MesszelleExtern>,
 }
 impl Sensor {
@@ -18,25 +19,26 @@ impl Sensor {
     }
 }
 
-
 #[get("/")]
 fn index(server: State<ServerExtern>) -> Json<Vec<Sensor>> {
     Json(server.clone().get_sensors().clone())
 }
 
-
-
 impl<'a> From<&'a Box<SensorIntern + Send>> for Sensor {
     fn from(sensor: &'a Box<SensorIntern + Send>) -> Self {
+        // Kontruiere Messzellen
         let mut messzellen: Vec<MesszelleExtern> = vec![];
         for messzelle in sensor.get_messzellen() {
             if let Ok(messzelle) = messzelle.lock() {
                 messzellen.push((&*messzelle).into())
             }
         }
+        // Sensor Typ auslesen und setzen
+        let sensor_type = format!("{}", sensor);
 
         Sensor {
             messzellen: messzellen,
+            sensor_type: sensor_type,
         }
     }
 }

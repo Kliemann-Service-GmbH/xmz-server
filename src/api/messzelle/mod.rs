@@ -7,16 +7,10 @@ use rocket::State;
 use std::time::SystemTime;
 
 
-pub enum MesszelleTypes {
-    RaGasNO2Mod,
-    RaGasCOMod,
-    MetzConnectCI4Analog420,
-}
-
-
 #[derive(Clone, Debug)]
 #[derive(Serialize)]
 pub struct Messzelle {
+    messzelle_type: String,
     value: Option<(f64, SystemTime)>,
     max_values_for_n_minutes: u64, // in Sekunden
 }
@@ -34,11 +28,12 @@ impl<'a> From<&'a Box<MesszelleIntern + Send>> for Messzelle {
             None => None,
         };
         // Type finden
-        // ...
+        let messzelle_type = format!("{}", messzelle);
 
         Messzelle {
             value: value,
             max_values_for_n_minutes: 0,
+            messzelle_type: messzelle_type,
         }
     }
 }

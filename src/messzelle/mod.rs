@@ -4,7 +4,7 @@
 //! Diese sitzt in der Regel auf einer Sensor Platine (`sensor`). Jeder Sensor hat mindestens eine
 //! Messzelle mit einem Wert und einem Mittelwert.
 
-use std::fmt::Debug;
+use std::fmt;
 use std::sync::{Arc, Mutex};
 use std::time::SystemTime;
 use prelude::*;
@@ -28,7 +28,7 @@ pub type MesszellenRefList<'a> = Vec<&'a Messzelle>;
 /// Jede Messzelle hat einen Direktwert (`value()`) sowie ein Mittelwert (`average(minutes)`).
 /// Der Mittelwert Funktion kann ein Parameter übergeben werden mit dem die Dauer des zu
 /// berechnendem Mittelwertes angegeben werden kann.
-pub trait Messzelle: AsAny + Debug {
+pub trait Messzelle: AsAny + fmt::Debug + fmt::Display {
     /// Aktueller Messzelle Wert und Timestamp der Ermittlung
     ///
     /// Jede Messzelle verfügt über ein Liste mit einem oder mehreren Paaren, Messwerten und den
