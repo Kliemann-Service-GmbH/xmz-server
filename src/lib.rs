@@ -33,6 +33,7 @@
 
 #[macro_use] extern crate log;
 #[macro_use] extern crate serde_derive;
+extern crate bincode;
 extern crate rand;
 extern crate rocket_contrib;
 extern crate rocket;
@@ -48,6 +49,7 @@ pub mod prelude; // Nützliche Traits und Funktionen die alle Teile dieses Proje
 pub mod schaltpunkt; // Liste von Schwellwerten (`schwellwert`) und Aktionen (`aktion`)
 pub mod schwellwert; // Regel die wenn erfüllt zumeist Ausgänge schaltet
 pub mod sensor; // Trait das die Eigenschaften aller vom Server unterstützten Sensoren beschreibt.
+pub mod server_builder; // Konstruiert eine Server Instanz aus der letzten Laufzeit Information oder einer Bootrstrpping Konfigurationsdatei
 pub mod server; // Kernkomponente dieser Anwendung
 pub mod zone; // Zonen die vom Server überwacht werden
 

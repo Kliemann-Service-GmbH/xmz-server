@@ -19,7 +19,9 @@ name = "xmz-server"
 travis-ci = { repository = "Kliemann-Service-GmbH/xmz-server" }
 
 [dependencies]
+bincode = "1.0"
 clippy = { version = "*", optional = true }
+env_logger = "0.5.8"
 log = "0.4"
 rand = "0.4"
 rocket = "0.3.6"
@@ -29,4 +31,3 @@ serde = "1"
 serde_derive = "1"
 serde_json = "1"
 toml = "^0.4" # Konfigurationsdatei Format
-env_logger = "0.5.8"

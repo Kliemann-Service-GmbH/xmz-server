@@ -1,6 +1,7 @@
 //! Kernkomponente dieser Anwendung
 //!
 use api;
+use bincode::{serialize, deserialize};
 use error::ServerError;
 use prelude::*;
 use sensor::BoxedSensor;
@@ -16,10 +17,12 @@ pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 
 /// Struktur der Server Komponente
 #[derive(Clone)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Server {
     /// Wartungsintervall in Tagen
     pub service_interval: u32,
     /// Liste der Sensoren die dieser Server verwaltet
+    #[serde(skip)]
     pub sensors: SensorsList,
 }
 
@@ -86,11 +89,31 @@ impl Server {
         self.sensors.push(sensor);
     }
 
+    /// Serialize in das Bincode format
+    pub fn serialize_to_bincode(&self) -> Result<Vec<u8>, ServerError> {
+        match serialize(&self) {
+            Ok(data) => Ok(data),
+            Err(err) => Err(ServerError::Bincode(err)),
+        }
+    }
+
+    fn store_runtime_information(&self) -> Result<(), ServerError> {
+        println!("Bincode: {:?}", &self.serialize_to_bincode());
+        Ok(())
+    }
+
     pub fn start(&self) -> Result<(), ServerError> {
+        // Laufzeit Informationen speichern
+        self.store_runtime_information()?;
+
+        // Sensor Update Thread starten
         let server_update_guard = self.update_sensors();
 
+        // JSON Api (rocket) starten
         self.launch_api();
 
+        // Der Sensor Update Thread wird gejoint, somit läuft der Server solange dieser Thread
+        // läuft.
         server_update_guard.join().expect("Fehler im Sensor Update Guard");
 
         Ok(())
