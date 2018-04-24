@@ -7,6 +7,8 @@
 
 use std::any::Any;
 // Reexports
+pub use config::Config;
+pub use error::ServerError;
 pub use server::Server;
 pub use sensor::{
     MetzConnectCI4,

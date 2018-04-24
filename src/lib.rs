@@ -31,6 +31,7 @@
 //!             * `<Aktion>` (n Aktionen)
 //!
 
+#[macro_use] extern crate configure;
 #[macro_use] extern crate log;
 #[macro_use] extern crate serde_derive;
 extern crate bincode;
@@ -41,8 +42,9 @@ extern crate serde_json;
 extern crate serde;
 
 mod api;
-mod error;           // Mögliche Fehler die im Serverbetrieb auftreten können
-pub mod action;      // Liste von zu schaltenden Ausgängen (`output`)
+mod config; // Konfiguration via Umgebungsvariablen: https://boats.gitlab.io/blog/post/2018-01-18-configure/
+mod error; // Mögliche Fehler die im Serverbetrieb auftreten können
+pub mod action; // Liste von zu schaltenden Ausgängen (`output`)
 pub mod messzelle; // Einzelne Sensor Messzelle, sitzt in der Regel auf einer Sensor Platine (`sensor`)
 pub mod output; // Ausgänge die vom Server Prozess geschalten werden können (z.B. LEDs, Relais, IO Module)
 pub mod prelude; // Nützliche Traits und Funktionen die alle Teile dieses Projekts verwenden
@@ -53,6 +55,7 @@ pub mod server_builder; // Konstruiert eine Server Instanz aus der letzten Laufz
 pub mod server; // Kernkomponente dieser Anwendung
 pub mod zone; // Zonen die vom Server überwacht werden
 
+pub use config::Config;
 pub use error::ServerError;
 pub use messzelle::Messzelle;
 pub use sensor::Sensor;

@@ -15,8 +15,6 @@ pub struct ServerBuilder;
 
 
 impl ServerBuilder {
-
-
     pub fn runtime_info_available() -> bool {
         false
     }

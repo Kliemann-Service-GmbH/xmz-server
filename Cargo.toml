@@ -21,6 +21,7 @@ travis-ci = { repository = "Kliemann-Service-GmbH/xmz-server" }
 [dependencies]
 bincode = "1.0"
 clippy = { version = "*", optional = true }
+configure = "0.1"
 env_logger = "0.5.8"
 log = "0.4"
 rand = "0.4"
