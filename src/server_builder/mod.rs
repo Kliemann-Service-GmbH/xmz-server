@@ -16,11 +16,11 @@ pub struct ServerBuilder;
 
 impl ServerBuilder {
     pub fn runtime_info_available(cfg: &Config) -> bool {
-        false
+        cfg.runtime_info_path.exists()
     }
 
     pub fn config_file_available(cfg: &Config) -> bool {
-        false
+        cfg.configuration_path.exists()
     }
 
     pub fn from_runtime_info(cfg: &Config) -> Result<Server, ServerError> {
