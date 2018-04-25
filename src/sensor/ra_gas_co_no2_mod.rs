@@ -62,7 +62,7 @@ impl fmt::Display for RaGasCONO2Mod {
 impl Sensor for RaGasCONO2Mod {
     // Update Sensor Platine via BUS
     fn update(&self) {
-        info!("Update Sensor: '{}'", &self);
+        debug!("Update Sensor: '{}'", &self);
         let messzellen = &self.messzellen.clone();
         for messzelle in messzellen {
             if let Ok(mut messzelle) = messzelle.lock() {

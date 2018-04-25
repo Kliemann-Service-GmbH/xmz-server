@@ -105,7 +105,7 @@ impl Messzelle for RaGasNO2Mod {
         };
         self.values.push((last_value + 1.0, SystemTime::now()));
         self.shrink_values();
-        info!("|-- Update Messzelle: '{}'", &self);
+        debug!("|-- Update Messzelle: '{}'", &self);
     }
 
     /// Entfernt alle Wert/Zeistempel Paare die älter als `Messzelle::max_values_for_n_minutes` sind.
