@@ -61,3 +61,4 @@ pub use messzelle::Messzelle;
 pub use sensor::Sensor;
 pub use server::Server;
 pub use zone::Zone;
+pub use server_builder::ServerBuilder;

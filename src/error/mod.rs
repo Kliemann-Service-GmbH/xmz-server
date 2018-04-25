@@ -4,6 +4,8 @@ use configure::DeserializeError as ConfigureError;
 use output::OutputError;
 use std::error::Error;
 use std::fmt;
+use std::path::PathBuf;
+
 
 /// Mögliche Server Fehler
 ///
@@ -13,6 +15,8 @@ pub enum ServerError {
     Output(OutputError),
     Bincode(BincodeError),
     Configure(ConfigureError),
+    CouldNotBuildFromConfig,
+    CouldNotBuildFromRuntime,
 }
 
 impl fmt::Display for ServerError {
@@ -21,6 +25,8 @@ impl fmt::Display for ServerError {
             ServerError::Output(ref err) => write!(f, "Output error: {}", err),
             ServerError::Bincode(ref err) => write!(f, "Bincode serialisation error: {}", err),
             ServerError::Configure(ref err) => write!(f, "Could not deserialize configuration: {}", err),
+            ServerError::CouldNotBuildFromConfig => write!(f, "Could not build server from config file"),
+            ServerError::CouldNotBuildFromRuntime => write!(f, "Could not build server from runtime information"),
         }
     }
 }
@@ -31,6 +37,8 @@ impl Error for ServerError {
             ServerError::Output(ref err) => err.description(),
             ServerError::Bincode(ref err) => err.description(),
             ServerError::Configure(ref err) => err.description(),
+            ServerError::CouldNotBuildFromConfig => "Maybe the configuration file is not present, corrupt or not readable. Please check file access rights.",
+            ServerError::CouldNotBuildFromRuntime => "Maybe the runtime information file is not present, corrupt or not readable. Please check file access rights.",
         }
     }
 
@@ -39,6 +47,8 @@ impl Error for ServerError {
             ServerError::Output(ref err) => Some(err),
             ServerError::Bincode(ref err) => Some(err),
             ServerError::Configure(ref err) => Some(err),
+            ServerError::CouldNotBuildFromConfig => None,
+            ServerError::CouldNotBuildFromRuntime => None,
         }
     }
 }

@@ -9,12 +9,14 @@ use std::any::Any;
 // Reexports
 pub use config::Config;
 pub use error::ServerError;
-pub use server::Server;
 pub use sensor::{
     MetzConnectCI4,
     RaGasCONO2Mod,
     Sensor,
 };
+pub use server_builder::ServerBuilder;
+pub use server::Server;
+pub use std::error::Error;
 pub use std::sync::{Arc, Mutex};
 pub use zone::Zone;
 

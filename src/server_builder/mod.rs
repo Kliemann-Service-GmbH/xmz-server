@@ -9,18 +9,28 @@
 /// (d.h. das diese nicht nach einem Neustart verloren gehen).
 ///
 /// Siehe: [Dokumentation der 'xMZ-Plattform'](https://kliemann-service-gmbh.github.io/xmz-doc/
-
+use prelude::*;
 
 pub struct ServerBuilder;
 
 
 impl ServerBuilder {
-    pub fn runtime_info_available() -> bool {
+    pub fn runtime_info_available(cfg: &Config) -> bool {
         false
     }
 
-    pub fn config_file_available() -> bool {
+    pub fn config_file_available(cfg: &Config) -> bool {
         false
+    }
+
+    pub fn from_runtime_info(cfg: &Config) -> Result<Server, ServerError> {
+        // Ok(Server::new())
+        Err(ServerError::CouldNotBuildFromRuntime)
+    }
+
+    pub fn from_config_file(cfg: &Config) -> Result<Server, ServerError> {
+        // Ok(Server::new())
+        Err(ServerError::CouldNotBuildFromConfig)
     }
 }
 

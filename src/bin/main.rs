@@ -8,13 +8,26 @@ use configure::Configure;
 use xmz_server::prelude::*;
 
 
+fn build_server(cfg: &Config) -> Result<Server, ServerError> {
+    let server = if ServerBuilder::runtime_info_available(&cfg) {
+        ServerBuilder::from_runtime_info(&cfg)?
+    } else if ServerBuilder::config_file_available(&cfg) {
+        ServerBuilder::from_config_file(&cfg)?
+    } else {
+        // Ansonnsten Server mit `Default::default()` Werten
+        Server::new()
+    };
+
+    Ok(server)
+}
+
 fn run() -> Result<(), ServerError> {
     println!("xmz-server: {}", env!("CARGO_PKG_VERSION"));
 
     let cfg = Config::generate()?;
-    println!("Benutze Config: {:?}", cfg);
+    println!("Benutze Config: {:?}", &cfg);
 
-    let server = Server::new();
+    let server = build_server(&cfg)?;
 
     server.start()?;
 
@@ -28,5 +41,6 @@ fn main() {
 
     if let Err(e) = run() {
         println!("\nError: {}", e);
+        println!("Additional Information: {}", e.description());
     }
 }

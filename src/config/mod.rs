@@ -5,8 +5,8 @@ use std::path::PathBuf;
 #[derive(Deserialize, Configure)]
 #[serde(default)]
 pub struct Config {
-    configuration_path: PathBuf,
-    runtime_info_path: PathBuf,
+    pub configuration_path: PathBuf,
+    pub runtime_info_path: PathBuf,
 }
 
 impl Default for Config {
