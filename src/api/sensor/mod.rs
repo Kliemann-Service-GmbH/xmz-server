@@ -1,8 +1,6 @@
 use ::api::messzelle::Messzelle as MesszelleExtern;
-use ::api::sensor::Sensor as SensorExtern;
 use ::api::server::Server as ServerExtern;
 use ::sensor::Sensor as SensorIntern;
-use ::server::Server as ServerIntern;
 use rocket_contrib::Json;
 use rocket::State;
 
@@ -14,6 +12,7 @@ pub struct Sensor {
     messzellen: Vec<MesszelleExtern>,
 }
 impl Sensor {
+    #[allow(dead_code)]
     pub fn get_messzellen(&self) -> &Vec<MesszelleExtern> {
         &self.messzellen
     }
@@ -47,6 +46,7 @@ impl<'a> From<&'a Box<SensorIntern + Send>> for Sensor {
 
 #[cfg(test)]
 mod test {
+    use super::*;
     use api;
     use rocket::local::Client;
     use rocket::http::Status;
@@ -57,5 +57,11 @@ mod test {
         let client = Client::new(api::rocket(server.into())).expect("valid rocket instance");
         let response = client.get("/sensors").dispatch();
         assert_eq!(response.status(), Status::Ok);
+    }
+
+    #[test]
+    fn get_messzellen() {
+        let sensor = Sensor { sensor_type: "Test Sensor".to_string(), messzellen: Vec::new(), };
+        assert_eq!(sensor.get_messzellen().len(), 0);
     }
 }

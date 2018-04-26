@@ -11,16 +11,16 @@
 /// Siehe: [Dokumentation der 'xMZ-Plattform'](https://kliemann-service-gmbh.github.io/xmz-doc/
 use error::ServerError;
 use prelude::*;
-use std::convert::TryInto;
 use std::fs::File;
 use std::io::prelude::*;
 use toml;
+
 
 #[derive(Debug)]
 #[derive(Deserialize)]
 #[serde(rename = "server")]
 struct ServerFromConf {
-    service_interval: i32,
+    service_interval: u32,
 }
 
 #[derive(Debug)]
@@ -37,7 +37,10 @@ impl ServerBuilder {
 
 impl From<ServerBuilder> for Server {
     fn from(builder: ServerBuilder) -> Server {
-        Server::new()
+        Server {
+            service_interval: builder.server.service_interval,
+            sensors: Vec::new(),
+        }
     }
 }
 
@@ -63,7 +66,7 @@ impl ServerBuilder {
     ///
     /// Die Funktion liefert ein `Result` mit einer `ServerBuilder` Instanz, oder liefert ein
     /// entsprechenden `ServerError` zurück.
-    pub fn from_runtime_info(cfg: &Config) -> Result<ServerBuilder, ServerError> {
+    pub fn from_runtime_info(_cfg: &Config) -> Result<ServerBuilder, ServerError> {
         Err(ServerError::CouldNotBuildFromRuntime)
     }
 
@@ -101,10 +104,12 @@ mod test {
     }
 
     #[test]
-    fn no_config_no_runtime_is_server_default() {
+    fn no_config_no_runtime_is_error() {
         use std::path::PathBuf;
 
         let mut cfg = Config::default();
-        cfg.configuration_path = PathBuf::from("/path/to/not/existend/runtime_info");
+        cfg.configuration_path = PathBuf::from("/path/to/not/existend/configuration");
+        cfg.runtime_info_path = PathBuf::from("/path/to/not/existend/runtime_info");
+        assert!(ServerBuilder::from_config_file(&cfg).is_err());
     }
 }

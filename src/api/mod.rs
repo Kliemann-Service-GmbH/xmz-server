@@ -2,15 +2,10 @@ mod messzelle;
 mod sensor;
 mod server;
 
-use rocket;
-use rocket::Rocket;
-use rocket::http::RawStr;
-use rocket::State;
 use ::api::server::Server as ServerExtern;
 use ::server::Server as ServerIntern;
-
-
-
+use rocket;
+use rocket::Rocket;
 
 
 /// Konstruiert die Rocket Instanz

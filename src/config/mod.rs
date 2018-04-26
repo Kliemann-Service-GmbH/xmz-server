@@ -1,4 +1,3 @@
-use configure::Configure;
 use std::path::PathBuf;
 
 #[derive(Debug)]

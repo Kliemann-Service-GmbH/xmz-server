@@ -1,9 +1,4 @@
-use ::api::server::Server as ServerExtern;
-use ::sensor::Sensor as SensorIntern;
 use ::messzelle::Messzelle as MesszelleIntern;
-use ::server::Server as ServerIntern;
-use rocket_contrib::Json;
-use rocket::State;
 use std::time::SystemTime;
 
 

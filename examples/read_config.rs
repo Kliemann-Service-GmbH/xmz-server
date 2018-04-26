@@ -17,8 +17,8 @@ enum ConfigError {
 impl fmt::Display for ConfigError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            ConfigError::ConfigurationNotFound(ref error) => write!(f, "Konfigurationsdatein nicht gefunden: '{:?}'", error),
-            ConfigError::ParseError(ref error) => write!(f, "Konnte Konfigurationsdatein nicht lesen: '{:?}'", error),
+            ConfigError::ConfigurationNotFound(ref err) => write!(f, "Konfigurationsdatein nicht gefunden: {:?}", err),
+            ConfigError::ParseError(ref err) => write!(f, "Konnte Konfigurationsdatein nicht lesen: {:?}", err),
         }
     }
 }
@@ -26,8 +26,8 @@ impl fmt::Display for ConfigError {
 impl Error for ConfigError {
     fn description(&self) -> &str {
         match *self {
-            ConfigError::ConfigurationNotFound(ref error) => "Konfigurationsdatein nicht gefunden",
-            ConfigError::ParseError(ref error) => "Konnte Konfigurationsdatein nicht lesen",
+            ConfigError::ConfigurationNotFound(ref _err) => "Konfigurationsdatein nicht gefunden",
+            ConfigError::ParseError(ref _err) => "Konnte Konfigurationsdatein nicht lesen",
         }
     }
 }
@@ -71,8 +71,8 @@ struct Configuration {
 fn openconfig() -> Result<(), ConfigError> {
     let mut configfile = File::open("xmz-server.toml")?;
     let mut configstr = String::new();
-    configfile.read_to_string(&mut configstr);
-    let mut configuration: Configuration = toml::from_str(&configstr)?;
+    configfile.read_to_string(&mut configstr)?;
+    let configuration: Configuration = toml::from_str(&configstr)?;
     println!("{:?}", configuration);
 
     Ok(())

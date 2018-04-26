@@ -1,7 +1,7 @@
 //! Kernkomponente dieser Anwendung
 //!
 use api;
-use bincode::{serialize, deserialize};
+use bincode::serialize;
 use error::ServerError;
 use prelude::*;
 use sensor::BoxedSensor;

@@ -5,7 +5,6 @@ use output::OutputError;
 use std::error::Error;
 use std::fmt;
 use std::io::Error as IOError;
-use std::path::PathBuf;
 use toml::de::Error as TomlError;
 
 
@@ -42,7 +41,7 @@ impl Error for ServerError {
         match *self {
             ServerError::Bincode(ref err) => err.description(),
             ServerError::Configure(ref err) => err.description(),
-            ServerError::CouldNotBuildFromConfig(ref err) => "Maybe the configuration file is not present, corrupt or not readable. Please check file access rights.",
+            ServerError::CouldNotBuildFromConfig(ref _err) => "Maybe the configuration file is not present, corrupt or not readable. Please check file access rights.",
             ServerError::CouldNotBuildFromRuntime => "Maybe the runtime information file is not present, corrupt or not readable. Please check file access rights.",
             ServerError::IO(ref err) => err.description(),
             ServerError::Output(ref err) => err.description(),
