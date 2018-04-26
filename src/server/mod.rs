@@ -42,7 +42,10 @@ impl Default for Server {
 impl Server {
     /// Erstellt eine neue Server Instanz
     pub fn new() -> Self {
-        Default::default()
+        Server {
+            service_interval: 0,
+            sensors: Vec::new(),
+        }
     }
 
     /// Aktualisiert der Reihe nach jeden Sensor
@@ -73,8 +76,7 @@ impl Server {
     /// ```rust
     /// use xmz_server::prelude::*;
     ///
-    /// let server = Server::new();
-    /// assert_eq!(server.service_interval, 365);
+    /// let server = Server::default();
     /// assert_eq!(server.get_sensors().len(), 2);
     /// ```
     pub fn get_sensors(&self) -> &SensorsList {
@@ -126,8 +128,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn create() {
+    fn new() {
         let server = Server::new();
+        assert_eq!(server.service_interval, 0);
+        assert_eq!(server.sensors.len(), 0);
+    }
+
+    #[test]
+    fn default() {
+        let server = Server::default();
         assert_eq!(server.service_interval, 365);
         assert_eq!(server.sensors.len(), 2);
     }

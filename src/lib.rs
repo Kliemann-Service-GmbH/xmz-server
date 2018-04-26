@@ -40,6 +40,7 @@ extern crate rocket_contrib;
 extern crate rocket;
 extern crate serde_json;
 extern crate serde;
+extern crate toml;
 
 mod api;
 mod config; // Konfiguration via Umgebungsvariablen: https://boats.gitlab.io/blog/post/2018-01-18-configure/

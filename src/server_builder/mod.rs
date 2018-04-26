@@ -1,36 +1,85 @@
-/// Erzeugt eine neue Server Instanz aus Laufzeit Information oder Konfigurationsdatein
+/// Erzeugt eine neue Server Instanz aus Laufzeitinformation oder Konfigurationsdatein
 ///
 /// Beim allerersten Start des Servers wird die Server Instanz aus einer initialen
 /// Konfigurationsdatein erstellt.
 /// Konnte aus dieser ersten Konfiguration eine funktionale Server Intanz gestartet werden,
-/// wird eine Datei mit den Laufzeit Informationen (der aktuelle Zustand des Servers) erzeugt.
-/// Alle weiteren Starts des Servers verwenden diese Laufzeit Informationen.
+/// wird eine Datei mit den Laufzeitinformationen (der aktuelle Zustand des Servers) erzeugt.
+/// Alle weiteren Starts des Servers verwenden diese Laufzeitinformationen.
 /// Dies gewährleistet das Daten wie die Laufzeit "persistent" gespeichert werden können
 /// (d.h. das diese nicht nach einem Neustart verloren gehen).
 ///
 /// Siehe: [Dokumentation der 'xMZ-Plattform'](https://kliemann-service-gmbh.github.io/xmz-doc/
+use error::ServerError;
 use prelude::*;
+use std::convert::TryInto;
+use std::fs::File;
+use std::io::prelude::*;
+use toml;
 
-pub struct ServerBuilder;
+#[derive(Debug)]
+#[derive(Deserialize)]
+#[serde(rename = "server")]
+struct ServerFromConf {
+    service_interval: i32,
+}
+
+#[derive(Debug)]
+#[derive(Deserialize)]
+pub struct ServerBuilder {
+    server: ServerFromConf,
+}
+
+impl ServerBuilder {
+    pub fn generate(self) -> Server {
+        self.into()
+    }
+}
+
+impl From<ServerBuilder> for Server {
+    fn from(builder: ServerBuilder) -> Server {
+        Server::new()
+    }
+}
 
 
 impl ServerBuilder {
+    /// Testet ob die Datei mit den Laufzeitinformationen existiert
+    ///
+    ///  Diese Funktion liefert auch `false` wenn auf die Datei nicht zugegriffen werden kann,
+    ///  z.B. durch fehlende Berechtigungen.
     pub fn runtime_info_available(cfg: &Config) -> bool {
         cfg.runtime_info_path.exists()
     }
 
+    /// Testet ob die Konfigurationsdatei existiert
+    ///
+    ///  Diese Funktion liefert auch `false` wenn auf die Datei nicht zugegriffen werden kann,
+    ///  z.B. durch fehlende Berechtigungen.
     pub fn config_file_available(cfg: &Config) -> bool {
         cfg.configuration_path.exists()
     }
 
-    pub fn from_runtime_info(cfg: &Config) -> Result<Server, ServerError> {
-        // Ok(Server::new())
+    /// Stellt die Server Instanz aus den Laufzeitinformationen wieder her
+    ///
+    /// Die Funktion liefert ein `Result` mit einer `ServerBuilder` Instanz, oder liefert ein
+    /// entsprechenden `ServerError` zurück.
+    pub fn from_runtime_info(cfg: &Config) -> Result<ServerBuilder, ServerError> {
         Err(ServerError::CouldNotBuildFromRuntime)
     }
 
-    pub fn from_config_file(cfg: &Config) -> Result<Server, ServerError> {
-        // Ok(Server::new())
-        Err(ServerError::CouldNotBuildFromConfig)
+    /// Bildet eine Server Instanz aus der Konfigurationsdatei
+    ///
+    /// Die Funktion liefert ein `Result` mit einer `ServerBuilder` Instanz, oder liefert ein
+    /// `ServerError`.
+    pub fn from_config_file(cfg: &Config) -> Result<ServerBuilder, ServerError> {
+        let mut file = File::open(&cfg.configuration_path)?;
+        let mut s = String::new();
+        file.read_to_string(&mut s)?;
+
+        match toml::from_str::<ServerBuilder>(&s) {
+            Ok(builder) => Ok(builder),
+            Err(err) => Err(ServerError::CouldNotBuildFromConfig(err)),
+        }
     }
 }
 
@@ -41,16 +90,21 @@ mod test {
 
     #[test]
     fn runtime_info_available() {
-        assert_eq!(ServerBuilder::runtime_info_available(), false);
+        let cfg = Config::default();
+        assert_eq!(ServerBuilder::runtime_info_available(&cfg), false);
     }
 
     #[test]
     fn config_file_available() {
-        assert_eq!(ServerBuilder::config_file_available(), false);
+        let cfg = Config::default();
+        assert_eq!(ServerBuilder::config_file_available(&cfg), false);
     }
 
     #[test]
-    fn no_config_no_runtim_is_error() {
-        assert!(false)
+    fn no_config_no_runtime_is_server_default() {
+        use std::path::PathBuf;
+
+        let mut cfg = Config::default();
+        cfg.configuration_path = PathBuf::from("/path/to/not/existend/runtime_info");
     }
 }

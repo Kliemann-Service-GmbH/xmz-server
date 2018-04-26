@@ -10,11 +10,16 @@ use xmz_server::prelude::*;
 
 fn build_server(cfg: &Config) -> Result<Server, ServerError> {
     let server = if ServerBuilder::runtime_info_available(&cfg) {
-        ServerBuilder::from_runtime_info(&cfg)?
+        info!("Laufzeit Information: `{:?}` gefunden", &cfg.runtime_info_path);
+        let builder = ServerBuilder::from_runtime_info(&cfg)?;
+        builder.generate()
     } else if ServerBuilder::config_file_available(&cfg) {
-        ServerBuilder::from_config_file(&cfg)?
+        info!("Konfigurationsdatei: `{:?}` gefunden", &cfg.configuration_path);
+        let builder = ServerBuilder::from_config_file(&cfg)?;
+        builder.generate()
     } else {
         // Ansonnsten Server mit `Default::default()` Werten
+        warn!("Weder Laufzeit Information noch Konfigurationsdatei gefunden, verwende Default Test Server");
         Server::new()
     };
 
@@ -25,9 +30,10 @@ fn run() -> Result<(), ServerError> {
     println!("xmz-server: {}", env!("CARGO_PKG_VERSION"));
 
     let cfg = Config::generate()?;
-    println!("Benutze Config: {:?}", &cfg);
+    debug!("Benutze generierte Config: {:?}", &cfg);
 
     let server = build_server(&cfg)?;
+    println!("Erkannter Server: {:?}", server);
 
     server.start()?;
 
@@ -42,5 +48,9 @@ fn main() {
     if let Err(e) = run() {
         println!("\nError: {}", e);
         println!("Additional Information: {}", e.description());
+
+        if let Some(cause) = e.cause() {
+            println!("Cause: {}", cause);
+        }
     }
 }
