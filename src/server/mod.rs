@@ -114,7 +114,8 @@ impl Server {
                 info!("Create runtime info at: {:?}", path);
                 let bincode = &self.serialize_to_bincode()?;
                 buffer.write(bincode)?;
-                info!("Store server instance as: {:?}", bincode);
+                info!("Store server instance as bincode");
+                debug!(">> bincode: {:?}", bincode);
                 Ok(())
             },
             None => Err(ServerError::RuntimePathNotSet),

@@ -9,6 +9,7 @@
 /// (d.h. das diese nicht nach einem Neustart verloren gehen).
 ///
 /// Siehe: [Dokumentation der 'xMZ-Plattform'](https://kliemann-service-gmbh.github.io/xmz-doc/
+use bincode;
 use error::ServerError;
 use prelude::*;
 use std::fs::File;
@@ -71,8 +72,15 @@ impl ServerBuilder {
     ///
     /// Die Funktion liefert ein `Result` mit einer `ServerBuilder` Instanz, oder liefert ein
     /// entsprechenden `ServerError` zurück.
-    pub fn from_runtime_info(_cfg: &Config) -> Result<ServerBuilder, ServerError> {
-        Err(ServerError::CouldNotBuildFromRuntime)
+    pub fn from_runtime_info(cfg: &Config) -> Result<Server, ServerError> {
+        let mut file = File::open(&cfg.runtime_info_path)?;
+        let mut s = String::new();
+        file.read_to_string(&mut s)?;
+
+        match bincode::deserialize(&s.as_bytes()) {
+            Ok(server) => Ok(server),
+            Err(err) => Err(ServerError::CouldNotBuildFromRuntime),
+        }
     }
 
     /// Bildet eine Server Instanz aus der Konfigurationsdatei

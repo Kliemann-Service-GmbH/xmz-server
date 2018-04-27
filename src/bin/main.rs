@@ -11,8 +11,8 @@ use xmz_server::prelude::*;
 fn build_server(cfg: &Config) -> Result<Server, ServerError> {
     let server = if ServerBuilder::runtime_info_available(&cfg) {
         info!("Laufzeit Information: `{:?}` gefunden", &cfg.runtime_info_path);
-        let builder = ServerBuilder::from_runtime_info(&cfg)?;
-        builder.generate()
+        let server = ServerBuilder::from_runtime_info(&cfg)?;
+        server
     } else if ServerBuilder::config_file_available(&cfg) {
         info!("Konfigurationsdatei: `{:?}` gefunden", &cfg.configuration_path);
         let builder = ServerBuilder::from_config_file(&cfg)?;
@@ -33,7 +33,7 @@ fn run() -> Result<(), ServerError> {
     debug!("Benutze generierte Config: {:?}", &cfg);
 
     let server = build_server(&cfg)?;
-    println!("Erkannter Server: {:?}", server);
+    debug!("Erkannter Server: {:?}", server);
 
     server.start()?;
 
