@@ -3,7 +3,7 @@
 **/*.rs.bk
 
 # Konfigurationsdatei
-xmz.toml
+xmz-server.toml
 
 # Bitbake files
 *.bb

@@ -1,12 +1,15 @@
 //! Kernkomponente dieser Anwendung
 //!
 use api;
+use bincode;
 use error::ServerError;
 use prelude::*;
 use sensor::BoxedSensor;
+use std::fs::File;
+use std::io::Write;
+use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::thread;
-
 
 /// Liste der Sensoren
 ///
@@ -15,21 +18,39 @@ use std::thread;
 pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 
 /// Struktur der Server Komponente
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Server {
-    /// Wartungsintervall
+    /// Wartungsintervall in Tagen
     pub service_interval: u32,
     /// Liste der Sensoren die dieser Server verwaltet
+    #[serde(skip)]
     pub sensors: SensorsList,
+    pub configuration_path: Option<PathBuf>,
+    pub runtime_info_path: Option<PathBuf>,
+}
+
+impl Default for Server {
+    fn default() -> Self {
+        Server {
+            service_interval: 365,
+            sensors: vec![
+                Arc::new(Mutex::new(Box::new(RaGasCONO2Mod::new()))),
+                Arc::new(Mutex::new(Box::new(MetzConnectCI4::new()))),
+            ],
+            // zones: vec![],
+            configuration_path: None,
+            runtime_info_path: None,
+        }
+    }
 }
 
 impl Server {
     /// Erstellt eine neue Server Instanz
-    pub fn new(settings: &Settings) -> Self {
+    pub fn new() -> Self {
         Server {
-            service_interval: settings.server.service_interval,
-            sensors: vec![],
-            // zones: vec![],
+            service_interval: 0,
+            sensors: Vec::new(),
+            ..Default::default()
         }
     }
 
@@ -61,9 +82,8 @@ impl Server {
     /// ```rust
     /// use xmz_server::prelude::*;
     ///
-    /// let settings = Settings::new().unwrap();
-    /// let server = Server::new(&settings);
-    /// assert_eq!(server.get_sensors().len(), 0);
+    /// let server = Server::default();
+    /// assert_eq!(server.get_sensors().len(), 2);
     /// ```
     pub fn get_sensors(&self) -> &SensorsList {
         &self.sensors
@@ -77,12 +97,44 @@ impl Server {
         self.sensors.push(sensor);
     }
 
+    /// Serialize in das Bincode format
+    pub fn serialize_to_bincode(&self) -> Result<Vec<u8>, ServerError> {
+        match bincode::serialize(&self) {
+            Ok(data) => Ok(data),
+            Err(err) => Err(ServerError::Bincode(err)),
+        }
+    }
+
+    fn store_runtime_information(&self) -> Result<(), ServerError> {
+        match &self.runtime_info_path {
+            Some(path) => {
+                let mut buffer = File::create(path)?;
+                info!("Create runtime info at: {:?}", path);
+                let bincode = &self.serialize_to_bincode()?;
+                buffer.write(bincode)?;
+                info!("Store server instance as bincode");
+                debug!(">> bincode: {:?}", bincode);
+                Ok(())
+            }
+            None => Err(ServerError::RuntimePathNotSet),
+        }
+    }
+
     pub fn start(&self) -> Result<(), ServerError> {
+        // Laufzeit Informationen speichern
+        self.store_runtime_information()?;
+
+        // Sensor Update Thread starten
         let server_update_guard = self.update_sensors();
 
+        // JSON Api (rocket) starten
         self.launch_api();
 
-        server_update_guard.join().expect("Fehler im Sensor Update Guard");
+        // Der Sensor Update Thread wird gejoint, somit läuft der Server solange dieser Thread
+        // läuft.
+        server_update_guard
+            .join()
+            .expect("Fehler im Sensor Update Guard");
 
         Ok(())
     }
@@ -93,9 +145,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn create() {
-        let settings = Settings::new();
-        let server = Server::new(&settings.unwrap());
+    fn new() {
+        let server = Server::new();
+        assert_eq!(server.service_interval, 0);
         assert_eq!(server.sensors.len(), 0);
+    }
+
+    #[test]
+    fn default() {
+        let server = Server::default();
+        assert_eq!(server.service_interval, 365);
+        assert_eq!(server.sensors.len(), 2);
     }
 }

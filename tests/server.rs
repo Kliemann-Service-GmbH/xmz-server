@@ -1,13 +1,23 @@
 extern crate xmz_server;
 
-use xmz_server::{Server, Settings};
+use xmz_server::prelude::*;
 
 #[test]
-fn server_create() {
-    let config = Settings::new().unwrap();
-    let server = Server::new(&config);
+fn new() {
+    let server = Server::new();
+
+    assert_eq!(server.service_interval, 0);
     assert_eq!(server.sensors.len(), 0);
 }
+
+#[test]
+fn default() {
+    let server = Server::default();
+
+    assert_eq!(server.service_interval, 365);
+    assert_eq!(server.sensors.len(), 2);
+}
+
 //
 // #[test]
 // fn server_update_sensors() {
