@@ -4,10 +4,10 @@
 //! Diese sitzt in der Regel auf einer Sensor Platine (`sensor`). Jeder Sensor hat mindestens eine
 //! Messzelle mit einem Wert und einem Mittelwert.
 
+use prelude::*;
 use std::fmt;
 use std::sync::{Arc, Mutex};
 use std::time::SystemTime;
-use prelude::*;
 
 mod error;
 pub mod metz_connect_analog_420;

@@ -1,9 +1,7 @@
-use ::messzelle::Messzelle as MesszelleIntern;
+use messzelle::Messzelle as MesszelleIntern;
 use std::time::SystemTime;
 
-
-#[derive(Clone, Debug)]
-#[derive(Serialize)]
+#[derive(Clone, Debug, Serialize)]
 pub struct Messzelle {
     messzelle_type: String,
     value: Option<(f64, SystemTime)>,

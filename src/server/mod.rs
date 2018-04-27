@@ -11,7 +11,6 @@ use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::thread;
 
-
 /// Liste der Sensoren
 ///
 /// Diese Liste ist ein `Vector` von shared (`Arc`), mutablen (`Mutex`)
@@ -19,8 +18,7 @@ use std::thread;
 pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 
 /// Struktur der Server Komponente
-#[derive(Clone)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Server {
     /// Wartungsintervall in Tagen
     pub service_interval: u32,
@@ -28,7 +26,7 @@ pub struct Server {
     #[serde(skip)]
     pub sensors: SensorsList,
     pub configuration_path: Option<PathBuf>,
-    pub runtime_info_path:  Option<PathBuf>,
+    pub runtime_info_path: Option<PathBuf>,
 }
 
 impl Default for Server {
@@ -41,7 +39,7 @@ impl Default for Server {
             ],
             // zones: vec![],
             configuration_path: None,
-            runtime_info_path:  None,
+            runtime_info_path: None,
         }
     }
 }
@@ -117,7 +115,7 @@ impl Server {
                 info!("Store server instance as bincode");
                 debug!(">> bincode: {:?}", bincode);
                 Ok(())
-            },
+            }
             None => Err(ServerError::RuntimePathNotSet),
         }
     }
@@ -134,12 +132,13 @@ impl Server {
 
         // Der Sensor Update Thread wird gejoint, somit läuft der Server solange dieser Thread
         // läuft.
-        server_update_guard.join().expect("Fehler im Sensor Update Guard");
+        server_update_guard
+            .join()
+            .expect("Fehler im Sensor Update Guard");
 
         Ok(())
     }
 }
-
 
 #[cfg(test)]
 mod tests {

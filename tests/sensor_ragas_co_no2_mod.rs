@@ -3,7 +3,6 @@ extern crate xmz_server;
 use std::sync::{Arc, Mutex};
 use xmz_server::prelude::*;
 
-
 #[test]
 fn sensor_get_messzelle() {
     let sensor = RaGasCONO2Mod::new();

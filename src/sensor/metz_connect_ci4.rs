@@ -67,7 +67,6 @@ impl Sensor for MetzConnectCI4 {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

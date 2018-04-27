@@ -1,20 +1,26 @@
-
-#[macro_use] extern crate configure;
-#[macro_use] extern crate log;
+#[macro_use]
+extern crate configure;
+#[macro_use]
+extern crate log;
 extern crate env_logger;
 extern crate xmz_server;
 
 use configure::Configure;
 use xmz_server::prelude::*;
 
-
 fn build_server(cfg: &Config) -> Result<Server, ServerError> {
     let server = if ServerBuilder::runtime_info_available(&cfg) {
-        info!("Laufzeit Information: `{:?}` gefunden", &cfg.runtime_info_path);
+        info!(
+            "Laufzeit Information: `{:?}` gefunden",
+            &cfg.runtime_info_path
+        );
         let server = ServerBuilder::from_runtime_info(&cfg)?;
         server
     } else if ServerBuilder::config_file_available(&cfg) {
-        info!("Konfigurationsdatei: `{:?}` gefunden", &cfg.configuration_path);
+        info!(
+            "Konfigurationsdatei: `{:?}` gefunden",
+            &cfg.configuration_path
+        );
         let builder = ServerBuilder::from_config_file(&cfg)?;
         builder.generate()
     } else {

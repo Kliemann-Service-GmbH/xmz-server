@@ -2,11 +2,10 @@ mod messzelle;
 mod sensor;
 mod server;
 
-use ::api::server::Server as ServerExtern;
-use ::server::Server as ServerIntern;
+use api::server::Server as ServerExtern;
 use rocket;
 use rocket::Rocket;
-
+use server::Server as ServerIntern;
 
 /// Konstruiert die Rocket Instanz
 ///
@@ -17,7 +16,6 @@ fn rocket(server: ServerExtern) -> Rocket {
         .mount("/sensors", routes![sensor::index])
         .manage(server)
 }
-
 
 /// Startet die json web api
 ///

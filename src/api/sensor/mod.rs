@@ -1,12 +1,10 @@
-use ::api::messzelle::Messzelle as MesszelleExtern;
-use ::api::server::Server as ServerExtern;
-use ::sensor::Sensor as SensorIntern;
-use rocket_contrib::Json;
+use api::messzelle::Messzelle as MesszelleExtern;
+use api::server::Server as ServerExtern;
 use rocket::State;
+use rocket_contrib::Json;
+use sensor::Sensor as SensorIntern;
 
-
-#[derive(Clone, Debug)]
-#[derive(Serialize)]
+#[derive(Clone, Debug, Serialize)]
 pub struct Sensor {
     sensor_type: String,
     messzellen: Vec<MesszelleExtern>,
@@ -42,14 +40,12 @@ impl<'a> From<&'a Box<SensorIntern + Send>> for Sensor {
     }
 }
 
-
-
 #[cfg(test)]
 mod test {
     use super::*;
     use api;
-    use rocket::local::Client;
     use rocket::http::Status;
+    use rocket::local::Client;
 
     #[test]
     fn index() {
@@ -61,7 +57,10 @@ mod test {
 
     #[test]
     fn get_messzellen() {
-        let sensor = Sensor { sensor_type: "Test Sensor".to_string(), messzellen: Vec::new(), };
+        let sensor = Sensor {
+            sensor_type: "Test Sensor".to_string(),
+            messzellen: Vec::new(),
+        };
         assert_eq!(sensor.get_messzellen().len(), 0);
     }
 }

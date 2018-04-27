@@ -2,7 +2,6 @@ extern crate xmz_server;
 
 use xmz_server::prelude::*;
 
-
 #[test]
 fn new() {
     let server = Server::new();

@@ -1,12 +1,11 @@
+use messzelle::{Messzelle, MesszelleError};
 use std::fmt;
 use std::time::Duration;
 use std::time::SystemTime;
-use messzelle::{Messzelle, MesszelleError};
 
 /// CO Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
 ///
-#[derive(Debug)]
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct MetzConnectCI4Analog420 {
     pub values: Vec<(f64, SystemTime)>,
     pub max_values_for_n_minutes: u64, // in Sekunden

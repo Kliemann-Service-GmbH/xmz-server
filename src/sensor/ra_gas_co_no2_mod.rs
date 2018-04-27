@@ -3,7 +3,6 @@ use sensor::Sensor;
 use std::fmt;
 use std::sync::{Arc, Mutex};
 
-
 /// RA-GAS GmbH CO/ NO₂ Kombisensor mit Modbus Interface
 ///
 /// Kombisensor für Kohlenmonoxid (CO) und Stickstoffdioxid (NO₂) mit Modbus Interface.

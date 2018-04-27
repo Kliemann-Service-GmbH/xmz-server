@@ -1,8 +1,7 @@
 //! Regel die wenn erfüllt, Ausgänge schaltet
 //!
 
-#[derive(Debug)]
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct Schwellwert {}
 
 impl Schwellwert {

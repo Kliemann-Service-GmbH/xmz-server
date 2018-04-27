@@ -17,19 +17,16 @@ use std::io::prelude::*;
 use std::path::PathBuf;
 use toml;
 
-
-#[derive(Debug)]
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 #[serde(rename = "server")]
 struct ServerFromConf {
     service_interval: u32,
 }
 
-#[derive(Debug)]
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct ServerBuilder {
     configuration_path: Option<PathBuf>,
-    runtime_info_path:  Option<PathBuf>,
+    runtime_info_path: Option<PathBuf>,
     server: ServerFromConf,
 }
 
@@ -45,11 +42,10 @@ impl From<ServerBuilder> for Server {
             service_interval: builder.server.service_interval,
             sensors: Vec::new(),
             configuration_path: builder.configuration_path,
-            runtime_info_path:  builder.runtime_info_path,
+            runtime_info_path: builder.runtime_info_path,
         }
     }
 }
-
 
 impl ServerBuilder {
     /// Testet ob die Datei mit den Laufzeitinformationen existiert
@@ -95,14 +91,13 @@ impl ServerBuilder {
         match toml::from_str::<ServerBuilder>(&s) {
             Ok(mut builder) => {
                 builder.configuration_path = Some(cfg.configuration_path.clone());
-                builder.runtime_info_path  = Some(cfg.runtime_info_path.clone());
+                builder.runtime_info_path = Some(cfg.runtime_info_path.clone());
                 Ok(builder)
-            },
+            }
             Err(err) => Err(ServerError::CouldNotBuildFromConfig(err)),
         }
     }
 }
-
 
 #[cfg(test)]
 mod test {

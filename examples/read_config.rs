@@ -1,12 +1,12 @@
-extern crate xmz_server;
 extern crate toml;
-#[macro_use] extern crate serde_derive;
+extern crate xmz_server;
+#[macro_use]
+extern crate serde_derive;
 
-use std::fs::File;
-use std::io::prelude::*;
 use std::error::Error;
 use std::fmt;
-
+use std::fs::File;
+use std::io::prelude::*;
 
 #[derive(Debug)]
 enum ConfigError {
@@ -17,8 +17,12 @@ enum ConfigError {
 impl fmt::Display for ConfigError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            ConfigError::ConfigurationNotFound(ref err) => write!(f, "Konfigurationsdatein nicht gefunden: {:?}", err),
-            ConfigError::ParseError(ref err) => write!(f, "Konnte Konfigurationsdatein nicht lesen: {:?}", err),
+            ConfigError::ConfigurationNotFound(ref err) => {
+                write!(f, "Konfigurationsdatein nicht gefunden: {:?}", err)
+            }
+            ConfigError::ParseError(ref err) => {
+                write!(f, "Konnte Konfigurationsdatein nicht lesen: {:?}", err)
+            }
         }
     }
 }
@@ -44,9 +48,6 @@ impl From<toml::de::Error> for ConfigError {
     }
 }
 
-
-
-
 #[derive(Debug, Deserialize)]
 struct ServerConfig {
     service_interval: i32,
@@ -58,15 +59,12 @@ struct Sensor {
 }
 
 #[derive(Debug, Deserialize)]
-struct Messzelle {
-
-}
+struct Messzelle {}
 #[derive(Debug, Deserialize)]
 struct Configuration {
     server: ServerConfig,
     sensors: Vec<Sensor>,
 }
-
 
 fn openconfig() -> Result<(), ConfigError> {
     let mut configfile = File::open("xmz-server.toml")?;

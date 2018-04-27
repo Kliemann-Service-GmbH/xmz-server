@@ -1,7 +1,6 @@
 //! Liste von zu schaltenden Ausgängen (`output`)
 
-#[derive(Debug)]
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct Action {}
 
 impl Action {
