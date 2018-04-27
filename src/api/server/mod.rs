@@ -56,7 +56,7 @@ mod test {
 
     #[test]
     fn index() {
-        let server = ::server::Server { service_interval: 1, sensors: vec![] };
+        let server = ::server::Server::new();
         let client = Client::new(api::rocket(server.into())).expect("valid rocket instance");
         let response = client.get("/").dispatch();
         assert_eq!(response.status(), Status::Ok);

@@ -12,13 +12,13 @@ use toml::de::Error as TomlError;
 ///
 #[derive(Debug)]
 pub enum ServerError {
-    /// Fehler beim Schalten eines Ausgangs
     Bincode(BincodeError),
     Configure(ConfigureError),
     CouldNotBuildFromConfig(TomlError),
     CouldNotBuildFromRuntime,
     IO(IOError),
     Output(OutputError),
+    RuntimePathNotSet,
     ServerBuilder,
 }
 
@@ -31,6 +31,7 @@ impl fmt::Display for ServerError {
             ServerError::CouldNotBuildFromRuntime => write!(f, "Could not build server from runtime information"),
             ServerError::IO(ref err) => write!(f, "IO Error: {}", err),
             ServerError::Output(ref err) => write!(f, "Output error: {}", err),
+            ServerError::RuntimePathNotSet => write!(f, "Runtime path not set"),
             ServerError::ServerBuilder => write!(f, "Server build error"),
         }
     }
@@ -45,6 +46,7 @@ impl Error for ServerError {
             ServerError::CouldNotBuildFromRuntime => "Maybe the runtime information file is not present, corrupt or not readable. Please check file access rights.",
             ServerError::IO(ref err) => err.description(),
             ServerError::Output(ref err) => err.description(),
+            ServerError::RuntimePathNotSet => "The runtime path is not set.",
             ServerError::ServerBuilder => "Server could not build",
         }
     }
@@ -57,6 +59,7 @@ impl Error for ServerError {
             ServerError::CouldNotBuildFromRuntime => None,
             ServerError::IO(ref err) => Some(err),
             ServerError::Output(ref err) => Some(err),
+            ServerError::RuntimePathNotSet => None,
             ServerError::ServerBuilder => None,
         }
     }

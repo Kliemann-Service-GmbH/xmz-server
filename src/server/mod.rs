@@ -1,10 +1,13 @@
 //! Kernkomponente dieser Anwendung
 //!
 use api;
-use bincode::serialize;
+use bincode;
 use error::ServerError;
 use prelude::*;
 use sensor::BoxedSensor;
+use std::fs::File;
+use std::io::Write;
+use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::thread;
 
@@ -24,6 +27,8 @@ pub struct Server {
     /// Liste der Sensoren die dieser Server verwaltet
     #[serde(skip)]
     pub sensors: SensorsList,
+    pub configuration_path: Option<PathBuf>,
+    pub runtime_info_path:  Option<PathBuf>,
 }
 
 impl Default for Server {
@@ -35,6 +40,8 @@ impl Default for Server {
                 Arc::new(Mutex::new(Box::new(MetzConnectCI4::new()))),
             ],
             // zones: vec![],
+            configuration_path: None,
+            runtime_info_path:  None,
         }
     }
 }
@@ -45,6 +52,7 @@ impl Server {
         Server {
             service_interval: 0,
             sensors: Vec::new(),
+            ..Default::default()
         }
     }
 
@@ -93,15 +101,24 @@ impl Server {
 
     /// Serialize in das Bincode format
     pub fn serialize_to_bincode(&self) -> Result<Vec<u8>, ServerError> {
-        match serialize(&self) {
+        match bincode::serialize(&self) {
             Ok(data) => Ok(data),
             Err(err) => Err(ServerError::Bincode(err)),
         }
     }
 
     fn store_runtime_information(&self) -> Result<(), ServerError> {
-        println!("Bincode: {:?}", &self.serialize_to_bincode());
-        Ok(())
+        match &self.runtime_info_path {
+            Some(path) => {
+                let mut buffer = File::create(path)?;
+                info!("Create runtime info at: {:?}", path);
+                let bincode = &self.serialize_to_bincode()?;
+                buffer.write(bincode)?;
+                info!("Store server instance as: {:?}", bincode);
+                Ok(())
+            },
+            None => Err(ServerError::RuntimePathNotSet),
+        }
     }
 
     pub fn start(&self) -> Result<(), ServerError> {
