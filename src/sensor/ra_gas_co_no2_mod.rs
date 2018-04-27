@@ -61,7 +61,7 @@ impl fmt::Display for RaGasCONO2Mod {
 impl Sensor for RaGasCONO2Mod {
     // Update Sensor Platine via BUS
     fn update(&self) {
-        println!("\nUpdate Sensor: '{}'", &self);
+        debug!("Update Sensor: '{}'", &self);
         let messzellen = &self.messzellen.clone();
         for messzelle in messzellen {
             if let Ok(mut messzelle) = messzelle.lock() {
@@ -69,6 +69,11 @@ impl Sensor for RaGasCONO2Mod {
             }
         }
     }
+
+    fn get_messzellen(&self) -> &Vec<Arc<Mutex<BoxedMesszelle>>> {
+        &self.messzellen
+    }
+
     fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
         self.messzellen.get(num)
     }

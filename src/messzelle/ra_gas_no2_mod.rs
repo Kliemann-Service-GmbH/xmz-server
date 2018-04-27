@@ -1,12 +1,11 @@
+use messzelle::{Messzelle, MesszelleError};
 use std::fmt;
 use std::time::Duration;
 use std::time::SystemTime;
-use messzelle::{Messzelle, MesszelleError};
 
 /// NO2 Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
 ///
-#[derive(Debug)]
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct RaGasNO2Mod {
     pub values: Vec<(f64, SystemTime)>,
     pub max_values_for_n_minutes: u64, // in Sekunden
@@ -37,6 +36,10 @@ impl Messzelle for RaGasNO2Mod {
         self.values.last()
     }
 
+    fn get_values(&self) -> Vec<(f64, SystemTime)> {
+        self.values.clone()
+    }
+
     /// Mittelwert der letzten `min` Minuten
     ///
     /// # Examples
@@ -54,7 +57,6 @@ impl Messzelle for RaGasNO2Mod {
             timestamp.elapsed().unwrap() < Duration::from_secs(minutes)
         }) {
             values = values.split_off(index);
-            println!("index: {:?}", index);
         }
 
         // Spezialfall, nur noch ein Wert vorhanden. Hier muss nun geprüft werden ob dieser
@@ -102,7 +104,7 @@ impl Messzelle for RaGasNO2Mod {
         };
         self.values.push((last_value + 1.0, SystemTime::now()));
         self.shrink_values();
-        println!("|-- Update Messzelle: '{}'", &self);
+        debug!("|-- Update Messzelle: '{}'", &self);
     }
 
     /// Entfernt alle Wert/Zeistempel Paare die älter als `Messzelle::max_values_for_n_minutes` sind.

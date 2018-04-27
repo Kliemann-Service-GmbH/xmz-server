@@ -1,8 +1,7 @@
 //! Liste von Schwellwerten (`schwellwert`) und Aktionen (`aktion`)
 //!
 
-#[derive(Debug)]
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct Schaltpunkt {}
 
 impl Schaltpunkt {

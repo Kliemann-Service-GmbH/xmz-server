@@ -42,7 +42,7 @@ impl EvenCounter {
     }
 
     fn get_rand_duration(&self) -> u64 {
-        use rand::{Rng, thread_rng};
+        use rand::{thread_rng, Rng};
         let mut rng = thread_rng();
         rng.gen_range(0, 1000)
     }
@@ -53,7 +53,6 @@ impl Observable<u32> for EvenCounter {
         self.observers.push(observer);
     }
 }
-
 
 struct EvenObserver {
     name: String,
@@ -79,9 +78,11 @@ impl Observer for EvenObserver {
 
 fn main() {
     let mut foo = EvenCounter::new();
-    let (bar, baz, quux) = (Box::new(EvenObserver::new("bar".to_string())),
-                            Box::new(EvenObserver::new("baz".to_string())),
-                            Box::new(EvenObserver::new("quux".to_string())));
+    let (bar, baz, quux) = (
+        Box::new(EvenObserver::new("bar".to_string())),
+        Box::new(EvenObserver::new("baz".to_string())),
+        Box::new(EvenObserver::new("quux".to_string())),
+    );
 
     foo.register(bar);
     foo.register(baz);
