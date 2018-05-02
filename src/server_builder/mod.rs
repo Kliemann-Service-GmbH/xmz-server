@@ -10,6 +10,7 @@
 ///
 /// Siehe: [Dokumentation der 'xMZ-Plattform'](https://kliemann-service-gmbh.github.io/xmz-doc/
 use bincode;
+use configuration;
 use error::ServerError;
 use prelude::*;
 use std::fs::File;
@@ -17,17 +18,13 @@ use std::io::prelude::*;
 use std::path::PathBuf;
 use toml;
 
-#[derive(Debug, Deserialize)]
-#[serde(rename = "server")]
-struct ServerFromConf {
-    service_interval: u32,
-}
 
 #[derive(Debug, Deserialize)]
 pub struct ServerBuilder {
     configuration_path: Option<PathBuf>,
     runtime_info_path: Option<PathBuf>,
-    server: ServerFromConf,
+    server: configuration::Server,
+    sensors: Vec<configuration::Sensor>,
 }
 
 impl ServerBuilder {
@@ -38,9 +35,11 @@ impl ServerBuilder {
 
 impl From<ServerBuilder> for Server {
     fn from(builder: ServerBuilder) -> Server {
+        let sensors: Vec<Arc<Mutex<Box<Sensor + Send + 'static>>>> = vec![];
         Server {
             service_interval: builder.server.service_interval,
-            sensors: Vec::new(),
+            // sensors: sensors,
+            sensors: sensors,
             configuration_path: builder.configuration_path,
             runtime_info_path: builder.runtime_info_path,
         }
@@ -75,7 +74,7 @@ impl ServerBuilder {
 
         match bincode::deserialize(&s.as_bytes()) {
             Ok(server) => Ok(server),
-            Err(err) => Err(ServerError::CouldNotBuildFromRuntime),
+            Err(err) => Err(ServerError::CouldNotBuildFromRuntime(err)),
         }
     }
 

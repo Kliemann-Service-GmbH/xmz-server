@@ -14,7 +14,7 @@ pub enum ServerError {
     Bincode(BincodeError),
     Configure(ConfigureError),
     CouldNotBuildFromConfig(TomlError),
-    CouldNotBuildFromRuntime,
+    CouldNotBuildFromRuntime(BincodeError),
     IO(IOError),
     Output(OutputError),
     RuntimePathNotSet,
@@ -31,8 +31,8 @@ impl fmt::Display for ServerError {
             ServerError::CouldNotBuildFromConfig(ref err) => {
                 write!(f, "Could not build server from config file: {}", err)
             }
-            ServerError::CouldNotBuildFromRuntime => {
-                write!(f, "Could not build server from runtime information")
+            ServerError::CouldNotBuildFromRuntime(ref err) => {
+                write!(f, "Could not build server from runtime information: {}", err)
             }
             ServerError::IO(ref err) => write!(f, "IO Error: {}", err),
             ServerError::Output(ref err) => write!(f, "Output error: {}", err),
@@ -48,7 +48,7 @@ impl Error for ServerError {
             ServerError::Bincode(ref err) => err.description(),
             ServerError::Configure(ref err) => err.description(),
             ServerError::CouldNotBuildFromConfig(ref _err) => "Maybe the configuration file is not present, corrupt or not readable. Please check file access rights.",
-            ServerError::CouldNotBuildFromRuntime => "Maybe the runtime information file is not present, corrupt or not readable. Please check file access rights.",
+            ServerError::CouldNotBuildFromRuntime(ref _err) => "Maybe the runtime information file is not present, corrupt or not readable. Please check file access rights.",
             ServerError::IO(ref err) => err.description(),
             ServerError::Output(ref err) => err.description(),
             ServerError::RuntimePathNotSet => "The runtime path is not set.",
@@ -61,7 +61,7 @@ impl Error for ServerError {
             ServerError::Bincode(ref err) => Some(err),
             ServerError::Configure(ref err) => Some(err),
             ServerError::CouldNotBuildFromConfig(ref err) => Some(err),
-            ServerError::CouldNotBuildFromRuntime => None,
+            ServerError::CouldNotBuildFromRuntime(ref err) => Some(err),
             ServerError::IO(ref err) => Some(err),
             ServerError::Output(ref err) => Some(err),
             ServerError::RuntimePathNotSet => None,

@@ -49,6 +49,7 @@ extern crate toml;
 pub mod action; // Liste von zu schaltenden Ausgängen (`output`)
 mod api;
 mod config; // Konfiguration via Umgebungsvariablen: https://boats.gitlab.io/blog/post/2018-01-18-configure/
+mod configuration; // Datenstructur zur Erstellung des Servers aus der Konfiguration
 mod error;  // Mögliche Fehler die im Serverbetrieb auftreten können
 pub mod messzelle; // Einzelne Sensor Messzelle, sitzt in der Regel auf einer Sensor Platine (`sensor`)
 pub mod output; // Ausgänge die vom Server Prozess geschalten werden können (z.B. LEDs, Relais, IO Module)

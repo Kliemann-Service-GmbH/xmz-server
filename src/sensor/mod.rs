@@ -13,6 +13,22 @@ pub use self::ra_gas_co_no2_mod::RaGasCONO2Mod;
 pub type BoxedSensor = Box<Sensor + Send + 'static>;
 pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 
+
+/// Verfügbare Sensor Typen
+///
+/// Von der 'xMZ-Plattform' unterstützte Sensor Module.
+/// Ein Sensor Modul beherbergt eine oder mehrere `Messzellen` sowie ein BUS Interface über das der
+/// Sensor mit der Zentrale verbunden ist (Modbus RTU/ TCP/IP).
+///
+#[derive(Debug, Deserialize)]
+pub enum SensorType {
+    #[serde(rename="Metz Connect CI4 Modul")]
+    MetzConnectCI4,
+    #[serde(rename="RA-GAS GmbH CO/ NO₂ Kombisensor mit Modbus Interface")]
+    RaGasCONO2Mod,
+}
+
+
 /// Trait das die Eigenschaften aller Sensoren beschreibt.
 ///
 /// Jeder Sensor kann meherer Messzellen besitzen. So verfügt beispielsweise der
