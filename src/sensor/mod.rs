@@ -20,12 +20,14 @@ pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 /// Ein Sensor Modul beherbergt eine oder mehrere `Messzellen` sowie ein BUS Interface über das der
 /// Sensor mit der Zentrale verbunden ist (Modbus RTU/ TCP/IP).
 ///
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub enum SensorType {
     #[serde(rename="Metz Connect CI4 Modul")]
     MetzConnectCI4,
     #[serde(rename="RA-GAS GmbH CO/ NO₂ Kombisensor mit Modbus Interface")]
     RaGasCONO2Mod,
+    #[serde(rename="Test Sensor")]
+    TestSensor,
 }
 
 
@@ -39,6 +41,10 @@ pub trait Sensor: fmt::Debug + fmt::Display {
     ///
     /// In dieser Funktion sollten auch die Werte (`values`) der Messzellen aktualisiert werden.
     fn update(&self);
+
+    /// Gibt den Sensor Type wieder
+    ///
+    fn get_sensor_type(&self) -> SensorType;
 
     /// Liefert eine Referenz auf den Vector der Messzellen
     ///

@@ -1,4 +1,4 @@
-//! Objekt Representation aus Konfigurationsdatei
+//! Objekt Representation aus der Laufzeitinformation
 mod messzelle;
 mod sensor;
 mod server;

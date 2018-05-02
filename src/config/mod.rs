@@ -15,3 +15,13 @@ impl Default for Config {
         }
     }
 }
+
+impl Config {
+    /// Testet ob die Datei mit den Laufzeitinformationen existiert
+    ///
+    ///  Diese Funktion liefert auch `false` wenn auf die Datei nicht zugegriffen werden kann,
+    ///  z.B. durch fehlende Berechtigungen.
+    pub fn runtime_info_available(&self) -> bool {
+        self.runtime_info_path.exists()
+    }
+}

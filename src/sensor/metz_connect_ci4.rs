@@ -1,5 +1,5 @@
 use messzelle::{BoxedMesszelle, MesszellenList, MetzConnectCI4Analog420};
-use sensor::Sensor;
+use sensor::{Sensor, SensorType};
 use std::fmt;
 use std::sync::{Arc, Mutex};
 
@@ -11,6 +11,8 @@ use std::sync::{Arc, Mutex};
 ///
 #[derive(Debug)]
 pub struct MetzConnectCI4 {
+    /// Sensor Type
+    pub sensor_type: SensorType,
     /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
     pub messzellen: MesszellenList,
 }
@@ -30,6 +32,7 @@ impl Default for MetzConnectCI4 {
         let messzelle4 = MetzConnectCI4Analog420::new();
 
         MetzConnectCI4 {
+            sensor_type: SensorType::MetzConnectCI4,
             messzellen: vec![
                 Arc::new(Mutex::new(Box::new(messzelle1))),
                 Arc::new(Mutex::new(Box::new(messzelle2))),
@@ -56,6 +59,10 @@ impl Sensor for MetzConnectCI4 {
                 messzelle.update()
             }
         }
+    }
+
+    fn get_sensor_type(&self) -> SensorType {
+        self.sensor_type.clone()
     }
 
     fn get_messzellen(&self) -> &Vec<Arc<Mutex<BoxedMesszelle>>> {

@@ -6,7 +6,7 @@ use sensor;
 
 #[derive(Clone, Debug, Serialize)]
 pub struct Sensor {
-    sensor_type: String,
+    sensor_type: sensor::SensorType,
     messzellen: Vec<api::messzelle::Messzelle>,
 }
 impl Sensor {
@@ -30,12 +30,9 @@ impl<'a> From<&'a Box<sensor::Sensor + Send>> for Sensor {
                 messzellen.push((&*messzelle).into())
             }
         }
-        // Sensor Typ auslesen und setzen
-        let sensor_type = format!("{}", sensor);
-
         Sensor {
             messzellen: messzellen,
-            sensor_type: sensor_type,
+            sensor_type: sensor.get_sensor_type(),
         }
     }
 }
@@ -58,7 +55,7 @@ mod test {
     #[test]
     fn get_messzellen() {
         let sensor = Sensor {
-            sensor_type: "Test Sensor".to_string(),
+            sensor_type: sensor::SensorType::TestSensor,
             messzellen: Vec::new(),
         };
         assert_eq!(sensor.get_messzellen().len(), 0);

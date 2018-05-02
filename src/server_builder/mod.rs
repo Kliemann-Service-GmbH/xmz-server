@@ -35,13 +35,11 @@ impl ServerBuilder {
 
 impl From<ServerBuilder> for Server {
     fn from(builder: ServerBuilder) -> Server {
-        let sensors: Vec<Arc<Mutex<Box<Sensor + Send + 'static>>>> = vec![];
         Server {
             service_interval: builder.server.service_interval,
-            // sensors: sensors,
-            sensors: sensors,
             configuration_path: builder.configuration_path,
             runtime_info_path: builder.runtime_info_path,
+            sensors: vec![],
         }
     }
 }
