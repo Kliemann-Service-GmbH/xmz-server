@@ -24,4 +24,30 @@ impl Config {
     pub fn runtime_info_available(&self) -> bool {
         self.runtime_info_path.exists()
     }
+
+    /// Testet ob die Konfigurationsdatei existiert
+    ///
+    ///  Diese Funktion liefert auch `false` wenn auf die Datei nicht zugegriffen werden kann,
+    ///  z.B. durch fehlende Berechtigungen.
+    pub fn config_file_available(&self) -> bool {
+        self.configuration_path.exists()
+    }
+
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn runtime_info_available() {
+        let cfg = Config::default();
+        assert_eq!(cfg.runtime_info_available(), false);
+    }
+
+    #[test]
+    fn config_file_available() {
+        let cfg = Config::default();
+        assert_eq!(cfg.config_file_available(), false);
+    }
 }

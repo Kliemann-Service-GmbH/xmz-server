@@ -8,21 +8,26 @@ extern crate xmz_server;
 use configure::Configure;
 use xmz_server::prelude::*;
 
+
+/// Konstruiert aus der initialen Konfiguration eine Server Instanz
+///
 fn build_server(cfg: &Config) -> Result<Server, ServerError> {
-    let server = if ServerBuilder::runtime_info_available(&cfg) {
+    // Wenn die konfiguriert Laufzeitinformation gefunden wurde ...
+    let server = if cfg.runtime_info_available() {
         info!(
             "Laufzeit Information: `{:?}` gefunden",
             &cfg.runtime_info_path
         );
-        let server = ServerBuilder::from_runtime_info(&cfg)?;
-        server
-    } else if ServerBuilder::config_file_available(&cfg) {
+        // ... builde den Server
+        let server = runtime_info::Server::from_runtime_info(&cfg)?;
+        server.into()
+    } else if cfg.config_file_available() {
         info!(
             "Konfigurationsdatei: `{:?}` gefunden",
             &cfg.configuration_path
         );
-        let builder = ServerBuilder::from_config_file(&cfg)?;
-        builder.generate()
+        let server = configuration::Server::from_config_file(&cfg)?;
+        server.into()
     } else {
         // Ansonnsten Server mit `Default::default()` Werten
         warn!("Weder Laufzeit Information noch Konfigurationsdatei gefunden, verwende Default Test Server");
