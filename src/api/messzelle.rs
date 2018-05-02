@@ -1,4 +1,4 @@
-use messzelle::Messzelle as MesszelleIntern;
+use messzelle;
 use std::time::SystemTime;
 
 #[derive(Clone, Debug, Serialize)]
@@ -13,8 +13,8 @@ pub struct Messzelle {
 //     Json()
 // }
 
-impl<'a> From<&'a Box<MesszelleIntern + Send>> for Messzelle {
-    fn from(messzelle: &'a Box<MesszelleIntern + Send>) -> Self {
+impl<'a> From<&'a Box<messzelle::Messzelle + Send>> for Messzelle {
+    fn from(messzelle: &'a Box<messzelle::Messzelle + Send>) -> Self {
         // Wert aus der Referenz auspacken
         let value = match messzelle.value() {
             Some(ref x) => Some(**x),

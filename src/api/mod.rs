@@ -2,15 +2,15 @@ mod messzelle;
 mod sensor;
 mod server;
 
-use api::server::Server as ServerExtern;
+use api;
 use rocket;
 use rocket::Rocket;
-use server::Server as ServerIntern;
+
 
 /// Konstruiert die Rocket Instanz
 ///
 /// Diese Funktion wird auch in den Unti Tests der Api Untermodule aufgerufen
-fn rocket(server: ServerExtern) -> Rocket {
+fn rocket(server: api::server::Server) -> Rocket {
     rocket::ignite()
         .mount("/", routes![server::index])
         .mount("/sensors", routes![sensor::index])
@@ -19,6 +19,8 @@ fn rocket(server: ServerExtern) -> Rocket {
 
 /// Startet die json web api
 ///
-pub fn launch(server: ServerIntern) {
+/// Diese statische Funktion `launch` erwartet eine Server Instanz, diese wird dann bei der
+/// Übergabe an die `rocket` Funktion in eine `api::server::Server` Instanz konvertiert.
+pub fn launch(server: ::server::Server) {
     rocket(server.into()).launch();
 }
