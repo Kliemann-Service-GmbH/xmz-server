@@ -24,20 +24,20 @@ pub enum ServerError {
 impl fmt::Display for ServerError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            ServerError::Bincode(ref err) => write!(f, "Bincode serialisation error: {}", err),
+            ServerError::Bincode(ref err) => write!(f, "Fehler in der Bincode Serialisation: {}", err),
             ServerError::Configure(ref err) => {
-                write!(f, "Could not deserialize configuration: {}", err)
+                write!(f, "Konnte Konfiguration nicht Deserialisieren: {}", err)
             }
             ServerError::CouldNotBuildFromConfig(ref err) => {
-                write!(f, "Could not build server from config file: {}", err)
+                write!(f, "Konnte keine Server Instanz aus der Konfigurationsdatei erzeugen: {}", err)
             }
             ServerError::CouldNotBuildFromRuntime(ref err) => {
-                write!(f, "Could not build server from runtime information: {}", err)
+                write!(f, "Konnte keine Server Instanz aus der Laufzeitinformationen erzeugen: {}", err)
             }
-            ServerError::IO(ref err) => write!(f, "IO Error: {}", err),
-            ServerError::Output(ref err) => write!(f, "Output error: {}", err),
-            ServerError::RuntimePathNotSet => write!(f, "Runtime path not set"),
-            ServerError::ServerBuilder => write!(f, "Server build error"),
+            ServerError::IO(ref err) => write!(f, "IO Fehler: {}", err),
+            ServerError::Output(ref err) => write!(f, "Output Fehler: {}", err),
+            ServerError::RuntimePathNotSet => write!(f, "Pfad der Laufzeitinformation nicht gesetzt"),
+            ServerError::ServerBuilder => write!(f, "Fehler im Serverbuilder"),
         }
     }
 }
@@ -47,12 +47,12 @@ impl Error for ServerError {
         match *self {
             ServerError::Bincode(ref err) => err.description(),
             ServerError::Configure(ref err) => err.description(),
-            ServerError::CouldNotBuildFromConfig(ref _err) => "Maybe the configuration file is not present, corrupt or not readable. Please check file access rights.",
-            ServerError::CouldNotBuildFromRuntime(ref _err) => "Maybe the runtime information file is not present, corrupt or not readable. Please check file access rights.",
+            ServerError::CouldNotBuildFromConfig(ref _err) => "Die Konfigurationsdatei konnte nicht gelesen werden. Evtl. stimmen die Dateiberechtigungen nicht, oder die Datei ist defekt.",
+            ServerError::CouldNotBuildFromRuntime(ref _err) => "Die Laufzeitinformationen konnten nicht gelesen werden. Evtl. stimmen die Dateiberechtigungen nicht, oder die Datei ist defekt.",
             ServerError::IO(ref err) => err.description(),
             ServerError::Output(ref err) => err.description(),
-            ServerError::RuntimePathNotSet => "The runtime path is not set.",
-            ServerError::ServerBuilder => "Server could not build",
+            ServerError::RuntimePathNotSet => "Pfad der Laufzeitinformation nicht gesetzt",
+            ServerError::ServerBuilder => "Server konnte nicht erstellt weden",
         }
     }
 
