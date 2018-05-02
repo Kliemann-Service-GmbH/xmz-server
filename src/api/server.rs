@@ -1,28 +1,27 @@
 //! Server Externe
 //!
 //! Dieses Modul beinhaltet die Externe Representation der Server Struktur
-
-use api::sensor::Sensor as SensorExtern;
-use api::server::Server as ServerExtern;
-use rocket::State;
+use api;
 use rocket_contrib::Json;
-use server::Server as ServerIntern;
+use rocket::State;
+use server;
+
 
 #[derive(Clone, Debug, Serialize)]
 pub struct Server {
     pub service_interval: u32,
-    pub sensors: Vec<SensorExtern>,
+    pub sensors: Vec<api::sensor::Sensor>,
 }
 
 impl Server {
-    pub fn get_sensors(&self) -> &Vec<SensorExtern> {
+    pub fn get_sensors(&self) -> &Vec<api::sensor::Sensor> {
         &self.sensors
     }
 }
 
-impl From<ServerIntern> for Server {
-    fn from(server: ServerIntern) -> Self {
-        let mut sensors: Vec<SensorExtern> = Vec::new();
+impl From<server::Server> for Server {
+    fn from(server: server::Server) -> Self {
+        let mut sensors: Vec<api::sensor::Sensor> = Vec::new();
         for sensor in server.get_sensors() {
             if let Ok(sensor) = sensor.lock() {
                 sensors.push((&*sensor).into());
@@ -37,7 +36,7 @@ impl From<ServerIntern> for Server {
 }
 
 #[get("/")]
-fn index(server: State<ServerExtern>) -> Json<ServerExtern> {
+fn index(server: State<api::server::Server>) -> Json<api::server::Server> {
     Json(server.clone())
 }
 
