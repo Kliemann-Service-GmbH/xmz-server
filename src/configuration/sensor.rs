@@ -17,3 +17,21 @@ impl From<Sensor> for ::sensor::RaGasCONO2Mod {
         }
     }
 }
+
+impl From<Sensor> for ::sensor::MetzConnectCI4 {
+    fn from(sensor: Sensor) -> Self {
+        ::sensor::MetzConnectCI4 {
+            sensor_type: ::sensor::SensorType::MetzConnectCI4,
+            messzellen: Vec::new(),
+        }
+    }
+}
+
+impl From<Sensor> for ::sensor::TestSensor {
+    fn from(sensor: Sensor) -> Self {
+        ::sensor::TestSensor {
+            sensor_type: ::sensor::SensorType::TestSensor,
+            messzellen: Vec::new(),
+        }
+    }
+}
