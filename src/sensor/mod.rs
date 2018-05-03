@@ -33,7 +33,6 @@ pub enum SensorType {
     TestSensor,
 }
 
-
 /// Trait das die Eigenschaften aller Sensoren beschreibt.
 ///
 /// Jeder Sensor kann meherer Messzellen besitzen. So verfügt beispielsweise der

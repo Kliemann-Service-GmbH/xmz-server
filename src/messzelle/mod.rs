@@ -14,6 +14,7 @@ pub mod metz_connect_analog_420;
 pub mod ra_gas_co_mod;
 pub mod ra_gas_no2_mod;
 
+// Reexports
 pub use self::error::MesszelleError;
 pub use self::metz_connect_analog_420::MetzConnectCI4Analog420;
 pub use self::ra_gas_co_mod::RaGasCOMod;
@@ -22,6 +23,20 @@ pub use self::ra_gas_no2_mod::RaGasNO2Mod;
 pub type BoxedMesszelle = Box<Messzelle + Send + 'static>;
 pub type MesszellenList = Vec<Arc<Mutex<BoxedMesszelle>>>;
 pub type MesszellenRefList<'a> = Vec<&'a Messzelle>;
+
+
+/// Verfügbare Messzellen Typen
+///
+///
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub enum MesszelleType {
+    #[serde(rename="RA-GAS GmbH NO₂")]
+    RaGasNO2,
+    #[serde(rename="RA-GAS GmbH CO")]
+    RaGasCO,
+    #[serde(rename="Analog 4-20mA")]
+    Analog420mA,
+}
 
 /// Basis Trait das die Eigenschaften einer Messzelle beschreibt
 ///
@@ -37,7 +52,21 @@ pub trait Messzelle: AsAny + fmt::Debug + fmt::Display {
     /// Ist kein Messwert vorhanden wird `None` zurückgegeben.
     fn value(&self) -> Option<&(f64, SystemTime)>;
 
+    /// Liefert alle Werte zurück
+    ///
+    /// Jede Messzelle verfügt über ein Liste mit einem oder mehreren Paaren, Messwerten und den
+    /// Timestamps die bei der Ermittlung dieses Messwertes erstellt werden.
+    /// Die Implementierung der `get_values()` Funktion muss alle dieser Wertepaare, in
+    /// einem Vector zurück geben.
     fn get_values(&self) -> Vec<(f64, SystemTime)>;
+
+    /// Liefert den Typ der Messzelle
+    ///
+    /// Der Typ der Messzelle kann in der Konfigurationsdatei nur als String angegben
+    /// werden.
+    /// Zudem ist der Typ aus den Trait Objekten nicht einfach zu ermitteln. Analog zu
+    /// den Sensoren ist dieser Memeber eine Art Krückstock.
+    fn get_messzelle_type(&self) -> MesszelleType;
 
     /// Mittelwert der letzten `min` Minuten
     ///

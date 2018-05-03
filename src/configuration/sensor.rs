@@ -1,16 +1,13 @@
-use sensor::SensorType;
-use configuration;
-
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Sensor {
     id: u32,
-    pub sensor_type: SensorType,
-    messzellen: Vec<configuration::Messzelle>,
+    pub sensor_type: ::sensor::SensorType,
+    messzellen: Vec<::configuration::Messzelle>,
 }
 
 impl From<Sensor> for ::sensor::RaGasCONO2Mod {
-    fn from(sensor: Sensor) -> Self {
+    fn from(_sensor: Sensor) -> Self {
         ::sensor::RaGasCONO2Mod {
             sensor_type: ::sensor::SensorType::RaGasCONO2Mod,
             messzellen: Vec::new(),
@@ -19,7 +16,7 @@ impl From<Sensor> for ::sensor::RaGasCONO2Mod {
 }
 
 impl From<Sensor> for ::sensor::MetzConnectCI4 {
-    fn from(sensor: Sensor) -> Self {
+    fn from(_sensor: Sensor) -> Self {
         ::sensor::MetzConnectCI4 {
             sensor_type: ::sensor::SensorType::MetzConnectCI4,
             messzellen: Vec::new(),
@@ -28,10 +25,30 @@ impl From<Sensor> for ::sensor::MetzConnectCI4 {
 }
 
 impl From<Sensor> for ::sensor::TestSensor {
-    fn from(sensor: Sensor) -> Self {
+    fn from(_sensor: Sensor) -> Self {
         ::sensor::TestSensor {
             sensor_type: ::sensor::SensorType::TestSensor,
             messzellen: Vec::new(),
+        }
+    }
+}
+
+/// Konvertierung von den Sensor Trait Objekten `server::Sensor`
+///
+///
+impl<'a> From<&'a Box<::sensor::Sensor + Send>> for Sensor {
+    fn from(sensor: &'a Box<::sensor::Sensor + Send>) -> Self {
+        // Kontruiere Messzellen
+        let mut messzellen: Vec<::configuration::Messzelle> = vec![];
+        for messzelle in sensor.get_messzellen() {
+            if let Ok(messzelle) = messzelle.lock() {
+                messzellen.push((&*messzelle).into())
+            }
+        }
+        Sensor {
+            id: 0,
+            messzellen: messzellen,
+            sensor_type: sensor.get_sensor_type(),
         }
     }
 }

@@ -1,4 +1,3 @@
-use configuration;
 use config::Config;
 use error::ServerError;
 use std::fs::File;
@@ -8,15 +7,16 @@ use toml;
 use std::sync::{Arc, Mutex};
 
 
+/// Server Representation zum Speichern/ Wiederherstellen einer Konfigurationsdatei
+///
 #[derive(Debug, Deserialize)]
 pub struct Server {
     pub service_interval: u32,
-    pub sensors: Vec<configuration::sensor::Sensor>,
+    pub sensors: Vec<::configuration::sensor::Sensor>,
     #[serde(skip)]
-    configuration_path: Option<PathBuf>,
+    pub configuration_path: Option<PathBuf>,
     #[serde(skip)]
-    runtime_info_path: Option<PathBuf>,
-
+    pub runtime_info_path: Option<PathBuf>,
 }
 
 impl Server {
@@ -40,7 +40,9 @@ impl Server {
     }
 }
 
-
+/// Konvertierung des `configuration::Server` nach `server::Server`
+///
+/// Stellt den `server::Server` aus den Daten der Konfigurationsdatei wieder her.
 impl From<Server> for ::server::Server {
     fn from(server: Server) -> Self {
         let mut sensors: Vec<Arc<Mutex<Box<::sensor::Sensor + Send + 'static>>>> = vec![];

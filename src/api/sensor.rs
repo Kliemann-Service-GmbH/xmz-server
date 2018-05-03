@@ -21,6 +21,10 @@ fn index(server: State<api::server::Server>) -> Json<Vec<Sensor>> {
     Json(server.clone().get_sensors().clone())
 }
 
+
+/// Konvertierung von den Sensor Trait Objekten `server::Sensor`
+///
+///
 impl<'a> From<&'a Box<sensor::Sensor + Send>> for Sensor {
     fn from(sensor: &'a Box<sensor::Sensor + Send>) -> Self {
         // Kontruiere Messzellen

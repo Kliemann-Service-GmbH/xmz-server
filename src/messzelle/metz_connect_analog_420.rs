@@ -1,12 +1,14 @@
-use messzelle::{Messzelle, MesszelleError};
+use messzelle::{Messzelle, MesszelleError, MesszelleType};
 use std::fmt;
 use std::time::Duration;
 use std::time::SystemTime;
 
-/// CO Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
+// FIXME: Public members checken
+/// CO Messzelle eines 'RA-GAS GmbH CO/ NO2 Kombisensor mit Modbus Interface'
 ///
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct MetzConnectCI4Analog420 {
+    messzelle_type: MesszelleType,
     pub values: Vec<(f64, SystemTime)>,
     pub max_values_for_n_minutes: u64, // in Sekunden
 }
@@ -14,6 +16,7 @@ pub struct MetzConnectCI4Analog420 {
 impl MetzConnectCI4Analog420 {
     pub fn new() -> Self {
         MetzConnectCI4Analog420 {
+            messzelle_type: MesszelleType::Analog420mA,
             values: vec![],
             // max_values_for_n_minutes: 5 * 60 * 60,    // Normale Messzellen arbeiten mit Minuten Werten
             max_values_for_n_minutes: 5, // Simulator Messzellen arbeiten mit Sekunden Werten
@@ -25,21 +28,47 @@ impl Messzelle for MetzConnectCI4Analog420 {
     /// Aktueller Messzelle Wert und Timestamp der Ermittlung
     ///
     /// # Examples
-    /// ```
+    ///
+    /// ```rust
     /// assert!(true);
     /// ```
     fn value(&self) -> Option<&(f64, SystemTime)> {
         self.values.last()
     }
 
+    /// Liefert alle Werte der Messzelle
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = MetzConnectCI4Analog420;
+    /// assert!(messzelle.get_values().is_none());
+    /// ```
     fn get_values(&self) -> Vec<(f64, SystemTime)> {
         self.values.clone()
+    }
+
+    /// Liefert den Typ der Messzelle
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = MetzConnectCI4Analog420::new();
+    /// assert_eq!(messzelle.get_messzelle_type(), MesszelleType::Analog420mA);
+    /// ```
+    fn get_messzelle_type(&self) -> MesszelleType {
+        self.messzelle_type.clone()
     }
 
     /// Mittelwert der letzten `min` Minuten
     ///
     /// # Examples
-    /// ```
+    ///
+    /// ```rust
     /// assert!(true);
     /// ```
     fn average(&self, minutes: u64) -> Result<f64, MesszelleError> {
@@ -82,7 +111,8 @@ impl Messzelle for MetzConnectCI4Analog420 {
     /// Aktuellen Messzellewert ermitteln und speichern.
     ///
     /// # Examples
-    /// ```
+    ///
+    /// ```rust
     /// assert!(true);
     /// ```
     fn update(&mut self) {
@@ -106,7 +136,8 @@ impl Messzelle for MetzConnectCI4Analog420 {
     ///
     ///
     /// # Examples
-    /// ```
+    ///
+    /// ```rust
     /// assert!(true);
     /// ```
     fn shrink_values(&mut self) {

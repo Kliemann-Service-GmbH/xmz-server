@@ -17,6 +17,7 @@ use std::thread;
 /// Sensor Trait Objekten (`BoxedSensor`).
 pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 
+
 /// Struktur der Server Komponente
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Server {
@@ -36,6 +37,7 @@ impl Default for Server {
             sensors: vec![
                 Arc::new(Mutex::new(Box::new(RaGasCONO2Mod::new()))),
                 Arc::new(Mutex::new(Box::new(MetzConnectCI4::new()))),
+                Arc::new(Mutex::new(Box::new(TestSensor::new()))),
             ],
             // zones: vec![],
             configuration_path: None,
@@ -99,7 +101,10 @@ impl Server {
 
     /// Serialize in das Bincode format
     pub fn serialize_to_bincode(&self) -> Result<Vec<u8>, ServerError> {
-        match bincode::serialize(&self) {
+        let server: runtime_info::Server = self.clone().into();
+        println!(">> {:?}", server);
+
+        match bincode::serialize(&server) {
             Ok(data) => Ok(data),
             Err(err) => Err(ServerError::Bincode(err)),
         }
@@ -139,6 +144,27 @@ impl Server {
         Ok(())
     }
 }
+
+/// Konvertiere Laufzeit Representation des Servers
+impl From<Server> for ::runtime_info::Server {
+    fn from(server: Server) -> Self {
+        let mut sensors: Vec<runtime_info::Sensor> = Vec::new();
+        for sensor in server.get_sensors() {
+            if let Ok(sensor) = sensor.lock() {
+                sensors.push((&*sensor).into());
+            }
+        }
+
+        ::runtime_info::Server {
+            service_interval: server.service_interval,
+            sensors: sensors,
+            configuration_path: server.configuration_path,
+            runtime_info_path: server.runtime_info_path,
+        }
+    }
+}
+
+
 
 #[cfg(test)]
 mod tests {

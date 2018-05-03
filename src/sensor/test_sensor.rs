@@ -1,4 +1,4 @@
-use messzelle::{BoxedMesszelle, MesszellenList, RaGasCOMod, RaGasNO2Mod};
+use messzelle::{BoxedMesszelle, MesszellenList};
 use sensor::{Sensor, SensorType};
 use std::fmt;
 use std::sync::{Arc, Mutex};

@@ -1,12 +1,13 @@
-use messzelle::{Messzelle, MesszelleError};
+use messzelle::{Messzelle, MesszelleError, MesszelleType};
 use std::fmt;
 use std::time::Duration;
 use std::time::SystemTime;
 
 /// NO2 Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
 ///
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct RaGasNO2Mod {
+    messzelle_type: MesszelleType,
     pub values: Vec<(f64, SystemTime)>,
     pub max_values_for_n_minutes: u64, // in Sekunden
 }
@@ -14,6 +15,7 @@ pub struct RaGasNO2Mod {
 impl RaGasNO2Mod {
     pub fn new() -> Self {
         RaGasNO2Mod {
+            messzelle_type: MesszelleType::RaGasNO2,
             values: vec![],
             // max_values_for_n_minutes: 5 * 60 * 60,    // Normale Messzellen arbeiten mit Minuten Werten
             max_values_for_n_minutes: 5, // Simulator Messzellen arbeiten mit Sekunden Werten
@@ -27,7 +29,7 @@ impl Messzelle for RaGasNO2Mod {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
+    /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasNO2Mod::new();
     /// assert!(messzelle.value().is_none());
@@ -36,8 +38,32 @@ impl Messzelle for RaGasNO2Mod {
         self.values.last()
     }
 
+    /// Liefert alle Werte der Messzelle
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = RaGasNO2Mod;
+    /// assert!(messzelle.get_values().is_none());
+    /// ```
     fn get_values(&self) -> Vec<(f64, SystemTime)> {
         self.values.clone()
+    }
+
+    /// Liefert den Typ der Messzelle
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = MetzConnectCI4Analog420::new();
+    /// assert_eq!(messzelle.get_messzelle_type(), MesszelleType::Analog420mA);
+    /// ```
+    fn get_messzelle_type(&self) -> MesszelleType {
+        self.messzelle_type.clone()
     }
 
     /// Mittelwert der letzten `min` Minuten
@@ -45,7 +71,7 @@ impl Messzelle for RaGasNO2Mod {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
+    /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasNO2Mod::new();
     /// assert!(messzelle.value().is_none());
@@ -92,7 +118,7 @@ impl Messzelle for RaGasNO2Mod {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
+    /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasNO2Mod::new();
     /// assert!(messzelle.value().is_none());
@@ -120,7 +146,7 @@ impl Messzelle for RaGasNO2Mod {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
+    /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasNO2Mod::new();
     /// assert!(messzelle.value().is_none());
@@ -161,7 +187,7 @@ impl Messzelle for RaGasNO2Mod {
 
 impl fmt::Display for RaGasNO2Mod {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "NO2")
+        write!(f, "RA-GAS GmbH NO₂")
     }
 }
 

@@ -1,12 +1,13 @@
-use messzelle::{Messzelle, MesszelleError};
+use messzelle::{Messzelle, MesszelleError, MesszelleType};
 use std::fmt;
 use std::time::Duration;
 use std::time::SystemTime;
 
 /// CO Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
 ///
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct RaGasCOMod {
+    messzelle_type: MesszelleType,
     pub values: Vec<(f64, SystemTime)>,
     pub max_values_for_n_minutes: u64, // in Sekunden
 }
@@ -14,6 +15,7 @@ pub struct RaGasCOMod {
 impl RaGasCOMod {
     pub fn new() -> Self {
         RaGasCOMod {
+            messzelle_type: MesszelleType::RaGasCO,
             values: vec![],
             // max_values_for_n_minutes: 5 * 60 * 60,    // Normale Messzellen arbeiten mit Minuten Werten
             max_values_for_n_minutes: 5, // Simulator Messzellen arbeiten mit Sekunden Werten
@@ -25,6 +27,7 @@ impl Messzelle for RaGasCOMod {
     /// Aktueller Messzelle Wert und Timestamp der Ermittlung
     ///
     /// # Examples
+    ///
     /// ```
     /// assert!(true);
     /// ```
@@ -32,13 +35,38 @@ impl Messzelle for RaGasCOMod {
         self.values.last()
     }
 
+    /// Liefert alle Werte der Messzelle
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = RaGasCOMod;
+    /// assert!(messzelle.get_values().is_none());
+    /// ```
     fn get_values(&self) -> Vec<(f64, SystemTime)> {
         self.values.clone()
+    }
+
+    /// Liefert den Typ der Messzelle
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = MetzConnectCI4Analog420::new();
+    /// assert_eq!(messzelle.get_messzelle_type(), MesszelleType::Analog420mA);
+    /// ```
+    fn get_messzelle_type(&self) -> MesszelleType {
+        self.messzelle_type.clone()
     }
 
     /// Mittelwert der letzten `min` Minuten
     ///
     /// # Examples
+    ///
     /// ```
     /// assert!(true);
     /// ```
@@ -82,6 +110,7 @@ impl Messzelle for RaGasCOMod {
     /// Aktuellen Messzellewert ermitteln und speichern.
     ///
     /// # Examples
+    ///
     /// ```
     /// assert!(true);
     /// ```
@@ -106,6 +135,7 @@ impl Messzelle for RaGasCOMod {
     ///
     ///
     /// # Examples
+    ///
     /// ```
     /// assert!(true);
     /// ```
@@ -145,7 +175,7 @@ impl Messzelle for RaGasCOMod {
 
 impl fmt::Display for RaGasCOMod {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "CO")
+        write!(f, "RA-GAS GmbH CO")
     }
 }
 

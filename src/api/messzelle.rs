@@ -1,4 +1,3 @@
-use messzelle;
 use std::time::SystemTime;
 
 #[derive(Clone, Debug, Serialize)]
@@ -13,8 +12,10 @@ pub struct Messzelle {
 //     Json()
 // }
 
-impl<'a> From<&'a Box<messzelle::Messzelle + Send>> for Messzelle {
-    fn from(messzelle: &'a Box<messzelle::Messzelle + Send>) -> Self {
+/// Konvertierung der Messzellen Trait Objekte des Servers `::messzelle::Messzelle`
+///
+impl<'a> From<&'a Box<::messzelle::Messzelle + Send>> for Messzelle {
+    fn from(messzelle: &'a Box<::messzelle::Messzelle + Send>) -> Self {
         // Wert aus der Referenz auspacken
         let value = match messzelle.value() {
             Some(ref x) => Some(**x),
