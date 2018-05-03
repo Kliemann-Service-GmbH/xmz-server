@@ -13,9 +13,18 @@ pub struct RaGasCOMod {
 }
 
 impl RaGasCOMod {
+    /// Erstellt eine neue Messzelle
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = RaGasCOMod::new();
+    /// ```
     pub fn new() -> Self {
         RaGasCOMod {
-            messzelle_type: MesszelleType::RaGasCO,
+            messzelle_type: MesszelleType::RaGasCOMod,
             values: vec![],
             // max_values_for_n_minutes: 5 * 60 * 60,    // Normale Messzellen arbeiten mit Minuten Werten
             max_values_for_n_minutes: 5, // Simulator Messzellen arbeiten mit Sekunden Werten
@@ -28,8 +37,10 @@ impl Messzelle for RaGasCOMod {
     ///
     /// # Examples
     ///
-    /// ```
-    /// assert!(true);
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = RaGasCOMod::new();
     /// ```
     fn value(&self) -> Option<&(f64, SystemTime)> {
         self.values.last()
@@ -42,8 +53,8 @@ impl Messzelle for RaGasCOMod {
     /// ```rust
     /// use xmz_server::prelude::*;
     ///
-    /// let messzelle = RaGasCOMod;
-    /// assert!(messzelle.get_values().is_none());
+    /// let messzelle = RaGasCOMod::new();
+    /// assert_eq!(messzelle.get_values().len(), 0);
     /// ```
     fn get_values(&self) -> Vec<(f64, SystemTime)> {
         self.values.clone()
@@ -56,8 +67,8 @@ impl Messzelle for RaGasCOMod {
     /// ```rust
     /// use xmz_server::prelude::*;
     ///
-    /// let messzelle = MetzConnectCI4Analog420::new();
-    /// assert_eq!(messzelle.get_messzelle_type(), MesszelleType::Analog420mA);
+    /// let messzelle = RaGasCOMod::new();
+    /// assert_eq!(messzelle.get_messzelle_type(), MesszelleType::RaGasCOMod);
     /// ```
     fn get_messzelle_type(&self) -> MesszelleType {
         self.messzelle_type.clone()
@@ -67,8 +78,10 @@ impl Messzelle for RaGasCOMod {
     ///
     /// # Examples
     ///
-    /// ```
-    /// assert!(true);
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = RaGasCOMod::new();
     /// ```
     fn average(&self, minutes: u64) -> Result<f64, MesszelleError> {
         let mut values = self.values.clone();
@@ -111,8 +124,10 @@ impl Messzelle for RaGasCOMod {
     ///
     /// # Examples
     ///
-    /// ```
-    /// assert!(true);
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = RaGasCOMod::new();
     /// ```
     fn update(&mut self) {
         let last_value = match self.value() {
@@ -136,8 +151,10 @@ impl Messzelle for RaGasCOMod {
     ///
     /// # Examples
     ///
-    /// ```
-    /// assert!(true);
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = RaGasCOMod::new();
     /// ```
     fn shrink_values(&mut self) {
         // 1. Spezialfall, ist nur ein Wert/Zeitstempel Paar vorhanden muss dieses zuerst

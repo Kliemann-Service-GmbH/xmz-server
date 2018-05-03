@@ -68,7 +68,7 @@ mod tests {
     #[test]
     fn new() {
         let sensor = TestSensor::new();
-        assert_eq!(sensor.messzellen.len(), 2);
+        assert_eq!(sensor.messzellen.len(), 0);
     }
 
     #[test]

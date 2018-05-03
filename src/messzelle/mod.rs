@@ -29,13 +29,14 @@ pub type MesszellenRefList<'a> = Vec<&'a Messzelle>;
 ///
 ///
 #[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(PartialEq)]
 pub enum MesszelleType {
     #[serde(rename="RA-GAS GmbH NO₂")]
-    RaGasNO2,
+    RaGasNO2Mod,
     #[serde(rename="RA-GAS GmbH CO")]
-    RaGasCO,
-    #[serde(rename="Analog 4-20mA")]
-    Analog420mA,
+    RaGasCOMod,
+    #[serde(rename="Analog 4-20mA Sensor an Metz Connect DI4")]
+    MetzConnectCI4Analog420,
 }
 
 /// Basis Trait das die Eigenschaften einer Messzelle beschreibt

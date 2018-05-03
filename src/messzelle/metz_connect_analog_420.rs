@@ -14,9 +14,18 @@ pub struct MetzConnectCI4Analog420 {
 }
 
 impl MetzConnectCI4Analog420 {
+    /// Erstellt eine neue Messzelle
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = MetzConnectCI4Analog420::new();
+    /// ```
     pub fn new() -> Self {
         MetzConnectCI4Analog420 {
-            messzelle_type: MesszelleType::Analog420mA,
+            messzelle_type: MesszelleType::MetzConnectCI4Analog420,
             values: vec![],
             // max_values_for_n_minutes: 5 * 60 * 60,    // Normale Messzellen arbeiten mit Minuten Werten
             max_values_for_n_minutes: 5, // Simulator Messzellen arbeiten mit Sekunden Werten
@@ -30,7 +39,10 @@ impl Messzelle for MetzConnectCI4Analog420 {
     /// # Examples
     ///
     /// ```rust
-    /// assert!(true);
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = MetzConnectCI4Analog420::new();
+    /// assert!(messzelle.value().is_none());
     /// ```
     fn value(&self) -> Option<&(f64, SystemTime)> {
         self.values.last()
@@ -43,8 +55,8 @@ impl Messzelle for MetzConnectCI4Analog420 {
     /// ```rust
     /// use xmz_server::prelude::*;
     ///
-    /// let messzelle = MetzConnectCI4Analog420;
-    /// assert!(messzelle.get_values().is_none());
+    /// let messzelle = MetzConnectCI4Analog420::new();
+    /// assert_eq!(messzelle.get_values().len(), 0);
     /// ```
     fn get_values(&self) -> Vec<(f64, SystemTime)> {
         self.values.clone()
@@ -58,7 +70,7 @@ impl Messzelle for MetzConnectCI4Analog420 {
     /// use xmz_server::prelude::*;
     ///
     /// let messzelle = MetzConnectCI4Analog420::new();
-    /// assert_eq!(messzelle.get_messzelle_type(), MesszelleType::Analog420mA);
+    /// assert_eq!(messzelle.get_messzelle_type(), MesszelleType::MetzConnectCI4Analog420);
     /// ```
     fn get_messzelle_type(&self) -> MesszelleType {
         self.messzelle_type.clone()
@@ -69,7 +81,8 @@ impl Messzelle for MetzConnectCI4Analog420 {
     /// # Examples
     ///
     /// ```rust
-    /// assert!(true);
+    /// use xmz_server::prelude::*;
+    ///
     /// ```
     fn average(&self, minutes: u64) -> Result<f64, MesszelleError> {
         let mut values = self.values.clone();
@@ -113,7 +126,8 @@ impl Messzelle for MetzConnectCI4Analog420 {
     /// # Examples
     ///
     /// ```rust
-    /// assert!(true);
+    /// use xmz_server::prelude::*;
+    ///
     /// ```
     fn update(&mut self) {
         let last_value = match self.value() {
@@ -138,7 +152,8 @@ impl Messzelle for MetzConnectCI4Analog420 {
     /// # Examples
     ///
     /// ```rust
-    /// assert!(true);
+    /// use xmz_server::prelude::*;
+    ///
     /// ```
     fn shrink_values(&mut self) {
         // 1. Spezialfall, ist nur ein Wert/Zeitstempel Paar vorhanden muss dieses zuerst

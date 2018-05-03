@@ -13,9 +13,18 @@ pub struct RaGasNO2Mod {
 }
 
 impl RaGasNO2Mod {
+    /// Erstellt eine neue Messzelle
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = RaGasNO2Mod::new();
+    /// ```
     pub fn new() -> Self {
         RaGasNO2Mod {
-            messzelle_type: MesszelleType::RaGasNO2,
+            messzelle_type: MesszelleType::RaGasNO2Mod,
             values: vec![],
             // max_values_for_n_minutes: 5 * 60 * 60,    // Normale Messzellen arbeiten mit Minuten Werten
             max_values_for_n_minutes: 5, // Simulator Messzellen arbeiten mit Sekunden Werten
@@ -45,8 +54,8 @@ impl Messzelle for RaGasNO2Mod {
     /// ```rust
     /// use xmz_server::prelude::*;
     ///
-    /// let messzelle = RaGasNO2Mod;
-    /// assert!(messzelle.get_values().is_none());
+    /// let messzelle = RaGasNO2Mod::new();
+    /// assert_eq!(messzelle.get_values().len(), 0);
     /// ```
     fn get_values(&self) -> Vec<(f64, SystemTime)> {
         self.values.clone()
@@ -59,8 +68,8 @@ impl Messzelle for RaGasNO2Mod {
     /// ```rust
     /// use xmz_server::prelude::*;
     ///
-    /// let messzelle = MetzConnectCI4Analog420::new();
-    /// assert_eq!(messzelle.get_messzelle_type(), MesszelleType::Analog420mA);
+    /// let messzelle = RaGasNO2Mod::new();
+    /// assert_eq!(messzelle.get_messzelle_type(), MesszelleType::RaGasNO2Mod);
     /// ```
     fn get_messzelle_type(&self) -> MesszelleType {
         self.messzelle_type.clone()

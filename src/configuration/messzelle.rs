@@ -14,7 +14,7 @@ pub struct Messzelle {
 impl Default for Messzelle {
     fn default() -> Self {
         Messzelle {
-            messzelle_type: ::messzelle::MesszelleType::Analog420mA,
+            messzelle_type: ::messzelle::MesszelleType::MetzConnectCI4Analog420,
             value: None,
             max_values_for_n_minutes: 60,
         }

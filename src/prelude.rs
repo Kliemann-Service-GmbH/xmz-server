@@ -10,7 +10,7 @@ use std::any::Any;
 pub use config::Config;
 pub use configuration;
 pub use error::ServerError;
-pub use messzelle::{Messzelle, MesszelleType, RaGasNO2Mod, RaGasCOMod};
+pub use messzelle::{Messzelle, MesszelleType, MetzConnectCI4Analog420, RaGasNO2Mod, RaGasCOMod};
 pub use runtime_info;
 pub use sensor::{MetzConnectCI4, RaGasCONO2Mod, Sensor, SensorType, TestSensor};
 pub use server::Server;
