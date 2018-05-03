@@ -20,6 +20,7 @@ fn build_server(cfg: &Config) -> Result<Server, ServerError> {
         );
         // ... builde den Server
         let server = runtime_info::Server::from_runtime_info(&cfg)?;
+        // Konvertiere Runtime Server in richtigen Server
         server.into()
     } else if cfg.config_file_available() {
         info!(
@@ -27,6 +28,7 @@ fn build_server(cfg: &Config) -> Result<Server, ServerError> {
             &cfg.configuration_path
         );
         let server = configuration::Server::from_config_file(&cfg)?;
+        // Konvertiere Configuration Server in richtigen Server
         server.into()
     } else {
         // Ansonnsten Server mit `Default::default()` Werten

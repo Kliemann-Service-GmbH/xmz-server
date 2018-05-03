@@ -74,6 +74,7 @@ impl Sensor for RaGasCONO2Mod {
                 messzelle.update()
             }
         }
+        ::std::thread::sleep(::std::time::Duration::from_secs(1));
     }
 
     fn get_sensor_type(&self) -> SensorType {

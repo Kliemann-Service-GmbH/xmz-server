@@ -59,6 +59,7 @@ impl Sensor for MetzConnectCI4 {
                 messzelle.update()
             }
         }
+        ::std::thread::sleep(::std::time::Duration::from_secs(1));
     }
 
     fn get_sensor_type(&self) -> SensorType {
