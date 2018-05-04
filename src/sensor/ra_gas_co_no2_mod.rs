@@ -1,5 +1,5 @@
 use messzelle::{BoxedMesszelle, MesszellenList, RaGasCOMod, RaGasNO2Mod};
-use sensor::Sensor;
+use sensor::{Sensor, SensorType};
 use std::fmt;
 use std::sync::{Arc, Mutex};
 
@@ -9,7 +9,10 @@ use std::sync::{Arc, Mutex};
 /// Diese Kombigeräte mit 2 Messzellen werden über ein Modbus RTU BUS abgefragt.
 #[derive(Debug)]
 pub struct RaGasCONO2Mod {
-    messzellen: MesszellenList,
+    /// Sensor Type
+    pub sensor_type: SensorType,
+    /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
+    pub messzellen: MesszellenList,
 }
 
 impl RaGasCONO2Mod {
@@ -24,6 +27,7 @@ impl RaGasCONO2Mod {
 
         RaGasCONO2Mod {
             messzellen: vec![Arc::new(Mutex::new(Box::new(co_messzelle)))],
+            ..Default::default()
         }
     }
 
@@ -33,6 +37,7 @@ impl RaGasCONO2Mod {
 
         RaGasCONO2Mod {
             messzellen: vec![Arc::new(Mutex::new(Box::new(no2_messzelle)))],
+            ..Default::default()
         }
     }
 }
@@ -44,6 +49,7 @@ impl Default for RaGasCONO2Mod {
         let no2_messzelle = RaGasNO2Mod::new();
 
         RaGasCONO2Mod {
+            sensor_type: SensorType::RaGasCONO2Mod,
             messzellen: vec![
                 Arc::new(Mutex::new(Box::new(co_messzelle))),
                 Arc::new(Mutex::new(Box::new(no2_messzelle))),
@@ -68,6 +74,11 @@ impl Sensor for RaGasCONO2Mod {
                 messzelle.update()
             }
         }
+        ::std::thread::sleep(::std::time::Duration::from_secs(1));
+    }
+
+    fn get_sensor_type(&self) -> SensorType {
+        self.sensor_type.clone()
     }
 
     fn get_messzellen(&self) -> &Vec<Arc<Mutex<BoxedMesszelle>>> {

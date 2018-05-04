@@ -1,41 +1,42 @@
-use api::messzelle::Messzelle as MesszelleExtern;
-use api::server::Server as ServerExtern;
+use api;
 use rocket::State;
 use rocket_contrib::Json;
-use sensor::Sensor as SensorIntern;
+use sensor;
+
 
 #[derive(Clone, Debug, Serialize)]
 pub struct Sensor {
-    sensor_type: String,
-    messzellen: Vec<MesszelleExtern>,
+    sensor_type: sensor::SensorType,
+    messzellen: Vec<api::messzelle::Messzelle>,
 }
 impl Sensor {
     #[allow(dead_code)]
-    pub fn get_messzellen(&self) -> &Vec<MesszelleExtern> {
+    pub fn get_messzellen(&self) -> &Vec<api::messzelle::Messzelle> {
         &self.messzellen
     }
 }
 
 #[get("/")]
-fn index(server: State<ServerExtern>) -> Json<Vec<Sensor>> {
+fn index(server: State<api::server::Server>) -> Json<Vec<Sensor>> {
     Json(server.clone().get_sensors().clone())
 }
 
-impl<'a> From<&'a Box<SensorIntern + Send>> for Sensor {
-    fn from(sensor: &'a Box<SensorIntern + Send>) -> Self {
+
+/// Konvertierung von den Sensor Trait Objekten `server::Sensor`
+///
+///
+impl<'a> From<&'a Box<sensor::Sensor + Send>> for Sensor {
+    fn from(sensor: &'a Box<sensor::Sensor + Send>) -> Self {
         // Kontruiere Messzellen
-        let mut messzellen: Vec<MesszelleExtern> = vec![];
+        let mut messzellen: Vec<api::messzelle::Messzelle> = vec![];
         for messzelle in sensor.get_messzellen() {
             if let Ok(messzelle) = messzelle.lock() {
                 messzellen.push((&*messzelle).into())
             }
         }
-        // Sensor Typ auslesen und setzen
-        let sensor_type = format!("{}", sensor);
-
         Sensor {
             messzellen: messzellen,
-            sensor_type: sensor_type,
+            sensor_type: sensor.get_sensor_type(),
         }
     }
 }
@@ -58,7 +59,7 @@ mod test {
     #[test]
     fn get_messzellen() {
         let sensor = Sensor {
-            sensor_type: "Test Sensor".to_string(),
+            sensor_type: sensor::SensorType::TestSensor,
             messzellen: Vec::new(),
         };
         assert_eq!(sensor.get_messzellen().len(), 0);

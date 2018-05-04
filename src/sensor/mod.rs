@@ -6,12 +6,32 @@ use std::sync::{Arc, Mutex};
 
 mod metz_connect_ci4;
 mod ra_gas_co_no2_mod;
+mod test_sensor;
 
+// Reexports
 pub use self::metz_connect_ci4::MetzConnectCI4;
 pub use self::ra_gas_co_no2_mod::RaGasCONO2Mod;
+pub use self::test_sensor::TestSensor;
 
 pub type BoxedSensor = Box<Sensor + Send + 'static>;
 pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
+
+
+/// Verfügbare Sensor Typen
+///
+/// Von der 'xMZ-Plattform' unterstützte Sensor Module.
+/// Ein Sensor Modul beherbergt eine oder mehrere `Messzellen` sowie ein BUS Interface über das der
+/// Sensor mit der Zentrale verbunden ist (Modbus RTU/ TCP/IP).
+///
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub enum SensorType {
+    #[serde(rename="Metz Connect CI4 Modul")]
+    MetzConnectCI4,
+    #[serde(rename="RA-GAS GmbH CO/ NO₂ Kombisensor mit Modbus Interface")]
+    RaGasCONO2Mod,
+    #[serde(rename="Test Sensor")]
+    TestSensor,
+}
 
 /// Trait das die Eigenschaften aller Sensoren beschreibt.
 ///
@@ -23,6 +43,10 @@ pub trait Sensor: fmt::Debug + fmt::Display {
     ///
     /// In dieser Funktion sollten auch die Werte (`values`) der Messzellen aktualisiert werden.
     fn update(&self);
+
+    /// Gibt den Sensor Type wieder
+    ///
+    fn get_sensor_type(&self) -> SensorType;
 
     /// Liefert eine Referenz auf den Vector der Messzellen
     ///

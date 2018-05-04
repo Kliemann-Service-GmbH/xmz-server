@@ -11,11 +11,13 @@ use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::thread;
 
+
 /// Liste der Sensoren
 ///
 /// Diese Liste ist ein `Vector` von shared (`Arc`), mutablen (`Mutex`)
 /// Sensor Trait Objekten (`BoxedSensor`).
 pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
+
 
 /// Struktur der Server Komponente
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -36,6 +38,7 @@ impl Default for Server {
             sensors: vec![
                 Arc::new(Mutex::new(Box::new(RaGasCONO2Mod::new()))),
                 Arc::new(Mutex::new(Box::new(MetzConnectCI4::new()))),
+                Arc::new(Mutex::new(Box::new(TestSensor::new()))),
             ],
             // zones: vec![],
             configuration_path: None,
@@ -83,7 +86,7 @@ impl Server {
     /// use xmz_server::prelude::*;
     ///
     /// let server = Server::default();
-    /// assert_eq!(server.get_sensors().len(), 2);
+    /// assert_eq!(server.get_sensors().len(), 3);
     /// ```
     pub fn get_sensors(&self) -> &SensorsList {
         &self.sensors
@@ -97,10 +100,16 @@ impl Server {
         self.sensors.push(sensor);
     }
 
-    /// Serialize in das Bincode format
+    /// Serialize Server Instanz in das Bincode format
+    ///
     pub fn serialize_to_bincode(&self) -> Result<Vec<u8>, ServerError> {
-        match bincode::serialize(&self) {
-            Ok(data) => Ok(data),
+        let server: runtime_info::Server = self.clone().into();
+
+        match bincode::serialize(&server) {
+            Ok(data) => {
+                debug!("{:?}", &data);
+                Ok(data)
+            },
             Err(err) => Err(ServerError::Bincode(err)),
         }
     }
@@ -108,12 +117,13 @@ impl Server {
     fn store_runtime_information(&self) -> Result<(), ServerError> {
         match &self.runtime_info_path {
             Some(path) => {
-                let mut buffer = File::create(path)?;
                 info!("Create runtime info at: {:?}", path);
-                let bincode = &self.serialize_to_bincode()?;
-                buffer.write(bincode)?;
-                info!("Store server instance as bincode");
-                debug!(">> bincode: {:?}", bincode);
+                let mut buffer = File::create(path)?;
+
+                info!("Speichere Server Instanz im bincode Format");
+                let data = &self.serialize_to_bincode()?;
+                buffer.write(data)?;
+
                 Ok(())
             }
             None => Err(ServerError::RuntimePathNotSet),
@@ -140,6 +150,8 @@ impl Server {
     }
 }
 
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -155,6 +167,6 @@ mod tests {
     fn default() {
         let server = Server::default();
         assert_eq!(server.service_interval, 365);
-        assert_eq!(server.sensors.len(), 2);
+        assert_eq!(server.sensors.len(), 3);
     }
 }
