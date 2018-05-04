@@ -10,11 +10,11 @@ use std::path::PathBuf;
 #[derive(Clone, Debug, Serialize)]
 pub struct Server {
     pub service_interval: u32,
-    pub sensors: Vec<::api::sensor::Sensor>,
     // FIXME: Evtl. sollte dieser Pfad nicht öffentlich sein
     configuration_path: String,
     // FIXME: Evtl. sollte dieser Pfad nicht öffentlich sein
     runtime_info_path: String,
+    pub sensors: Vec<::api::sensor::Sensor>,
 }
 
 impl Server {

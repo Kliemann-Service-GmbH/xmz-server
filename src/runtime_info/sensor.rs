@@ -50,7 +50,7 @@ impl<'a> From<&'a Box<::sensor::Sensor + Send>> for Sensor {
             }
         }
         Sensor {
-            id: 0,
+            id: sensor.get_id(),
             messzellen: messzellen,
             sensor_type: sensor.get_sensor_type(),
         }

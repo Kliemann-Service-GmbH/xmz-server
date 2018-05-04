@@ -1,4 +1,8 @@
-//! Objekt Representation für die Web/ json Anbindung
+//! Web/ Json Anbindung
+//!
+//! Dieses Modul ist ähnlich wie die Module `configuration` und `runtime_info` aufgebaut.
+//! Auch hier wird der `server::Server` in eine andere Struktur gewandelt (via Rust `From` Trait)
+//!
 mod messzelle;
 mod sensor;
 mod server;
@@ -18,21 +22,18 @@ pub fn launch(server: ::server::Server) {
 
 /// Helper, Konstruiert die Rocket Instanz
 ///
-/// Normalerweise wird die Web/ Json Api via `apt::launch()` gestartet.
-/// Die Unit Tests benötiten jedoch die `Rocket` Instanz für die Tests. Dazu kann diese Funktion
-/// verwendet werden.
+/// Die rocket Routing Informationen werden in dieser Funktion konfiguriert.
 ///
-/// # Examples
+/// # Tipp
 ///
-/// ```rust
-/// extern crate xmz_server;
-/// use xmz_server::prelude::*;
+/// Normalerweise wird die Web/ Json Api via der public `apt::launch()` Funktion gestartet.
+/// Die Unit Tests benötiten jedoch die `Rocket` Instanz für die Tests. In Unit Tests kann diese
+/// Funktion direkt verwendet werden.
 ///
-/// let server = Server::new();
-/// ```
 fn rocket(server: api::server::Server) -> Rocket {
     rocket::ignite()
     .mount("/", routes![server::index])
     .mount("/sensors", routes![sensor::index])
+    // .mount("/sensor/<id>", routes![sensor::index])
     .manage(server)
 }
