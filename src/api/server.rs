@@ -4,17 +4,23 @@
 use rocket_contrib::Json;
 use rocket::State;
 use server;
+use std::path::PathBuf;
 
 
 #[derive(Clone, Debug, Serialize)]
 pub struct Server {
     pub service_interval: u32,
     pub sensors: Vec<::api::sensor::Sensor>,
+    // FIXME: Evtl. sollte dieser Pfad nicht öffentlich sein
     configuration_path: String,
+    // FIXME: Evtl. sollte dieser Pfad nicht öffentlich sein
     runtime_info_path: String,
 }
 
 impl Server {
+    /// Liefert ein Vector mit den Sensoren des Servers
+    ///
+    /// Diese Funktion wird in ::api::sensor::Sensor aufgerufen.
     pub fn get_sensors(&self) -> &Vec<::api::sensor::Sensor> {
         &self.sensors
     }
@@ -29,11 +35,22 @@ impl From<server::Server> for Server {
             }
         }
 
+        // In den Unit Tests kann es vorkommen das die Pfade `configuration_path` und `runtime_info_path`
+        // `None` sind.
+        let configuration_path = match server.configuration_path {
+            Some(path) => path,
+            None => PathBuf::from(""),
+        };
+        let runtime_info_path = match server.runtime_info_path {
+            Some(path) => path,
+            None => PathBuf::from(""),
+        };
+
         Server {
             service_interval: server.service_interval,
             sensors: sensors,
-            configuration_path: server.configuration_path.unwrap().to_string_lossy().to_string(),
-            runtime_info_path: server.runtime_info_path.unwrap().to_string_lossy().to_string(),
+            configuration_path: configuration_path.to_string_lossy().to_string(),
+            runtime_info_path: runtime_info_path.to_string_lossy().to_string(),
         }
     }
 }
@@ -45,7 +62,6 @@ fn index(server: State<::api::server::Server>) -> Json<::api::server::Server> {
 
 #[cfg(test)]
 mod test {
-    use api;
     use rocket::http::Status;
     use rocket::local::Client;
 

@@ -8,9 +8,10 @@ pub struct Messzelle {
 }
 
 // #[get("/")]
-// fn index(server: State<ServerExtern>) -> Json<Messzelle> {
-//     Json()
+// fn index(server: State<::api::server::Server>) -> Json<Vec<Sensor>> {
+//     Json(server.clone().get_sensor(1).get_messzellen().clone())
 // }
+
 
 /// Konvertierung der Messzellen Trait Objekte des Servers `::messzelle::Messzelle`
 ///
