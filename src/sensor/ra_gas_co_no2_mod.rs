@@ -9,6 +9,8 @@ use std::sync::{Arc, Mutex};
 /// Diese Kombigeräte mit 2 Messzellen werden über ein Modbus RTU BUS abgefragt.
 #[derive(Debug)]
 pub struct RaGasCONO2Mod {
+    /// Sensor ID
+    pub id: u32,
     /// Sensor Type
     pub sensor_type: SensorType,
     /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
@@ -49,6 +51,7 @@ impl Default for RaGasCONO2Mod {
         let no2_messzelle = RaGasNO2Mod::new();
 
         RaGasCONO2Mod {
+            id: 0,
             sensor_type: SensorType::RaGasCONO2Mod,
             messzellen: vec![
                 Arc::new(Mutex::new(Box::new(co_messzelle))),
@@ -64,6 +67,8 @@ impl fmt::Display for RaGasCONO2Mod {
     }
 }
 
+/// Implementation des Sensor Traits
+///
 impl Sensor for RaGasCONO2Mod {
     // Update Sensor Platine via BUS
     fn update(&self) {
@@ -75,6 +80,10 @@ impl Sensor for RaGasCONO2Mod {
             }
         }
         ::std::thread::sleep(::std::time::Duration::from_secs(1));
+    }
+
+    fn get_id(&self) -> u32 {
+        self.id
     }
 
     fn get_sensor_type(&self) -> SensorType {

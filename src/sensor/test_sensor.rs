@@ -8,6 +8,8 @@ use std::sync::{Arc, Mutex};
 ///
 #[derive(Debug)]
 pub struct TestSensor {
+    /// Sensor ID
+    pub id: u32,
     /// Sensor Type
     pub sensor_type: SensorType,
     /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
@@ -22,8 +24,8 @@ impl TestSensor {
 
 impl Default for TestSensor {
     fn default() -> Self {
-
         TestSensor {
+            id: 0,
             sensor_type: SensorType::TestSensor,
             messzellen: vec![],
         }
@@ -36,6 +38,8 @@ impl fmt::Display for TestSensor {
     }
 }
 
+/// Implementation des Sensor Traits
+///
 impl Sensor for TestSensor {
     fn update(&self) {
         debug!("Update Sensor: '{}'", &self);
@@ -46,6 +50,10 @@ impl Sensor for TestSensor {
             }
         }
         ::std::thread::sleep(::std::time::Duration::from_secs(1));
+    }
+
+    fn get_id(&self) -> u32 {
+        self.id
     }
 
     fn get_sensor_type(&self) -> SensorType {
@@ -60,6 +68,7 @@ impl Sensor for TestSensor {
         self.messzellen.get(num)
     }
 }
+
 
 #[cfg(test)]
 mod tests {

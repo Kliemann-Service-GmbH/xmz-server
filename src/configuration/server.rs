@@ -45,6 +45,7 @@ impl Server {
 /// Konvertierung des `configuration::Server` nach `server::Server`
 ///
 /// Stellt den `server::Server` aus den Daten der Konfigurationsdatei wieder her.
+/// 
 impl From<Server> for ::server::Server {
     fn from(server: Server) -> Self {
         let mut sensors: Vec<Arc<Mutex<Box<::sensor::Sensor + Send + 'static>>>> = vec![];

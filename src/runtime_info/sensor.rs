@@ -8,8 +8,9 @@ pub struct Sensor {
 }
 
 impl From<Sensor> for ::sensor::RaGasCONO2Mod {
-    fn from(_sensor: Sensor) -> Self {
+    fn from(sensor: Sensor) -> Self {
         ::sensor::RaGasCONO2Mod {
+            id: sensor.id,
             sensor_type: ::sensor::SensorType::RaGasCONO2Mod,
             messzellen: Vec::new(),
         }
@@ -17,8 +18,9 @@ impl From<Sensor> for ::sensor::RaGasCONO2Mod {
 }
 
 impl From<Sensor> for ::sensor::MetzConnectCI4 {
-    fn from(_sensor: Sensor) -> Self {
+    fn from(sensor: Sensor) -> Self {
         ::sensor::MetzConnectCI4 {
+            id: sensor.id,
             sensor_type: ::sensor::SensorType::MetzConnectCI4,
             messzellen: Vec::new(),
         }
@@ -26,8 +28,9 @@ impl From<Sensor> for ::sensor::MetzConnectCI4 {
 }
 
 impl From<Sensor> for ::sensor::TestSensor {
-    fn from(_sensor: Sensor) -> Self {
+    fn from(sensor: Sensor) -> Self {
         ::sensor::TestSensor {
+            id: sensor.id,
             sensor_type: ::sensor::SensorType::TestSensor,
             messzellen: Vec::new(),
         }

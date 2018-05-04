@@ -3,6 +3,8 @@ use sensor::{Sensor, SensorType};
 use std::fmt;
 use std::sync::{Arc, Mutex};
 
+
+// FIXME: pub's checken
 /// Metz Connect CI4 Modul
 ///
 /// Das Metz Connect CI4 Modul für die Hutschiene verfügt über ein Modbus Interface. An das Modul
@@ -11,6 +13,8 @@ use std::sync::{Arc, Mutex};
 ///
 #[derive(Debug)]
 pub struct MetzConnectCI4 {
+    /// Sensor ID
+    pub id: u32,
     /// Sensor Type
     pub sensor_type: SensorType,
     /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
@@ -32,6 +36,7 @@ impl Default for MetzConnectCI4 {
         let messzelle4 = MetzConnectCI4Analog420::new();
 
         MetzConnectCI4 {
+            id: 0,
             sensor_type: SensorType::MetzConnectCI4,
             messzellen: vec![
                 Arc::new(Mutex::new(Box::new(messzelle1))),
@@ -49,6 +54,8 @@ impl fmt::Display for MetzConnectCI4 {
     }
 }
 
+/// Implementation des Sensor Traits
+///
 impl Sensor for MetzConnectCI4 {
     // Update Sensor Platine via BUS
     fn update(&self) {
@@ -60,6 +67,10 @@ impl Sensor for MetzConnectCI4 {
             }
         }
         ::std::thread::sleep(::std::time::Duration::from_secs(1));
+    }
+
+    fn get_id(&self) -> u32 {
+        self.id
     }
 
     fn get_sensor_type(&self) -> SensorType {

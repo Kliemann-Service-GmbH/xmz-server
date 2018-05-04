@@ -44,6 +44,13 @@ pub trait Sensor: fmt::Debug + fmt::Display {
     /// In dieser Funktion sollten auch die Werte (`values`) der Messzellen aktualisiert werden.
     fn update(&self);
 
+    /// Gibt die Sensor ID wieder
+    ///
+    /// Die Sensor ID wird u.a. in der Konfigurationsdatei verwendet um die Messzellen den Sensoren
+    /// zuzuordnen.
+    ///
+    fn get_id(&self) -> u32;
+
     /// Gibt den Sensor Type wieder
     ///
     fn get_sensor_type(&self) -> SensorType;
