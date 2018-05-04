@@ -10,7 +10,6 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::thread;
-use toml;
 
 
 /// Liste der Sensoren
@@ -115,21 +114,6 @@ impl Server {
         }
     }
 
-    // FIXME: Kann weg
-    /// Serialize Server Instanz in das toml Format
-    ///
-    fn serialize_to_toml(&self) -> Result<String, ServerError> {
-        let server: runtime_info::Server = self.clone().into();
-
-        match toml::to_string(&server) {
-            Ok(data) => {
-                debug!("{:?}", &data);
-                Ok(data)
-            },
-            Err(err) => Err(ServerError::TomlSer(err)),
-        }
-    }
-
     fn store_runtime_information(&self) -> Result<(), ServerError> {
         match &self.runtime_info_path {
             Some(path) => {
@@ -139,11 +123,6 @@ impl Server {
                 info!("Speichere Server Instanz im bincode Format");
                 let data = &self.serialize_to_bincode()?;
                 buffer.write(data)?;
-
-                // FIXME: Kann weg
-                // info!("Speichere Server Instanz im toml Format");
-                // let data = &self.serialize_to_toml()?;
-                // buffer.write(data.as_bytes())?;
 
                 Ok(())
             }

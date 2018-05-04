@@ -5,7 +5,6 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
-use toml;
 
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -17,24 +16,6 @@ pub struct Server {
 }
 
 impl Server {
-    /// Bildet eine Server Instanz aus der Konfigurationsdatei
-    ///
-    /// Die Funktion liefert ein `Result` mit einer `ServerBuilder` Instanz, oder liefert ein
-    /// `ServerError`.
-    fn from_runtime_info_toml(cfg: &Config) -> Result<Server, ServerError> {
-        let mut file = File::open(&cfg.configuration_path)?;
-        let mut s = String::new();
-        file.read_to_string(&mut s)?;
-
-        match toml::from_str::<Server>(&s) {
-            Ok(server) => {
-                debug!("{:?}", &server);
-                Ok(server)
-            }
-            Err(err) => Err(ServerError::CouldNotBuildFromConfig(err)),
-        }
-    }
-
     /// Stellt die Server Instanz aus den Laufzeitinformationen wieder her
     ///
     /// Die Funktion liefert ein `Result` mit einer `ServerBuilder` Instanz, oder liefert ein
@@ -58,6 +39,7 @@ impl Server {
 /// Konvertierung des `runtime_info::Server` nach `server::Server`
 ///
 /// Stellt den `server::Server` aus den Daten der Laufzeitinformationen wieder her.
+///
 impl From<Server> for ::server::Server {
     fn from(server: Server) -> Self {
         let mut sensors: Vec<Arc<Mutex<Box<::sensor::Sensor + Send + 'static>>>> = vec![];
@@ -90,7 +72,11 @@ impl From<Server> for ::server::Server {
 
 
 
-/// Konvertiere Laufzeit Representation des Servers
+/// Konvertierung des `server::Server` nach `runtime_info::Server`
+///
+/// Konvertiert den `server::Server` in ein Format das in der Laufzeitinformation
+/// gespeichert werden kann.
+///
 impl From<::server::Server> for Server {
     fn from(server: ::server::Server) -> Self {
         let mut sensors: Vec<::runtime_info::Sensor> = Vec::new();
