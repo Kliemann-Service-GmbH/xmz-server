@@ -5,20 +5,36 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
+use toml;
 
 
 #[derive(Debug, Deserialize, Serialize)]
-#[serde(rename = "server")]
 pub struct Server {
     pub service_interval: u32,
     pub sensors: Vec<::runtime_info::sensor::Sensor>,
-    #[serde(skip)]
-    pub configuration_path: Option<PathBuf>,
-    #[serde(skip)]
-    pub runtime_info_path: Option<PathBuf>,
+    pub configuration_path: String,
+    pub runtime_info_path: String,
 }
 
 impl Server {
+    /// Bildet eine Server Instanz aus der Konfigurationsdatei
+    ///
+    /// Die Funktion liefert ein `Result` mit einer `ServerBuilder` Instanz, oder liefert ein
+    /// `ServerError`.
+    fn from_runtime_info_toml(cfg: &Config) -> Result<Server, ServerError> {
+        let mut file = File::open(&cfg.configuration_path)?;
+        let mut s = String::new();
+        file.read_to_string(&mut s)?;
+
+        match toml::from_str::<Server>(&s) {
+            Ok(server) => {
+                debug!("{:?}", &server);
+                Ok(server)
+            }
+            Err(err) => Err(ServerError::CouldNotBuildFromConfig(err)),
+        }
+    }
+
     /// Stellt die Server Instanz aus den Laufzeitinformationen wieder her
     ///
     /// Die Funktion liefert ein `Result` mit einer `ServerBuilder` Instanz, oder liefert ein
@@ -29,7 +45,10 @@ impl Server {
         file.read_to_string(&mut s)?;
 
         match bincode::deserialize(&s.as_bytes()) {
-            Ok(server) => Ok(server),
+            Ok(server) => {
+                debug!("{:?}", server);
+                Ok(server)
+            },
             Err(err) => Err(ServerError::CouldNotBuildFromRuntime(err)),
         }
     }
@@ -63,8 +82,29 @@ impl From<Server> for ::server::Server {
             service_interval: server.service_interval,
             sensors: sensors,
             // zones: vec![],
-            configuration_path: server.configuration_path,
-            runtime_info_path: server.runtime_info_path,
+            configuration_path: Some(PathBuf::from(server.configuration_path)),
+            runtime_info_path: Some(PathBuf::from(server.runtime_info_path)),
+        }
+    }
+}
+
+
+
+/// Konvertiere Laufzeit Representation des Servers
+impl From<::server::Server> for Server {
+    fn from(server: ::server::Server) -> Self {
+        let mut sensors: Vec<::runtime_info::Sensor> = Vec::new();
+        for sensor in server.get_sensors() {
+            if let Ok(sensor) = sensor.lock() {
+                sensors.push((&*sensor).into());
+            }
+        }
+
+        Server {
+            service_interval: server.service_interval,
+            sensors: sensors,
+            configuration_path: server.configuration_path.unwrap().to_string_lossy().to_string(),
+            runtime_info_path: server.runtime_info_path.unwrap().to_string_lossy().to_string(),
         }
     }
 }

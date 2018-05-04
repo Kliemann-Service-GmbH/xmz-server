@@ -14,19 +14,20 @@ use xmz_server::prelude::*;
 fn build_server(cfg: &Config) -> Result<Server, ServerError> {
     // Wenn die konfiguriert Laufzeitinformation gefunden wurde ...
     let server = if cfg.runtime_info_available() {
-        info!(
-            "Laufzeit Information: `{:?}` gefunden",
+        debug!(
+            "Pfad Laufzeit Information: `{:?}` in Environment Variable gefunden",
             &cfg.runtime_info_path
         );
-        // ... builde den Server
+        info!("restauriere Server aus Laufzeitumgebung");
         let server = runtime_info::Server::from_runtime_info(&cfg)?;
         // Konvertiere Runtime Server in richtigen Server
         server.into()
     } else if cfg.config_file_available() {
-        info!(
-            "Konfigurationsdatei: `{:?}` gefunden",
+        debug!(
+            "Pfad Konfigurationsdatei: `{:?}` in Environment Variable gefunden",
             &cfg.configuration_path
         );
+        info!("Erstelle Server aus Konfigurationsdatei neu");
         let server = configuration::Server::from_config_file(&cfg)?;
         // Konvertiere Configuration Server in richtigen Server
         server.into()
@@ -52,6 +53,7 @@ fn run() -> Result<(), ServerError> {
 
     Ok(())
 }
+
 
 fn main() {
     env_logger::init();

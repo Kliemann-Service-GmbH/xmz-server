@@ -31,6 +31,8 @@ impl Server {
 
         match toml::from_str::<Server>(&s) {
             Ok(mut builder) => {
+                // Die Pfade zur Konfigurationsdatei und Laufzeitinformation stammen aus dem `Config` Modul.
+                // Sie stehen nicht in der Konfigurationsdatei selbst.
                 builder.configuration_path = Some(cfg.configuration_path.clone());
                 builder.runtime_info_path = Some(cfg.runtime_info_path.clone());
                 Ok(builder)

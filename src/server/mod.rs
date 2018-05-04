@@ -10,6 +10,8 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::thread;
+use toml;
+
 
 /// Liste der Sensoren
 ///
@@ -99,26 +101,50 @@ impl Server {
         self.sensors.push(sensor);
     }
 
-    /// Serialize in das Bincode format
+    /// Serialize Server Instanz in das Bincode format
+    ///
     pub fn serialize_to_bincode(&self) -> Result<Vec<u8>, ServerError> {
         let server: runtime_info::Server = self.clone().into();
-        println!(">> {:?}", server);
 
         match bincode::serialize(&server) {
-            Ok(data) => Ok(data),
+            Ok(data) => {
+                debug!("{:?}", &data);
+                Ok(data)
+            },
             Err(err) => Err(ServerError::Bincode(err)),
+        }
+    }
+
+    // FIXME: Kann weg
+    /// Serialize Server Instanz in das toml Format
+    ///
+    fn serialize_to_toml(&self) -> Result<String, ServerError> {
+        let server: runtime_info::Server = self.clone().into();
+
+        match toml::to_string(&server) {
+            Ok(data) => {
+                debug!("{:?}", &data);
+                Ok(data)
+            },
+            Err(err) => Err(ServerError::TomlSer(err)),
         }
     }
 
     fn store_runtime_information(&self) -> Result<(), ServerError> {
         match &self.runtime_info_path {
             Some(path) => {
-                let mut buffer = File::create(path)?;
                 info!("Create runtime info at: {:?}", path);
-                let bincode = &self.serialize_to_bincode()?;
-                buffer.write(bincode)?;
-                info!("Store server instance as bincode");
-                debug!(">> bincode: {:?}", bincode);
+                let mut buffer = File::create(path)?;
+
+                info!("Speichere Server Instanz im bincode Format");
+                let data = &self.serialize_to_bincode()?;
+                buffer.write(data)?;
+
+                // FIXME: Kann weg
+                // info!("Speichere Server Instanz im toml Format");
+                // let data = &self.serialize_to_toml()?;
+                // buffer.write(data.as_bytes())?;
+
                 Ok(())
             }
             None => Err(ServerError::RuntimePathNotSet),
@@ -142,25 +168,6 @@ impl Server {
             .expect("Fehler im Sensor Update Guard");
 
         Ok(())
-    }
-}
-
-/// Konvertiere Laufzeit Representation des Servers
-impl From<Server> for ::runtime_info::Server {
-    fn from(server: Server) -> Self {
-        let mut sensors: Vec<runtime_info::Sensor> = Vec::new();
-        for sensor in server.get_sensors() {
-            if let Ok(sensor) = sensor.lock() {
-                sensors.push((&*sensor).into());
-            }
-        }
-
-        ::runtime_info::Server {
-            service_interval: server.service_interval,
-            sensors: sensors,
-            configuration_path: server.configuration_path,
-            runtime_info_path: server.runtime_info_path,
-        }
     }
 }
 

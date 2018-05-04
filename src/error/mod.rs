@@ -5,7 +5,8 @@ use output::OutputError;
 use std::error::Error;
 use std::fmt;
 use std::io::Error as IOError;
-use toml::de::Error as TomlError;
+use toml::de::Error as TomlDeError;
+use toml::ser::Error as TomlSerError;
 
 /// Mögliche Server Fehler
 ///
@@ -13,12 +14,14 @@ use toml::de::Error as TomlError;
 pub enum ServerError {
     Bincode(BincodeError),
     Configure(ConfigureError),
-    CouldNotBuildFromConfig(TomlError),
+    CouldNotBuildFromConfig(TomlDeError),
     CouldNotBuildFromRuntime(BincodeError),
     IO(IOError),
     Output(OutputError),
     RuntimePathNotSet,
     ServerBuilder,
+    TomlDe(TomlDeError),
+    TomlSer(TomlSerError),
 }
 
 impl fmt::Display for ServerError {
@@ -38,6 +41,8 @@ impl fmt::Display for ServerError {
             ServerError::Output(ref err) => write!(f, "Output Fehler: {}", err),
             ServerError::RuntimePathNotSet => write!(f, "Pfad der Laufzeitinformation nicht gesetzt"),
             ServerError::ServerBuilder => write!(f, "Fehler im Serverbuilder"),
+            ServerError::TomlDe(ref err) => write!(f, "Fehler beim deserializiern nach toml Daten: {}", err),
+            ServerError::TomlSer(ref err) => write!(f, "Fehler beim serializieren von toml Daten: {}", err),
         }
     }
 }
@@ -53,6 +58,8 @@ impl Error for ServerError {
             ServerError::Output(ref err) => err.description(),
             ServerError::RuntimePathNotSet => "Pfad der Laufzeitinformation nicht gesetzt",
             ServerError::ServerBuilder => "Server konnte nicht erstellt weden",
+            ServerError::TomlDe(ref err) => err.description(),
+            ServerError::TomlSer(ref err) => err.description(),
         }
     }
 
@@ -66,6 +73,8 @@ impl Error for ServerError {
             ServerError::Output(ref err) => Some(err),
             ServerError::RuntimePathNotSet => None,
             ServerError::ServerBuilder => None,
+            ServerError::TomlDe(ref err) => Some(err),
+            ServerError::TomlSer(ref err) => Some(err),
         }
     }
 }
@@ -85,5 +94,17 @@ impl From<ConfigureError> for ServerError {
 impl From<IOError> for ServerError {
     fn from(error: IOError) -> Self {
         ServerError::IO(error)
+    }
+}
+
+impl From<TomlDeError> for ServerError {
+    fn from(error: TomlDeError) -> Self {
+        ServerError::TomlDe(error)
+    }
+}
+
+impl From<TomlSerError> for ServerError {
+    fn from(error: TomlSerError) -> Self {
+        ServerError::TomlSer(error)
     }
 }
