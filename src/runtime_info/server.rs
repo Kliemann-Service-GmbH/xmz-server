@@ -9,10 +9,10 @@ use std::sync::{Arc, Mutex};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Server {
-    pub service_interval: u32,
-    pub sensors: Vec<::runtime_info::sensor::Sensor>,
-    pub configuration_path: String,
-    pub runtime_info_path: String,
+    service_interval: u32,
+    sensors: Vec<::runtime_info::sensor::Sensor>,
+    configuration_path: String,
+    runtime_info_path: String,
 }
 
 impl Server {
