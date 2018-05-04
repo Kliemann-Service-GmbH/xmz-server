@@ -13,9 +13,10 @@
 //! |**master:**|[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=master)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server)&nbsp;[![Code Coverage](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server/branch/master/graph/badge.svg)](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server)|
 //! |**development:**|[![Build Status](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server.svg?branch=development)](https://travis-ci.org/Kliemann-Service-GmbH/xmz-server)&nbsp;[![Code Coverage](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server/branch/development/graph/badge.svg)](https://codecov.io/gh/Kliemann-Service-GmbH/xmz-server)|
 //!
-//! Der Server ist die Kern Komponente. Zu seinen Aufgaben zählen zum Beispiel das Auslesen der
-//! Sensoren sowie der Auswertung der Sensor-Messzellen und das Schalten der diversen Ausgänge (Outputs),
-//! wie etwa Relais, LEDs und angeschlossene IO Module.
+//! Der Server ist die Kern Komponente der ['xMZ-Plattform'](https://github.com/Kliemann-Service-GmbH/xMZ-Plattform).
+//! Zu seinen Aufgaben zählen zum Beispiel das Auslesen der Sensoren sowie der Auswertung der
+//! Sensor-Messzellen und das Schalten der diversen Ausgänge (Outputs), wie etwa Relais, LEDs und
+//! angeschlossene IO Module.
 //!
 //! * **Dokumentation:** [https://kliemann-service-gmbh.github.io/xmz-server](https://kliemann-service-gmbh.github.io/xmz-server)
 //! * **Quellcode:** [https://github.com/Kliemann-Service-GmbH/xmz-server](https://github.com/Kliemann-Service-GmbH/xmz-server)
@@ -23,13 +24,13 @@
 //! # Struktur des Servers
 //!
 //! * Server
-//!     * `<Sensore>`   - Ein Server kann n Sensoren verwalten
-//!         * `<Messzellen>` (n Messzellen)
+//!     * `<Sensor>`        - Ein `Server` kann n Sensoren verwalten
+//!         * `<Messzelle>` - ein `Sensor` besizt n `Messzelle`e
 //!     * `<Zonen>`
-//!         * `<&Messzellen`> (n Verweise auf Sensor-Messzellen)
-//!         * `<Schaltpunkt>` (n Schaltpunkte)
-//!             * `<Schwellwert>` (n Schwellwerte)
-//!             * `<Aktion>` (n Aktionen)
+//!         * `<&Messzellen`> - eine `Zone` besitzt n Verweise auf `Messzelle`n
+//!         * `<Schaltpunkt>` - eine `Zone` besitzt n `Schaltpunkt`e
+//!             * `<Schwellwert>` - ein `Schaltpunkt` besitzt n `Schwellwert`e
+//!             * `<Aktion>`  - ein `Schaltpunkt` besitzt n `Aktion`en
 //!
 
 #[macro_use]
