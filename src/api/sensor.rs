@@ -30,11 +30,11 @@ impl<'a> From<&'a Box<::sensor::Sensor + Send>> for Sensor {
     fn from(sensor: &'a Box<::sensor::Sensor + Send>) -> Self {
         // Kontruiere Messzellen
         let mut messzellen: Vec<::api::messzelle::Messzelle> = vec![];
-        for messzelle in sensor.get_messzellen() {
-            if let Ok(messzelle) = messzelle.lock() {
-                messzellen.push((&*messzelle).into())
-            }
-        }
+        // for messzelle in sensor.get_messzellen() {
+        //     if let Ok(messzelle) = messzelle.lock() {
+        //         messzellen.push((&*messzelle).into())
+        //     }
+        // }
         Sensor {
             id: sensor.get_id(),
             messzellen: messzellen,

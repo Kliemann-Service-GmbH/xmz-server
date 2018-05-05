@@ -17,12 +17,13 @@ pub struct Messzelle {
 impl<'a> From<&'a Box<::messzelle::Messzelle + Send>> for Messzelle {
     fn from(messzelle: &'a Box<::messzelle::Messzelle + Send>) -> Self {
         // Wert aus der Referenz auspacken
-        let value = match messzelle.get_value() {
-            Some(ref x) => Some(**x),
-            None => None,
-        };
+        // let value = match messzelle.get_value() {
+        //     Some(ref x) => Some(**x),
+        //     None => None,
+        // };
+        println!("{:?}", messzelle);
         Messzelle {
-            value: value,
+            value: None, //value,
             messzelle_type: messzelle.get_messzelle_type(),
         }
     }

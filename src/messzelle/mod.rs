@@ -21,7 +21,7 @@ pub use self::ra_gas_co_mod::RaGasCOMod;
 pub use self::ra_gas_no2_mod::RaGasNO2Mod;
 
 pub type BoxedMesszelle = Box<Messzelle + Send + 'static>;
-pub type MesszellenList = Vec<Arc<Mutex<BoxedMesszelle>>>;
+pub type MesszellenList = Arc<Mutex<Vec<BoxedMesszelle>>>;
 pub type MesszellenRefList<'a> = Vec<&'a Messzelle>;
 
 pub const MAX_VALUES_FOR_N_MINUTES: u64 = 60;

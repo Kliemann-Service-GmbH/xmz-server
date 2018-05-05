@@ -4,19 +4,12 @@ use api;
 use bincode;
 use error::ServerError;
 use prelude::*;
-use sensor::BoxedSensor;
+use sensor::{BoxedSensor, SensorsList};
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::thread;
-
-
-/// Liste der Sensoren
-///
-/// Diese Liste ist ein `Vector` von shared (`Arc`), mutablen (`Mutex`)
-/// Sensor Trait Objekten (`BoxedSensor`).
-pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 
 
 /// Struktur der Server Komponente
@@ -33,13 +26,14 @@ pub struct Server {
 
 impl Default for Server {
     fn default() -> Self {
+        let sensors: SensorsList = Arc::new(Mutex::new(vec![
+            Box::new(RaGasCONO2Mod::new()),
+            Box::new(MetzConnectCI4::new()),
+            Box::new(TestSensor::new()),
+        ]));
         Server {
             service_interval: 365,
-            sensors: vec![
-                Arc::new(Mutex::new(Box::new(RaGasCONO2Mod::new()))),
-                Arc::new(Mutex::new(Box::new(MetzConnectCI4::new()))),
-                Arc::new(Mutex::new(Box::new(TestSensor::new()))),
-            ],
+            sensors: sensors,
             // zones: vec![],
             configuration_path: None,
             runtime_info_path: None,
@@ -52,7 +46,6 @@ impl Server {
     pub fn new() -> Self {
         Server {
             service_interval: 0,
-            sensors: Vec::new(),
             ..Default::default()
         }
     }
@@ -60,16 +53,16 @@ impl Server {
     /// Aktualisiert der Reihe nach jeden Sensor
     ///
     pub fn update_sensors(&self) -> thread::JoinHandle<bool> {
-        let sensors = self.sensors.clone();
-        let guard = thread::spawn(move || loop {
-            for sensor in sensors.clone() {
-                if let Ok(mut sensor) = sensor.lock() {
-                    sensor.update();
-                }
-            }
-        });
-
-        guard
+        // let sensors = self.sensors.clone();
+        // let guard = thread::spawn(move || loop {
+        //     for sensor in sensors.clone() {
+        //         if let Ok(mut sensor) = sensor.lock() {
+        //             sensor.update();
+        //         }
+        //     }
+        // });
+        // guard
+        thread::spawn(|| loop {})
     }
 
     /// Startet die Api (Json, Web)
@@ -92,12 +85,15 @@ impl Server {
         &self.sensors
     }
 
-    pub fn get_sensor(&self, num: usize) -> Option<&Arc<Mutex<BoxedSensor>>> {
-        self.sensors.get(num)
+    pub fn get_sensor(&self, num: usize) -> Option<&BoxedSensor> {
+        // self.sensors.into_inner().unwrap().get(num)
+        unimplemented!()
     }
 
-    pub fn add_sensor(&mut self, sensor: Arc<Mutex<BoxedSensor>>) {
-        self.sensors.push(sensor);
+    pub fn add_sensor(&mut self, sensor: &BoxedSensor) {
+        // let mut sensors = self.sensors.lock().unwrap();
+        // sensors.push(*sensor);
+        unimplemented!()
     }
 
     /// Serialize Server Instanz in das Bincode format

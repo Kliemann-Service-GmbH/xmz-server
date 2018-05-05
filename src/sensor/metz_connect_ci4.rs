@@ -35,15 +35,17 @@ impl Default for MetzConnectCI4 {
         let messzelle3 = MetzConnectCI4Analog420::new();
         let messzelle4 = MetzConnectCI4Analog420::new();
 
+        let messzellen: Vec<Box<::messzelle::Messzelle + Send + 'static>> = vec![
+            Box::new(messzelle1),
+            Box::new(messzelle2),
+            Box::new(messzelle3),
+            Box::new(messzelle4),
+        ];
+
         MetzConnectCI4 {
             id: 0,
             sensor_type: SensorType::MetzConnectCI4,
-            messzellen: vec![
-                Arc::new(Mutex::new(Box::new(messzelle1))),
-                Arc::new(Mutex::new(Box::new(messzelle2))),
-                Arc::new(Mutex::new(Box::new(messzelle3))),
-                Arc::new(Mutex::new(Box::new(messzelle4))),
-            ],
+            messzellen: Arc::new(Mutex::new(messzellen)),
         }
     }
 }
@@ -60,12 +62,13 @@ impl Sensor for MetzConnectCI4 {
     // Update Sensor Platine via BUS
     fn update(&self) {
         debug!("Update Sensor: '{}'", &self);
-        let messzellen = &self.messzellen.clone();
-        for messzelle in messzellen {
-            if let Ok(mut messzelle) = messzelle.lock() {
-                messzelle.update()
-            }
-        }
+        //
+        // let messzellen = &self.messzellen.clone();
+        // for messzelle in messzellen {
+        //     if let Ok(mut messzelle) = messzelle.lock() {
+        //         messzelle.update()
+        //     }
+        // }
         ::std::thread::sleep(::std::time::Duration::from_secs(1));
     }
 
@@ -77,12 +80,13 @@ impl Sensor for MetzConnectCI4 {
         self.sensor_type.clone()
     }
 
-    fn get_messzellen(&self) -> &Vec<Arc<Mutex<BoxedMesszelle>>> {
-        &self.messzellen
+    fn get_messzellen(&self) -> Arc<Mutex<Vec<BoxedMesszelle>>> {
+        self.messzellen.clone()
     }
 
-    fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
-        self.messzellen.get(num)
+    fn get_messzelle<'a>(&self, num: usize) -> Option<&'a BoxedMesszelle> {
+        // self.messzellen.into_inner().unwrap().get(num).clone()
+        unimplemented!()
     }
 }
 

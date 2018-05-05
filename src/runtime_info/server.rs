@@ -42,24 +42,24 @@ impl Server {
 ///
 impl From<Server> for ::server::Server {
     fn from(server: Server) -> Self {
-        let mut sensors: Vec<Arc<Mutex<Box<::sensor::Sensor + Send + 'static>>>> = vec![];
-        for s in server.sensors {
-            match s.sensor_type {
-                ::sensor::SensorType::RaGasCONO2Mod => {
-                    let sensor: ::sensor::RaGasCONO2Mod = s.clone().into();
-                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
-                },
-                ::sensor::SensorType::MetzConnectCI4 => {
-                    let sensor: ::sensor::MetzConnectCI4 = s.into();
-                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
-                },
-                ::sensor::SensorType::TestSensor => {
-                    let sensor: ::sensor::TestSensor = s.into();
-                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
-                },
-            }
-        }
-
+        let mut sensors: Arc<Mutex<Vec<Box<::sensor::Sensor + Send + 'static>>>> = Arc::new(Mutex::new(vec![]));
+        // let mut sensors: Vec<Arc<Mutex<Box<::sensor::Sensor + Send + 'static>>>> = vec![];
+        // for s in server.sensors {
+        //     match s.sensor_type {
+        //         ::sensor::SensorType::RaGasCONO2Mod => {
+        //             let sensor: ::sensor::RaGasCONO2Mod = s.clone().into();
+        //             sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
+        //         },
+        //         ::sensor::SensorType::MetzConnectCI4 => {
+        //             let sensor: ::sensor::MetzConnectCI4 = s.into();
+        //             sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
+        //         },
+        //         ::sensor::SensorType::TestSensor => {
+        //             let sensor: ::sensor::TestSensor = s.into();
+        //             sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
+        //         },
+        //     }
+        // }
         ::server::Server {
             service_interval: server.service_interval,
             sensors: sensors,
@@ -80,12 +80,11 @@ impl From<Server> for ::server::Server {
 impl From<::server::Server> for Server {
     fn from(server: ::server::Server) -> Self {
         let mut sensors: Vec<::runtime_info::Sensor> = Vec::new();
-        for sensor in server.get_sensors() {
-            if let Ok(sensor) = sensor.lock() {
-                sensors.push((&*sensor).into());
-            }
-        }
-
+        // for sensor in server.get_sensors() {
+        //     if let Ok(sensor) = sensor.lock() {
+        //         sensors.push((&*sensor).into());
+        //     }
+        // }
         Server {
             service_interval: server.service_interval,
             sensors: sensors,

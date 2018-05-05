@@ -26,14 +26,25 @@ impl Server {
     }
 }
 
+impl<'s> From<&'s server::Server> for Server {
+    fn from(server: &'s server::Server) -> Self {
+        Server {
+            service_interval: 1337,
+            configuration_path: "Config".to_string(),
+            runtime_info_path: "Runtime".to_string(),
+            sensors: vec![],
+        }
+    }
+}
+
 impl From<server::Server> for Server {
     fn from(server: server::Server) -> Self {
         let mut sensors: Vec<::api::sensor::Sensor> = Vec::new();
-        for sensor in server.get_sensors() {
-            if let Ok(sensor) = sensor.lock() {
-                sensors.push((&*sensor).into());
-            }
-        }
+        // for sensor in server.get_sensors() {
+        //     if let Ok(sensor) = sensor.lock() {
+        //         sensors.push((&*sensor).into());
+        //     }
+        // }
 
         // In den Unit Tests kann es vorkommen das die Pfade `configuration_path` und `runtime_info_path`
         // `None` sind.

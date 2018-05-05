@@ -14,7 +14,7 @@ pub use self::ra_gas_co_no2_mod::RaGasCONO2Mod;
 pub use self::test_sensor::TestSensor;
 
 pub type BoxedSensor = Box<Sensor + Send + 'static>;
-pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
+pub type SensorsList = Arc<Mutex<Vec<BoxedSensor>>>;
 
 
 /// Verfügbare Sensor Typen
@@ -57,10 +57,10 @@ pub trait Sensor: fmt::Debug + fmt::Display {
 
     /// Liefert eine Referenz auf den Vector der Messzellen
     ///
-    fn get_messzellen(&self) -> &Vec<Arc<Mutex<BoxedMesszelle>>>;
+    fn get_messzellen(&self) -> Arc<Mutex<Vec<BoxedMesszelle>>>;
 
     /// Liefert Optional eine Messzelle (wenn vorhanden)
     ///
     /// Gibt `None` zurück wenn der Sensor keine Messzelle an Position `num` besizt.
-    fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>>;
+    fn get_messzelle<'a>(&self, num: usize) -> Option<&'a BoxedMesszelle>;
 }
