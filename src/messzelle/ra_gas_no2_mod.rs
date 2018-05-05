@@ -3,11 +3,13 @@ use std::fmt;
 use std::time::Duration;
 use std::time::SystemTime;
 
+// Die `pub` Public members sind nötig, da die Felder von den Konvertierungen (Configuration, RuntimInfo,
+// und Api) gesetzt werden.
 /// NO2 Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
 ///
 #[derive(Debug)]
 pub struct RaGasNO2Mod {
-    messzelle_type: MesszelleType,
+    pub messzelle_type: MesszelleType,
     pub values: Vec<(f64, SystemTime)>,
     pub max_values_for_n_minutes: u64, // in Sekunden
 }
@@ -41,9 +43,9 @@ impl Messzelle for RaGasNO2Mod {
     /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasNO2Mod::new();
-    /// assert!(messzelle.value().is_none());
+    /// assert!(messzelle.get_value().is_none());
     /// ```
-    fn value(&self) -> Option<&(f64, SystemTime)> {
+    fn get_value(&self) -> Option<&(f64, SystemTime)> {
         self.values.last()
     }
 
@@ -83,7 +85,7 @@ impl Messzelle for RaGasNO2Mod {
     /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasNO2Mod::new();
-    /// assert!(messzelle.value().is_none());
+    /// assert!(messzelle.get_value().is_none());
     /// ```
     fn average(&self, minutes: u64) -> Result<f64, MesszelleError> {
         let mut values = self.values.clone();
@@ -130,10 +132,10 @@ impl Messzelle for RaGasNO2Mod {
     /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasNO2Mod::new();
-    /// assert!(messzelle.value().is_none());
+    /// assert!(messzelle.get_value().is_none());
     /// ```
     fn update(&mut self) {
-        let last_value = match self.value() {
+        let last_value = match self.get_value() {
             Some(&(value, _timestamp)) => value,
             None => 0.0,
         };
@@ -158,7 +160,7 @@ impl Messzelle for RaGasNO2Mod {
     /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasNO2Mod::new();
-    /// assert!(messzelle.value().is_none());
+    /// assert!(messzelle.get_value().is_none());
     /// ```
     fn shrink_values(&mut self) {
         // 1. Spezialfall, ist nur ein Wert/Zeitstempel Paar vorhanden muss dieses zuerst
@@ -212,9 +214,15 @@ mod tests {
     }
 
     #[test]
-    fn value() {
+    fn get_value() {
         let messzelle = RaGasNO2Mod::new();
-        assert!(messzelle.value().is_none());
+        assert!(messzelle.get_value().is_none());
+    }
+
+    #[test]
+    fn get_values() {
+        let messzelle = RaGasNO2Mod::new();
+        assert_eq!(messzelle.get_values().len(), 0);
     }
 
     #[test]

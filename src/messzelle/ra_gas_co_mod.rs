@@ -3,11 +3,13 @@ use std::fmt;
 use std::time::Duration;
 use std::time::SystemTime;
 
+// Die `pub` Public members sind nötig, da die Felder von den Konvertierungen (Configuration, RuntimInfo,
+// und Api) gesetzt werden.
 /// CO Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
 ///
 #[derive(Debug)]
 pub struct RaGasCOMod {
-    messzelle_type: MesszelleType,
+    pub messzelle_type: MesszelleType,
     pub values: Vec<(f64, SystemTime)>,
     pub max_values_for_n_minutes: u64, // in Sekunden
 }
@@ -41,8 +43,9 @@ impl Messzelle for RaGasCOMod {
     /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasCOMod::new();
+    /// assert!(messzelle.get_value().is_none());
     /// ```
-    fn value(&self) -> Option<&(f64, SystemTime)> {
+    fn get_value(&self) -> Option<&(f64, SystemTime)> {
         self.values.last()
     }
 
@@ -130,7 +133,7 @@ impl Messzelle for RaGasCOMod {
     /// let messzelle = RaGasCOMod::new();
     /// ```
     fn update(&mut self) {
-        let last_value = match self.value() {
+        let last_value = match self.get_value() {
             Some(&(value, _timestamp)) => value,
             None => 0.0,
         };
@@ -208,9 +211,15 @@ mod tests {
     }
 
     #[test]
-    fn value() {
+    fn get_value() {
         let messzelle = RaGasCOMod::new();
-        assert!(messzelle.value().is_none());
+        assert!(messzelle.get_value().is_none());
+    }
+
+    #[test]
+    fn get_values() {
+        let messzelle = RaGasCOMod::new();
+        assert_eq!(messzelle.get_values().len(), 0);
     }
 
     #[test]

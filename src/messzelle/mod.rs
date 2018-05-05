@@ -41,7 +41,7 @@ pub enum MesszelleType {
 
 /// Basis Trait das die Eigenschaften einer Messzelle beschreibt
 ///
-/// Jede Messzelle hat einen Direktwert (`value()`) sowie ein Mittelwert (`average(minutes)`).
+/// Jede Messzelle hat einen Direktwert (`get_value()`) sowie ein Mittelwert (`average(minutes)`).
 /// Der Mittelwert Funktion kann ein Parameter übergeben werden mit dem die Dauer des zu
 /// berechnendem Mittelwertes angegeben werden kann.
 pub trait Messzelle: AsAny + fmt::Debug + fmt::Display {
@@ -49,9 +49,9 @@ pub trait Messzelle: AsAny + fmt::Debug + fmt::Display {
     ///
     /// Jede Messzelle verfügt über ein Liste mit einem oder mehreren Paaren, Messwerten und den
     /// Timestamps die bei der Ermittlung dieses Messwertes erstellt werden.
-    /// Die Implementierung der `value()` Funktion muss den letzten dieser Wertepaare ausgeben.
+    /// Die Implementierung der `get_value()` Funktion muss den letzten dieser Wertepaare ausgeben.
     /// Ist kein Messwert vorhanden wird `None` zurückgegeben.
-    fn value(&self) -> Option<&(f64, SystemTime)>;
+    fn get_value(&self) -> Option<&(f64, SystemTime)>;
 
     /// Liefert alle Werte zurück
     ///
