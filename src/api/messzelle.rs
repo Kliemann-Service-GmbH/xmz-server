@@ -4,7 +4,6 @@ use std::time::SystemTime;
 pub struct Messzelle {
     messzelle_type: ::messzelle::MesszelleType,
     value: Option<(f64, SystemTime)>,
-    max_values_for_n_minutes: u64, // in Sekunden
 }
 
 // #[get("/")]
@@ -24,7 +23,6 @@ impl<'a> From<&'a Box<::messzelle::Messzelle + Send>> for Messzelle {
         };
         Messzelle {
             value: value,
-            max_values_for_n_minutes: 0,
             messzelle_type: messzelle.get_messzelle_type(),
         }
     }

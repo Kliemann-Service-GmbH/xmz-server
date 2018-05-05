@@ -24,6 +24,7 @@ pub type BoxedMesszelle = Box<Messzelle + Send + 'static>;
 pub type MesszellenList = Vec<Arc<Mutex<BoxedMesszelle>>>;
 pub type MesszellenRefList<'a> = Vec<&'a Messzelle>;
 
+pub const MAX_VALUES_FOR_N_MINUTES: u64 = 60;
 
 /// Verfügbare Messzellen Typen
 ///

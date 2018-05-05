@@ -1,4 +1,9 @@
-use messzelle::{Messzelle, MesszelleError, MesszelleType};
+use messzelle::{
+    MAX_VALUES_FOR_N_MINUTES,
+    Messzelle,
+    MesszelleError,
+    MesszelleType,
+};
 use std::fmt;
 use std::time::Duration;
 use std::time::SystemTime;
@@ -11,7 +16,6 @@ use std::time::SystemTime;
 pub struct MetzConnectCI4Analog420 {
     pub messzelle_type: MesszelleType,
     pub values: Vec<(f64, SystemTime)>,
-    pub max_values_for_n_minutes: u64, // in Sekunden
 }
 
 impl MetzConnectCI4Analog420 {
@@ -28,8 +32,6 @@ impl MetzConnectCI4Analog420 {
         MetzConnectCI4Analog420 {
             messzelle_type: MesszelleType::MetzConnectCI4Analog420,
             values: vec![],
-            // max_values_for_n_minutes: 5 * 60 * 60,    // Normale Messzellen arbeiten mit Minuten Werten
-            max_values_for_n_minutes: 5, // Simulator Messzellen arbeiten mit Sekunden Werten
         }
     }
 }
@@ -140,7 +142,7 @@ impl Messzelle for MetzConnectCI4Analog420 {
         debug!("|-- Update Messzelle: '{}'", &self);
     }
 
-    /// Entfernt alle Wert/Zeistempel Paare die älter als `Messzelle::max_values_for_n_minutes` sind.
+    /// Entfernt alle Wert/Zeistempel Paare die älter als `Messzelle::MAX_VALUES_FOR_N_MINUTES` sind.
     ///
     /// Diese Funktion besteht aus 2 Tests. Der erste Spezialfall tritt ein wenn nur ein
     /// Wert/Zeitstempel Paar vorhanden ist. Hier muss getestet werden ob dieses veraltete Daten
@@ -164,7 +166,7 @@ impl Messzelle for MetzConnectCI4Analog420 {
         if self.values.len() == 1 {
             if let Some(&(_value, timestamp)) = self.values.get(0) {
                 if let Ok(duration) = timestamp.elapsed() {
-                    if duration > Duration::from_secs(self.max_values_for_n_minutes) {
+                    if duration > Duration::from_secs(MAX_VALUES_FOR_N_MINUTES) {
                         self.values.clear();
                     }
                 }
@@ -179,10 +181,10 @@ impl Messzelle for MetzConnectCI4Analog420 {
         // mit der Funktion [`split_off()`](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_off)
         // zu teilen.
         if let Some(index) = self.values.iter().position(|&(_value, timestamp)| {
-            timestamp.elapsed().unwrap() < Duration::from_secs(self.max_values_for_n_minutes)
+            timestamp.elapsed().unwrap() < Duration::from_secs(MAX_VALUES_FOR_N_MINUTES)
         }) {
             // Mit `split_off()` wird der Vector geteilt, es bleiben nur noch die
-            // Wert/Zeitstempel Paare der letzten `max_values_for_n_minutes` Minuten übrig.
+            // Wert/Zeitstempel Paare der letzten `MAX_VALUES_FOR_N_MINUTES` Minuten übrig.
             //
             // **Dieser Rest wird wieder als `values` übernommen, alle "alten" Werte werden so verworfen.**
             self.values = self.values.split_off(index);
@@ -204,7 +206,6 @@ mod tests {
     fn create() {
         let messzelle = MetzConnectCI4Analog420::new();
         assert_eq!(messzelle.values.len(), 0);
-        assert_eq!(messzelle.max_values_for_n_minutes, 5);
     }
 
     #[test]
