@@ -16,7 +16,7 @@ use rocket::Rocket;
 ///
 /// Diese statische Funktion `launch` erwartet eine Server Instanz, diese wird dann bei der
 /// Übergabe an die `rocket` Funktion in eine `api::server::Server` Instanz konvertiert.
-pub fn launch(server: ::server::Server) {
+pub fn launch(server: &::server::Server) {
     rocket(server.into()).launch();
 }
 

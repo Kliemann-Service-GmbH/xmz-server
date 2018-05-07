@@ -4,33 +4,35 @@ use api;
 use bincode;
 use error::ServerError;
 use prelude::*;
-use sensor::{BoxedSensor, SensorsList};
+use sensor::BoxedSensor;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex};
 use std::thread;
 
 
 /// Struktur der Server Komponente
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Debug)]
 pub struct Server {
     /// Wartungsintervall in Tagen
     pub service_interval: u32,
     /// Liste der Sensoren die dieser Server verwaltet
-    #[serde(skip)]
-    pub sensors: SensorsList,
+    pub sensors: Vec<BoxedSensor>,
     pub configuration_path: Option<PathBuf>,
     pub runtime_info_path: Option<PathBuf>,
 }
 
 impl Default for Server {
+    /// Default Konfiguration des Servers
+    ///
+    /// Die `default()` Konfiguration des Servers mit den sinnvollsten Werten.
+    ///
     fn default() -> Self {
-        let sensors: SensorsList = Arc::new(Mutex::new(vec![
+        let sensors: Vec<BoxedSensor> = vec![
             Box::new(RaGasCONO2Mod::new()),
             Box::new(MetzConnectCI4::new()),
             Box::new(TestSensor::new()),
-        ]));
+        ];
         Server {
             service_interval: 365,
             sensors: sensors,
@@ -43,9 +45,17 @@ impl Default for Server {
 
 impl Server {
     /// Erstellt eine neue Server Instanz
+    ///
+    /// Die `new()` Funktion erstellt eine "leere" neue Server Instanz. Das heist alle Member sind
+    /// Null oder leer, entsprechenden ihres Datentypes.
+    /// Die `default()` Implementation hingegen liefert einen "kompletten" Server. Das bedeutet
+    /// alle Member des Servers sind mit sinnvollen default Werten gefüllt. So sind zum
+    /// Beispiel alle unterstützten Sensoren, Messzellen jeweils einmal verfügbar.
+    ///
     pub fn new() -> Self {
         Server {
             service_interval: 0,
+            sensors: vec![],
             ..Default::default()
         }
     }
@@ -68,7 +78,7 @@ impl Server {
     /// Startet die Api (Json, Web)
     ///
     pub fn launch_api(&self) {
-        api::launch(self.clone());
+        api::launch(self);
     }
 
     /// Liefert eine Referenz auf die Liste der Sensoren
@@ -81,19 +91,17 @@ impl Server {
     /// let server = Server::default();
     /// assert_eq!(server.get_sensors().len(), 3);
     /// ```
-    pub fn get_sensors(&self) -> &SensorsList {
-        &self.sensors
+    pub fn get_sensors(&self) -> &[BoxedSensor] {
+        &self.sensors.as_slice()
     }
 
     pub fn get_sensor(&self, num: usize) -> Option<&BoxedSensor> {
-        // self.sensors.into_inner().unwrap().get(num)
-        unimplemented!()
+        let sensor = self.sensors.get(num);
+        sensor
     }
 
-    pub fn add_sensor(&mut self, sensor: &BoxedSensor) {
-        // let mut sensors = self.sensors.lock().unwrap();
-        // sensors.push(*sensor);
-        unimplemented!()
+    pub fn add_sensor(&mut self, sensor: BoxedSensor) {
+        self.sensors.push(sensor);
     }
 
     /// Serialize Server Instanz in das Bincode format
@@ -145,7 +153,6 @@ impl Server {
         Ok(())
     }
 }
-
 
 
 #[cfg(test)]

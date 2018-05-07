@@ -1,7 +1,6 @@
-use messzelle::{BoxedMesszelle, MesszellenList, MetzConnectCI4Analog420};
+use messzelle::{BoxedMesszelle, MetzConnectCI4Analog420};
 use sensor::{Sensor, SensorType};
 use std::fmt;
-use std::sync::{Arc, Mutex};
 
 
 // FIXME: pub's checken
@@ -18,7 +17,7 @@ pub struct MetzConnectCI4 {
     /// Sensor Type
     pub sensor_type: SensorType,
     /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
-    pub messzellen: MesszellenList,
+    pub messzellen: Vec<BoxedMesszelle>,
 }
 
 impl MetzConnectCI4 {
@@ -35,7 +34,7 @@ impl Default for MetzConnectCI4 {
         let messzelle3 = MetzConnectCI4Analog420::new();
         let messzelle4 = MetzConnectCI4Analog420::new();
 
-        let messzellen: Vec<Box<::messzelle::Messzelle + Send + 'static>> = vec![
+        let messzellen: Vec<BoxedMesszelle> = vec![
             Box::new(messzelle1),
             Box::new(messzelle2),
             Box::new(messzelle3),
@@ -45,7 +44,7 @@ impl Default for MetzConnectCI4 {
         MetzConnectCI4 {
             id: 0,
             sensor_type: SensorType::MetzConnectCI4,
-            messzellen: Arc::new(Mutex::new(messzellen)),
+            messzellen: messzellen,
         }
     }
 }
@@ -80,13 +79,13 @@ impl Sensor for MetzConnectCI4 {
         self.sensor_type.clone()
     }
 
-    fn get_messzellen(&self) -> Arc<Mutex<Vec<BoxedMesszelle>>> {
-        self.messzellen.clone()
+    fn get_messzellen(&self) -> &[BoxedMesszelle] {
+        &self.messzellen.as_slice()
     }
 
-    fn get_messzelle<'a>(&self, num: usize) -> Option<&'a BoxedMesszelle> {
-        // self.messzellen.into_inner().unwrap().get(num).clone()
-        unimplemented!()
+    fn get_messzelle(&self, num: usize) -> Option<&BoxedMesszelle> {
+        let messzelle = self.messzellen.get(num);
+        messzelle
     }
 }
 

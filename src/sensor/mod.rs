@@ -57,10 +57,10 @@ pub trait Sensor: fmt::Debug + fmt::Display {
 
     /// Liefert eine Referenz auf den Vector der Messzellen
     ///
-    fn get_messzellen(&self) -> Arc<Mutex<Vec<BoxedMesszelle>>>;
+    fn get_messzellen(&self) -> &[BoxedMesszelle];
 
     /// Liefert Optional eine Messzelle (wenn vorhanden)
     ///
     /// Gibt `None` zurück wenn der Sensor keine Messzelle an Position `num` besizt.
-    fn get_messzelle<'a>(&self, num: usize) -> Option<&'a BoxedMesszelle>;
+    fn get_messzelle(&self, num: usize) -> Option<&BoxedMesszelle>;
 }

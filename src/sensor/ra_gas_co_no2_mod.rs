@@ -1,7 +1,7 @@
-use messzelle::{BoxedMesszelle, MesszellenList, RaGasCOMod, RaGasNO2Mod};
+use messzelle::{BoxedMesszelle, RaGasCOMod, RaGasNO2Mod};
 use sensor::{Sensor, SensorType};
 use std::fmt;
-use std::sync::{Arc, Mutex};
+
 
 /// RA-GAS GmbH CO/ NO₂ Kombisensor mit Modbus Interface
 ///
@@ -14,7 +14,7 @@ pub struct RaGasCONO2Mod {
     /// Sensor Type
     pub sensor_type: SensorType,
     /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
-    pub messzellen: MesszellenList,
+    pub messzellen: Vec<BoxedMesszelle>,
 }
 
 impl RaGasCONO2Mod {
@@ -27,12 +27,12 @@ impl RaGasCONO2Mod {
     pub fn new_co() -> Self {
         let co_messzelle = RaGasCOMod::new();
 
-        let messzellen: Vec<Box<::messzelle::Messzelle + Send + 'static>> = vec![
+        let messzellen: Vec<BoxedMesszelle> = vec![
             Box::new(co_messzelle),
         ];
 
         RaGasCONO2Mod {
-            messzellen: Arc::new(Mutex::new(messzellen)),
+            messzellen: messzellen,
             ..Default::default()
         }
     }
@@ -41,12 +41,12 @@ impl RaGasCONO2Mod {
     pub fn new_no2() -> Self {
         let no2_messzelle = RaGasNO2Mod::new();
 
-        let messzellen: Vec<Box<::messzelle::Messzelle + Send + 'static>> = vec![
+        let messzellen: Vec<BoxedMesszelle> = vec![
             Box::new(no2_messzelle),
         ];
 
         RaGasCONO2Mod {
-            messzellen: Arc::new(Mutex::new(messzellen)),
+            messzellen: messzellen,
             ..Default::default()
         }
     }
@@ -58,7 +58,7 @@ impl Default for RaGasCONO2Mod {
         let no2_messzelle = RaGasNO2Mod::new();
         let co_messzelle = RaGasCOMod::new();
 
-        let messzellen: Vec<Box<::messzelle::Messzelle + Send + 'static>> = vec![
+        let messzellen: Vec<BoxedMesszelle> = vec![
             Box::new(no2_messzelle),
             Box::new(co_messzelle),
         ];
@@ -66,7 +66,7 @@ impl Default for RaGasCONO2Mod {
         RaGasCONO2Mod {
             id: 0,
             sensor_type: SensorType::RaGasCONO2Mod,
-            messzellen: Arc::new(Mutex::new(messzellen)),
+            messzellen: messzellen,
         }
     }
 }
@@ -100,13 +100,13 @@ impl Sensor for RaGasCONO2Mod {
         self.sensor_type.clone()
     }
 
-    fn get_messzellen(&self) -> Arc<Mutex<Vec<BoxedMesszelle>>> {
-        self.messzellen.clone()
+    fn get_messzellen(&self) -> &[BoxedMesszelle] {
+        &self.messzellen.as_slice()
     }
 
-    fn get_messzelle<'a>(&self, num: usize) -> Option<&'a BoxedMesszelle> {
-        // self.messzellen.into_inner().unwrap().get(num).clone()
-        unimplemented!()
+    fn get_messzelle(&self, num: usize) -> Option<&BoxedMesszelle> {
+        let messzelle = self.messzellen.get(num);
+        messzelle
     }
 }
 

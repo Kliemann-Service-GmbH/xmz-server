@@ -26,13 +26,34 @@ impl Server {
     }
 }
 
+/// Konvertierung des `server::Server` nach `configuration::Server`
+///
+/// Konvertiert den `server::Server` in ein Format das in der Laufzeitinformation
+/// gespeichert werden kann.
+///
+/// Diese Funktion ist analog zu der Konvertierung des `server::Server` nach [`runtime_info::Server`](../runtime_info/struct.Server.html)
+///
 impl<'s> From<&'s server::Server> for Server {
     fn from(server: &'s server::Server) -> Self {
+        // Restauriere Sensoren
+        let mut sensors: Vec<::api::sensor::Sensor> = Vec::new();
+        for sensor in server.get_sensors() {
+            sensors.push(sensor.into());
+        }
+
+        let configuration_path = match &server.configuration_path {
+            Some(path) => path.to_string_lossy().to_string(),
+            None => "not set".to_string(),
+        };
+        let runtime_info_path = match &server.runtime_info_path {
+            Some(path) => path.to_string_lossy().to_string(),
+            None => "not set".to_string(),
+        };
         Server {
-            service_interval: 1337,
-            configuration_path: "Config".to_string(),
-            runtime_info_path: "Runtime".to_string(),
-            sensors: vec![],
+            service_interval: server.service_interval,
+            configuration_path: configuration_path,
+            runtime_info_path: runtime_info_path,
+            sensors: sensors,
         }
     }
 }
@@ -40,11 +61,9 @@ impl<'s> From<&'s server::Server> for Server {
 impl From<server::Server> for Server {
     fn from(server: server::Server) -> Self {
         let mut sensors: Vec<::api::sensor::Sensor> = Vec::new();
-        // for sensor in server.get_sensors() {
-        //     if let Ok(sensor) = sensor.lock() {
-        //         sensors.push((&*sensor).into());
-        //     }
-        // }
+        for sensor in server.get_sensors() {
+            sensors.push(sensor.into());
+        }
 
         // In den Unit Tests kann es vorkommen das die Pfade `configuration_path` und `runtime_info_path`
         // `None` sind.
