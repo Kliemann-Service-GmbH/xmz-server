@@ -1,3 +1,10 @@
+use ::sensor::{
+    BoxedSensor,
+    MetzConnectCI4,
+    RaGasCONO2Mod,
+    SensorType,
+    TestSensor,
+};
 use config::Config;
 use error::ServerError;
 use std::fs::File;
@@ -48,19 +55,19 @@ impl Server {
 impl From<Server> for ::server::Server {
     fn from(server: Server) -> Self {
         // Restauriere Sensoren
-        let mut sensors: Vec<Box<::sensor::Sensor + Send + 'static>> = vec![];
+        let mut sensors: Vec<BoxedSensor> = vec![];
         for s in server.sensors {
             match s.sensor_type {
-                ::sensor::SensorType::RaGasCONO2Mod => {
-                    let sensor: ::sensor::RaGasCONO2Mod = s.into();
+                SensorType::RaGasCONO2Mod => {
+                    let sensor: RaGasCONO2Mod = s.into();
                     sensors.push(Box::new(sensor));
                 },
-                ::sensor::SensorType::MetzConnectCI4 => {
-                    let sensor: ::sensor::MetzConnectCI4 = s.into();
+                SensorType::MetzConnectCI4 => {
+                    let sensor: MetzConnectCI4 = s.into();
                     sensors.push(Box::new(sensor));
                 },
-                ::sensor::SensorType::TestSensor => {
-                    let sensor: ::sensor::TestSensor = s.into();
+                SensorType::TestSensor => {
+                    let sensor: TestSensor = s.into();
                     sensors.push(Box::new(sensor));
                 },
             }

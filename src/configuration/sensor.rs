@@ -1,9 +1,23 @@
+use ::messzelle::{
+    BoxedMesszelle,
+    MesszelleType,
+    MetzConnectCI4Analog420,
+    RaGasCOMod,
+    RaGasNO2Mod,
+};
+use ::sensor::{
+    BoxedSensor,
+    MetzConnectCI4,
+    RaGasCONO2Mod,
+    SensorType,
+    TestSensor,
+};
 
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Sensor {
     id: u32,
-    pub sensor_type: ::sensor::SensorType,
+    pub sensor_type: SensorType,
     messzellen: Vec<::configuration::Messzelle>,
 }
 
@@ -16,29 +30,29 @@ pub struct Sensor {
 /// Diese impl konvertiert die toml Daten, die in der Konfigurationsdatei verwendet werden in das
 /// entsprechenden Sensor Trait Objekt.
 ///
-impl From<Sensor> for ::sensor::RaGasCONO2Mod {
+impl From<Sensor> for RaGasCONO2Mod {
     fn from(sensor: Sensor) -> Self {
         // Restauriere Messzellen
-        let mut messzellen: Vec<Box<::messzelle::Messzelle + Send + 'static>>= vec![];
+        let mut messzellen: Vec<BoxedMesszelle>= vec![];
         for m in sensor.messzellen {
             match m.messzelle_type {
-                ::messzelle::MesszelleType::RaGasNO2Mod => {
-                    let messzelle: ::messzelle::RaGasNO2Mod = m.into();
+                MesszelleType::RaGasNO2Mod => {
+                    let messzelle: RaGasNO2Mod = m.into();
                     messzellen.push(Box::new(messzelle));
                 },
-                ::messzelle::MesszelleType::RaGasCOMod => {
-                    let messzelle: ::messzelle::RaGasCOMod = m.into();
+                MesszelleType::RaGasCOMod => {
+                    let messzelle: RaGasCOMod = m.into();
                     messzellen.push(Box::new(messzelle));
                 },
-                ::messzelle::MesszelleType::MetzConnectCI4Analog420 => {
-                    let messzelle: ::messzelle::MetzConnectCI4Analog420 = m.into();
+                MesszelleType::MetzConnectCI4Analog420 => {
+                    let messzelle: MetzConnectCI4Analog420 = m.into();
                     messzellen.push(Box::new(messzelle));
                 },
             }
         }
-        ::sensor::RaGasCONO2Mod {
+        RaGasCONO2Mod {
             id: sensor.id,
-            sensor_type: ::sensor::SensorType::RaGasCONO2Mod,
+            sensor_type: SensorType::RaGasCONO2Mod,
             messzellen: messzellen,
         }
     }
@@ -48,29 +62,29 @@ impl From<Sensor> for ::sensor::RaGasCONO2Mod {
 /// Diese impl konvertiert die toml Daten, die in der Konfigurationsdatei verwendet werden in das
 /// entsprechenden Sensor Trait Objekt.
 ///
-impl From<Sensor> for ::sensor::MetzConnectCI4 {
+impl From<Sensor> for MetzConnectCI4 {
     fn from(sensor: Sensor) -> Self {
         // Restauriere Messzellen
-        let mut messzellen: Vec<Box<::messzelle::Messzelle + Send + 'static>>= vec![];
+        let mut messzellen: Vec<BoxedMesszelle>= vec![];
         for m in sensor.messzellen {
             match m.messzelle_type {
-                ::messzelle::MesszelleType::RaGasNO2Mod => {
-                    let messzelle: ::messzelle::RaGasNO2Mod = m.into();
+                MesszelleType::RaGasNO2Mod => {
+                    let messzelle: RaGasNO2Mod = m.into();
                     messzellen.push(Box::new(messzelle));
                 },
-                ::messzelle::MesszelleType::RaGasCOMod => {
-                    let messzelle: ::messzelle::RaGasCOMod = m.into();
+                MesszelleType::RaGasCOMod => {
+                    let messzelle: RaGasCOMod = m.into();
                     messzellen.push(Box::new(messzelle));
                 },
-                ::messzelle::MesszelleType::MetzConnectCI4Analog420 => {
-                    let messzelle: ::messzelle::MetzConnectCI4Analog420 = m.into();
+                MesszelleType::MetzConnectCI4Analog420 => {
+                    let messzelle: MetzConnectCI4Analog420 = m.into();
                     messzellen.push(Box::new(messzelle));
                 },
             }
         }
-        ::sensor::MetzConnectCI4 {
+        MetzConnectCI4 {
             id: sensor.id,
-            sensor_type: ::sensor::SensorType::MetzConnectCI4,
+            sensor_type: SensorType::MetzConnectCI4,
             messzellen: messzellen,
         }
     }
@@ -80,29 +94,29 @@ impl From<Sensor> for ::sensor::MetzConnectCI4 {
 /// Diese impl konvertiert die toml Daten, die in der Konfigurationsdatei verwendet werden in das
 /// entsprechenden Sensor Trait Objekt.
 ///
-impl From<Sensor> for ::sensor::TestSensor {
+impl From<Sensor> for TestSensor {
     fn from(sensor: Sensor) -> Self {
         // Restauriere Messzellen
-        let mut messzellen: Vec<Box<::messzelle::Messzelle + Send + 'static>>= vec![];
+        let mut messzellen: Vec<BoxedMesszelle>= vec![];
         for m in sensor.messzellen {
             match m.messzelle_type {
-                ::messzelle::MesszelleType::RaGasNO2Mod => {
-                    let messzelle: ::messzelle::RaGasNO2Mod = m.into();
+                MesszelleType::RaGasNO2Mod => {
+                    let messzelle: RaGasNO2Mod = m.into();
                     messzellen.push(Box::new(messzelle));
                 },
-                ::messzelle::MesszelleType::RaGasCOMod => {
-                    let messzelle: ::messzelle::RaGasCOMod = m.clone().into();
+                MesszelleType::RaGasCOMod => {
+                    let messzelle: RaGasCOMod = m.clone().into();
                     messzellen.push(Box::new(messzelle));
                 },
-                ::messzelle::MesszelleType::MetzConnectCI4Analog420 => {
-                    let messzelle: ::messzelle::MetzConnectCI4Analog420 = m.into();
+                MesszelleType::MetzConnectCI4Analog420 => {
+                    let messzelle: MetzConnectCI4Analog420 = m.into();
                     messzellen.push(Box::new(messzelle));
                 },
             }
         }
-        ::sensor::TestSensor {
+        TestSensor {
             id: sensor.id,
-            sensor_type: ::sensor::SensorType::TestSensor,
+            sensor_type: SensorType::TestSensor,
             messzellen: messzellen,
         }
     }
@@ -115,8 +129,8 @@ impl From<Sensor> for ::sensor::TestSensor {
 ///
 /// Hauptsächlich werden die generic Komponenten in konkrete Typen gewandelt.
 ///
-impl<'a> From<&'a Box<::sensor::Sensor + Send>> for Sensor {
-    fn from(sensor: &'a Box<::sensor::Sensor + Send>) -> Self {
+impl<'a> From<&'a BoxedSensor> for Sensor {
+    fn from(sensor: &'a BoxedSensor) -> Self {
         // Restauriere Messzellen
         let mut messzellen: Vec<::configuration::Messzelle> = vec![];
         for messzelle in sensor.get_messzellen() {

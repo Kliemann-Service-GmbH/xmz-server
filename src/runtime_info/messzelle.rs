@@ -1,9 +1,16 @@
+use ::messzelle::{
+    BoxedMesszelle,
+    MesszelleType,
+    MetzConnectCI4Analog420,
+    RaGasCOMod,
+    RaGasNO2Mod,
+};
 use std::time::SystemTime;
 
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Messzelle {
-    pub messzelle_type: ::messzelle::MesszelleType,
+    pub messzelle_type: MesszelleType,
     values: Vec<(f64, SystemTime)>,
 }
 
@@ -12,10 +19,10 @@ pub struct Messzelle {
 /// Diese impl konvertiert die bincode Daten, der Laufzeitinformationen, in das entsprechenden
 /// ``Messzelle`` Trait Objekt.
 ///
-impl From<Messzelle> for ::messzelle::RaGasNO2Mod {
+impl From<Messzelle> for RaGasNO2Mod {
     fn from(messzelle: Messzelle) -> Self {
-        ::messzelle::RaGasNO2Mod {
-            messzelle_type: ::messzelle::MesszelleType::RaGasNO2Mod,
+        RaGasNO2Mod {
+            messzelle_type: MesszelleType::RaGasNO2Mod,
             values: messzelle.values,
         }
     }
@@ -25,10 +32,10 @@ impl From<Messzelle> for ::messzelle::RaGasNO2Mod {
 /// Diese impl konvertiert die bincode Daten, der Laufzeitinformationen, in das entsprechenden
 /// `Messzelle` Trait Objekt.
 ///
-impl From<Messzelle> for ::messzelle::RaGasCOMod {
+impl From<Messzelle> for RaGasCOMod {
     fn from(messzelle: Messzelle) -> Self {
-        ::messzelle::RaGasCOMod {
-            messzelle_type: ::messzelle::MesszelleType::RaGasCOMod,
+        RaGasCOMod {
+            messzelle_type: MesszelleType::RaGasCOMod,
             values: messzelle.values,
         }
     }
@@ -38,10 +45,10 @@ impl From<Messzelle> for ::messzelle::RaGasCOMod {
 /// Diese impl konvertiert die bincode Daten, der Laufzeitinformationen, in das entsprechenden
 /// `Messzelle` Trait Objekt.
 ///
-impl From<Messzelle> for ::messzelle::MetzConnectCI4Analog420 {
+impl From<Messzelle> for MetzConnectCI4Analog420 {
     fn from(messzelle: Messzelle) -> Self {
-        ::messzelle::MetzConnectCI4Analog420 {
-            messzelle_type: ::messzelle::MesszelleType::MetzConnectCI4Analog420,
+        MetzConnectCI4Analog420 {
+            messzelle_type: MesszelleType::MetzConnectCI4Analog420,
             values: messzelle.values,
         }
     }
@@ -49,8 +56,8 @@ impl From<Messzelle> for ::messzelle::MetzConnectCI4Analog420 {
 
 /// Konvertierung der Messzellen Trait Objekte des Servers `::messzelle::Messzelle`
 ///
-impl<'a> From<&'a Box<::messzelle::Messzelle + Send>> for Messzelle {
-    fn from(messzelle: &'a Box<::messzelle::Messzelle + Send>) -> Self {
+impl<'a> From<&'a BoxedMesszelle> for Messzelle {
+    fn from(messzelle: &'a BoxedMesszelle) -> Self {
         Messzelle {
             values: messzelle.get_values(),
             messzelle_type: messzelle.get_messzelle_type(),

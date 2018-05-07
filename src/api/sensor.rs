@@ -1,5 +1,6 @@
 use rocket::State;
 use rocket_contrib::Json;
+use ::sensor::BoxedSensor;
 
 
 #[derive(Clone, Debug, Serialize)]
@@ -26,8 +27,8 @@ fn index(server: State<::api::server::Server>) -> Json<Vec<Sensor>> {
 /// Konvertierung von den Sensor Trait Objekten `server::Sensor`
 ///
 /// Diese Konvertierung wird indirekt vom Server, ein Modul weiter oben, aufgerufen.
-impl<'a> From<&'a Box<::sensor::Sensor + Send>> for Sensor {
-    fn from(sensor: &'a Box<::sensor::Sensor + Send>) -> Self {
+impl<'a> From<&'a BoxedSensor> for Sensor {
+    fn from(sensor: &'a BoxedSensor) -> Self {
         // Kontruiere Messzellen
         let mut messzellen: Vec<::api::messzelle::Messzelle> = vec![];
         for messzelle in sensor.get_messzellen() {
