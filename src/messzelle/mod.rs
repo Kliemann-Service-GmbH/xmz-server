@@ -6,7 +6,6 @@
 
 use prelude::*;
 use std::fmt;
-use std::sync::{Arc, Mutex};
 use std::time::SystemTime;
 
 mod error;
@@ -20,9 +19,7 @@ pub use self::metz_connect_analog_420::MetzConnectCI4Analog420;
 pub use self::ra_gas_co_mod::RaGasCOMod;
 pub use self::ra_gas_no2_mod::RaGasNO2Mod;
 
-pub type BoxedMesszelle = Box<Messzelle + Send + 'static>;
-pub type MesszellenList = Arc<Mutex<Vec<BoxedMesszelle>>>;
-pub type MesszellenRefList<'a> = Vec<&'a Messzelle>;
+pub type BoxedMesszelle = Box<Messzelle + Send>;
 
 pub const MAX_VALUES_FOR_N_MINUTES: u64 = 60;
 

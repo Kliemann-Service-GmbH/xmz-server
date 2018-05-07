@@ -52,6 +52,15 @@ impl Server {
     /// alle Member des Servers sind mit sinnvollen default Werten gefüllt. So sind zum
     /// Beispiel alle unterstützten Sensoren, Messzellen jeweils einmal verfügbar.
     ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let server = Server::default();
+    /// assert_eq!(server.get_sensors().len(), 3);
+    /// ```
+    ///
     pub fn new() -> Self {
         Server {
             service_interval: 0,
@@ -62,17 +71,24 @@ impl Server {
 
     /// Aktualisiert der Reihe nach jeden Sensor
     ///
-    pub fn update_sensors(&self) -> thread::JoinHandle<bool> {
-        // let sensors = self.sensors.clone();
-        // let guard = thread::spawn(move || loop {
-        //     for sensor in sensors.clone() {
-        //         if let Ok(mut sensor) = sensor.lock() {
-        //             sensor.update();
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let server = Server::default();
+    /// assert_eq!(server.get_sensors().len(), 3);
+    /// ```
+    ///
+    pub fn update_sensors(&self) {
+        // let sensors = self.sensors.as_slice();
+        // thread::spawn(move || {
+        //     loop {
+        //         for sensor in sensors {
+        //             sensor.update()
         //         }
         //     }
         // });
-        // guard
-        thread::spawn(|| loop {})
     }
 
     /// Startet die Api (Json, Web)
@@ -95,16 +111,43 @@ impl Server {
         &self.sensors.as_slice()
     }
 
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let server = Server::default();
+    /// assert_eq!(server.get_sensors().len(), 3);
+    /// ```
     pub fn get_sensor(&self, num: usize) -> Option<&BoxedSensor> {
         let sensor = self.sensors.get(num);
         sensor
     }
 
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let server = Server::default();
+    /// assert_eq!(server.get_sensors().len(), 3);
+    /// ```
     pub fn add_sensor(&mut self, sensor: BoxedSensor) {
         self.sensors.push(sensor);
     }
 
     /// Serialize Server Instanz in das Bincode format
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let server = Server::default();
+    /// assert_eq!(server.get_sensors().len(), 3);
+    /// ```
     ///
     pub fn serialize_to_bincode(&self) -> Result<Vec<u8>, ServerError> {
         let server: runtime_info::Server = self.clone().into();
@@ -139,16 +182,10 @@ impl Server {
         self.store_runtime_information()?;
 
         // Sensor Update Thread starten
-        let server_update_guard = self.update_sensors();
+        self.update_sensors();
 
         // JSON Api (rocket) starten
         self.launch_api();
-
-        // Der Sensor Update Thread wird gejoint, somit läuft der Server solange dieser Thread
-        // läuft.
-        server_update_guard
-            .join()
-            .expect("Fehler im Sensor Update Guard");
 
         Ok(())
     }
