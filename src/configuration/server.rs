@@ -1,5 +1,6 @@
 use ::sensor::{
     BoxedSensor,
+    SensorList,
     MetzConnectCI4,
     RaGasCONO2Mod,
     SensorType,
@@ -10,6 +11,7 @@ use error::ServerError;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
+use std::sync::{Arc, Mutex};
 use toml;
 
 
@@ -28,8 +30,9 @@ pub struct Server {
 impl Server {
     /// Bildet eine Server Instanz aus der Konfigurationsdatei
     ///
-    /// Die Funktion liefert ein `Result` mit einer `ServerBuilder` Instanz, oder liefert ein
+    /// Die Funktion liefert ein `Result` mit einer `::configuration::Server` Instanz, oder liefert ein
     /// `ServerError`.
+    ///
     pub fn from_config_file(cfg: &Config) -> Result<Server, ServerError> {
         let mut file = File::open(&cfg.configuration_path)?;
         let mut s = String::new();
@@ -55,20 +58,20 @@ impl Server {
 impl From<Server> for ::server::Server {
     fn from(server: Server) -> Self {
         // Restauriere Sensoren
-        let mut sensors: Vec<BoxedSensor> = vec![];
+        let mut sensors: SensorList = vec![];
         for s in server.sensors {
             match s.sensor_type {
                 SensorType::RaGasCONO2Mod => {
                     let sensor: RaGasCONO2Mod = s.into();
-                    sensors.push(Box::new(sensor));
+                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
                 },
                 SensorType::MetzConnectCI4 => {
                     let sensor: MetzConnectCI4 = s.into();
-                    sensors.push(Box::new(sensor));
+                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
                 },
                 SensorType::TestSensor => {
                     let sensor: TestSensor = s.into();
-                    sensors.push(Box::new(sensor));
+                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
                 },
             }
         }

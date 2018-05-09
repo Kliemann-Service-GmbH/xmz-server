@@ -1,7 +1,7 @@
 //! Trait das die Eigenschaften aller vom Server unterstützten Sensoren beschreibt.
 //!
-use messzelle::BoxedMesszelle;
-use std::fmt;
+use prelude::*;
+
 
 mod metz_connect_ci4;
 mod ra_gas_co_no2_mod;
@@ -13,6 +13,7 @@ pub use self::ra_gas_co_no2_mod::RaGasCONO2Mod;
 pub use self::test_sensor::TestSensor;
 
 pub type BoxedSensor = Box<Sensor + Send>;
+pub type SensorList = Vec<Arc<Mutex<BoxedSensor>>>;
 
 
 /// Verfügbare Sensor Typen
@@ -55,10 +56,10 @@ pub trait Sensor: fmt::Debug + fmt::Display {
 
     /// Liefert eine Referenz auf den Vector der Messzellen
     ///
-    fn get_messzellen(&self) -> &[BoxedMesszelle];
+    fn get_messzellen(&self) -> Vec<Arc<Mutex<BoxedMesszelle>>>;
 
     /// Liefert Optional eine Messzelle (wenn vorhanden)
     ///
     /// Gibt `None` zurück wenn der Sensor keine Messzelle an Position `num` besizt.
-    fn get_messzelle(&self, num: usize) -> Option<&BoxedMesszelle>;
+    fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>>;
 }

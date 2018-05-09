@@ -1,5 +1,6 @@
 use ::sensor::{
     BoxedSensor,
+    SensorList,
     MetzConnectCI4,
     RaGasCONO2Mod,
     SensorType,
@@ -11,6 +12,7 @@ use error::ServerError;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
+use std::sync::{Arc, Mutex};
 
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -48,29 +50,29 @@ impl Server {
 ///
 impl From<Server> for ::server::Server {
     fn from(server: Server) -> Self {
-        let mut sensors: Vec<BoxedSensor> = vec![];
+        let mut sensors: SensorList = vec![];
         for s in server.sensors {
             match s.sensor_type {
                 SensorType::RaGasCONO2Mod => {
                     let sensor: RaGasCONO2Mod = s.clone().into();
-                    sensors.push(Box::new(sensor));
+                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
                 },
                 SensorType::MetzConnectCI4 => {
                     let sensor: MetzConnectCI4 = s.into();
-                    sensors.push(Box::new(sensor));
+                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
                 },
                 SensorType::TestSensor => {
                     let sensor: TestSensor = s.into();
-                    sensors.push(Box::new(sensor));
+                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
                 },
             }
         }
         ::server::Server {
             service_interval: server.service_interval,
-            sensors: sensors,
-            // zones: vec![],
             configuration_path: Some(PathBuf::from(server.configuration_path)),
             runtime_info_path: Some(PathBuf::from(server.runtime_info_path)),
+            sensors: sensors,
+            // zones: vec![],
         }
     }
 }
@@ -104,6 +106,7 @@ impl<'r> From<&'r ::server::Server> for Server {
             configuration_path: configuration_path,
             runtime_info_path: runtime_info_path,
             sensors: sensors,
+            // zones: vec![],
         }
     }
 }

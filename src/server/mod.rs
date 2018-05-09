@@ -2,13 +2,10 @@
 //!
 use api;
 use bincode;
-use error::ServerError;
 use prelude::*;
-use sensor::BoxedSensor;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
-use std::thread;
 
 
 /// Struktur der Server Komponente
@@ -17,7 +14,7 @@ pub struct Server {
     /// Wartungsintervall in Tagen
     pub service_interval: u32,
     /// Liste der Sensoren die dieser Server verwaltet
-    pub sensors: Vec<BoxedSensor>,
+    pub sensors: SensorList,
     pub configuration_path: Option<PathBuf>,
     pub runtime_info_path: Option<PathBuf>,
 }
@@ -28,10 +25,10 @@ impl Default for Server {
     /// Die `default()` Konfiguration des Servers mit den sinnvollsten Werten.
     ///
     fn default() -> Self {
-        let sensors: Vec<BoxedSensor> = vec![
-            Box::new(RaGasCONO2Mod::new()),
-            Box::new(MetzConnectCI4::new()),
-            Box::new(TestSensor::new()),
+        let sensors: SensorList = vec![
+            Arc::new(Mutex::new(Box::new(RaGasCONO2Mod::new()))),
+            Arc::new(Mutex::new(Box::new(MetzConnectCI4::new()))),
+            Arc::new(Mutex::new(Box::new(TestSensor::new()))),
         ];
         Server {
             service_interval: 365,
@@ -69,28 +66,6 @@ impl Server {
         }
     }
 
-    /// Aktualisiert der Reihe nach jeden Sensor
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use xmz_server::prelude::*;
-    ///
-    /// let server = Server::default();
-    /// assert_eq!(server.get_sensors().len(), 3);
-    /// ```
-    ///
-    pub fn update_sensors(&self) {
-        // let sensors = self.sensors.as_slice();
-        // thread::spawn(move || {
-        //     loop {
-        //         for sensor in sensors {
-        //             sensor.update()
-        //         }
-        //     }
-        // });
-    }
-
     /// Startet die Api (Json, Web)
     ///
     pub fn launch_api(&self) {
@@ -107,8 +82,8 @@ impl Server {
     /// let server = Server::default();
     /// assert_eq!(server.get_sensors().len(), 3);
     /// ```
-    pub fn get_sensors(&self) -> &[BoxedSensor] {
-        &self.sensors.as_slice()
+    pub fn get_sensors(&self) -> Vec<Arc<Mutex<BoxedSensor>>> {
+        self.sensors.clone()
     }
 
     ///
@@ -120,7 +95,7 @@ impl Server {
     /// let server = Server::default();
     /// assert_eq!(server.get_sensors().len(), 3);
     /// ```
-    pub fn get_sensor(&self, num: usize) -> Option<&BoxedSensor> {
+    pub fn get_sensor(&self, num: usize) -> Option<&Arc<Mutex<BoxedSensor>>> {
         let sensor = self.sensors.get(num);
         sensor
     }
@@ -135,7 +110,7 @@ impl Server {
     /// assert_eq!(server.get_sensors().len(), 3);
     /// ```
     pub fn add_sensor(&mut self, sensor: BoxedSensor) {
-        self.sensors.push(sensor);
+        self.sensors.push(Arc::new(Mutex::new(sensor)));
     }
 
     /// Serialize Server Instanz in das Bincode format
@@ -151,6 +126,7 @@ impl Server {
     ///
     pub fn serialize_to_bincode(&self) -> Result<Vec<u8>, ServerError> {
         let server: runtime_info::Server = self.clone().into();
+        debug!("{:?}", &server);
 
         match bincode::serialize(&server) {
             Ok(data) => {
@@ -177,6 +153,32 @@ impl Server {
         }
     }
 
+    /// Aktualisiert der Reihe nach jeden Sensor
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let server = Server::default();
+    /// assert_eq!(server.get_sensors().len(), 3);
+    /// ```
+    ///
+    pub fn update_sensors(&self) -> thread::JoinHandle<bool> {
+        let sensors = self.sensors.clone();
+        thread::spawn(move || loop {
+            for sensor in sensors.clone() {
+                if let Ok(sensor) = sensor.lock() {
+                    sensor.update();
+                }
+            }
+            thread::sleep(Duration::from_millis(100));
+        })
+    }
+
+    /// Started alle Komponenten des Servers
+    ///
+    /// Viele Teile des Servers werden in eigenen Threads gestarted.
     pub fn start(&self) -> Result<(), ServerError> {
         // Laufzeit Informationen speichern
         self.store_runtime_information()?;

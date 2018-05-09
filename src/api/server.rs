@@ -18,6 +18,7 @@ pub struct Server {
 }
 
 impl Server {
+    // FIXME: `&` entfernen
     /// Liefert ein Vector mit den Sensoren des Servers
     ///
     /// Diese Funktion wird in ::api::sensor::Sensor aufgerufen.
@@ -58,6 +59,9 @@ impl<'s> From<&'s server::Server> for Server {
     }
 }
 
+/// Alternative Konvertierung
+///
+/// TODO: Checken ob das besser ist
 impl From<server::Server> for Server {
     fn from(server: server::Server) -> Self {
         let mut sensors: Vec<::api::sensor::Sensor> = Vec::new();

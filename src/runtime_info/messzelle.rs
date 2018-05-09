@@ -6,6 +6,7 @@ use ::messzelle::{
     RaGasNO2Mod,
 };
 use std::time::SystemTime;
+use std::sync::{Arc, Mutex};
 
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -56,8 +57,9 @@ impl From<Messzelle> for MetzConnectCI4Analog420 {
 
 /// Konvertierung der Messzellen Trait Objekte des Servers `::messzelle::Messzelle`
 ///
-impl<'a> From<&'a BoxedMesszelle> for Messzelle {
-    fn from(messzelle: &'a BoxedMesszelle) -> Self {
+impl From<Arc<Mutex<BoxedMesszelle>>> for Messzelle {
+    fn from(messzelle: Arc<Mutex<BoxedMesszelle>>) -> Self {
+        let messzelle = messzelle.lock().unwrap();
         Messzelle {
             values: messzelle.get_values(),
             messzelle_type: messzelle.get_messzelle_type(),

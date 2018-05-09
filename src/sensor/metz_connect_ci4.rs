@@ -1,6 +1,4 @@
-use messzelle::{BoxedMesszelle, MetzConnectCI4Analog420};
-use sensor::{Sensor, SensorType};
-use std::fmt;
+use prelude::*;
 
 
 // FIXME: pub's checken
@@ -10,14 +8,14 @@ use std::fmt;
 /// können 4 analog Sensoren angeschlossen werden. Für die 4-20mA Messtechnik wird die Messzelle
 /// `MetzConnectCI4Analog420` verwendet.
 ///
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MetzConnectCI4 {
     /// Sensor ID
     pub id: u32,
     /// Sensor Type
     pub sensor_type: SensorType,
     /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
-    pub messzellen: Vec<BoxedMesszelle>,
+    pub messzellen: MesszelleList,
 }
 
 impl MetzConnectCI4 {
@@ -29,16 +27,11 @@ impl MetzConnectCI4 {
 
 impl Default for MetzConnectCI4 {
     fn default() -> Self {
-        let messzelle1 = MetzConnectCI4Analog420::new();
-        let messzelle2 = MetzConnectCI4Analog420::new();
-        let messzelle3 = MetzConnectCI4Analog420::new();
-        let messzelle4 = MetzConnectCI4Analog420::new();
-
-        let messzellen: Vec<BoxedMesszelle> = vec![
-            Box::new(messzelle1),
-            Box::new(messzelle2),
-            Box::new(messzelle3),
-            Box::new(messzelle4),
+        let messzellen: MesszelleList = vec![
+            Arc::new(Mutex::new(Box::new(MetzConnectCI4Analog420::new()))),
+            Arc::new(Mutex::new(Box::new(MetzConnectCI4Analog420::new()))),
+            Arc::new(Mutex::new(Box::new(MetzConnectCI4Analog420::new()))),
+            Arc::new(Mutex::new(Box::new(MetzConnectCI4Analog420::new()))),
         ];
 
         MetzConnectCI4 {
@@ -61,14 +54,14 @@ impl Sensor for MetzConnectCI4 {
     // Update Sensor Platine via BUS
     fn update(&self) {
         debug!("Update Sensor: '{}'", &self);
-        //
-        // let messzellen = &self.messzellen.clone();
-        // for messzelle in messzellen {
-        //     if let Ok(mut messzelle) = messzelle.lock() {
-        //         messzelle.update()
-        //     }
-        // }
-        ::std::thread::sleep(::std::time::Duration::from_secs(1));
+
+        let messzellen = &self.messzellen.clone();
+        for messzelle in messzellen {
+            if let Ok(mut messzelle) = messzelle.lock() {
+                messzelle.update()
+            }
+        }
+        thread::sleep(Duration::from_secs(1));
     }
 
     fn get_id(&self) -> u32 {
@@ -79,11 +72,11 @@ impl Sensor for MetzConnectCI4 {
         self.sensor_type.clone()
     }
 
-    fn get_messzellen(&self) -> &[BoxedMesszelle] {
-        &self.messzellen.as_slice()
+    fn get_messzellen(&self) -> Vec<Arc<Mutex<BoxedMesszelle>>> {
+        self.messzellen.clone()
     }
 
-    fn get_messzelle(&self, num: usize) -> Option<&BoxedMesszelle> {
+    fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
         let messzelle = self.messzellen.get(num);
         messzelle
     }

@@ -1,6 +1,5 @@
-use messzelle::BoxedMesszelle;
-use sensor::{Sensor, SensorType};
-use std::fmt;
+use prelude::*;
+
 
 
 /// Test Sensor
@@ -12,7 +11,7 @@ pub struct TestSensor {
     /// Sensor Type
     pub sensor_type: SensorType,
     /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
-    pub messzellen: Vec<BoxedMesszelle>,
+    pub messzellen: MesszelleList,
 }
 
 impl TestSensor {
@@ -59,11 +58,11 @@ impl Sensor for TestSensor {
         self.sensor_type.clone()
     }
 
-    fn get_messzellen(&self) -> &[BoxedMesszelle] {
-        &self.messzellen.as_slice()
+    fn get_messzellen(&self) -> Vec<Arc<Mutex<BoxedMesszelle>>> {
+        self.messzellen.clone()
     }
 
-    fn get_messzelle(&self, num: usize) -> Option<&BoxedMesszelle> {
+    fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
         let messzelle = self.messzellen.get(num);
         messzelle
     }

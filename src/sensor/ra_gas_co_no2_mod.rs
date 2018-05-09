@@ -1,6 +1,5 @@
-use messzelle::{BoxedMesszelle, RaGasCOMod, RaGasNO2Mod};
-use sensor::{Sensor, SensorType};
-use std::fmt;
+use prelude::*;
+
 
 
 /// RA-GAS GmbH CO/ NO₂ Kombisensor mit Modbus Interface
@@ -14,7 +13,7 @@ pub struct RaGasCONO2Mod {
     /// Sensor Type
     pub sensor_type: SensorType,
     /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
-    pub messzellen: Vec<BoxedMesszelle>,
+    pub messzellen: MesszelleList,
 }
 
 impl RaGasCONO2Mod {
@@ -27,8 +26,8 @@ impl RaGasCONO2Mod {
     pub fn new_co() -> Self {
         let co_messzelle = RaGasCOMod::new();
 
-        let messzellen: Vec<BoxedMesszelle> = vec![
-            Box::new(co_messzelle),
+        let messzellen: MesszelleList = vec![
+            Arc::new(Mutex::new(Box::new(co_messzelle))),
         ];
 
         RaGasCONO2Mod {
@@ -41,8 +40,8 @@ impl RaGasCONO2Mod {
     pub fn new_no2() -> Self {
         let no2_messzelle = RaGasNO2Mod::new();
 
-        let messzellen: Vec<BoxedMesszelle> = vec![
-            Box::new(no2_messzelle),
+        let messzellen: MesszelleList = vec![
+            Arc::new(Mutex::new(Box::new(no2_messzelle))),
         ];
 
         RaGasCONO2Mod {
@@ -58,9 +57,9 @@ impl Default for RaGasCONO2Mod {
         let no2_messzelle = RaGasNO2Mod::new();
         let co_messzelle = RaGasCOMod::new();
 
-        let messzellen: Vec<BoxedMesszelle> = vec![
-            Box::new(no2_messzelle),
-            Box::new(co_messzelle),
+        let messzellen: MesszelleList = vec![
+            Arc::new(Mutex::new(Box::new(no2_messzelle))),
+            Arc::new(Mutex::new(Box::new(co_messzelle))),
         ];
 
         RaGasCONO2Mod {
@@ -100,11 +99,11 @@ impl Sensor for RaGasCONO2Mod {
         self.sensor_type.clone()
     }
 
-    fn get_messzellen(&self) -> &[BoxedMesszelle] {
-        &self.messzellen.as_slice()
+    fn get_messzellen(&self) -> Vec<Arc<Mutex<BoxedMesszelle>>> {
+        self.messzellen.clone()
     }
 
-    fn get_messzelle(&self, num: usize) -> Option<&BoxedMesszelle> {
+    fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
         let messzelle = self.messzellen.get(num);
         messzelle
     }

@@ -1,5 +1,6 @@
 use std::time::SystemTime;
-use messzelle::BoxedMesszelle;
+use messzelle::{BoxedMesszelle};
+use std::sync::{Arc, Mutex};
 
 
 #[derive(Clone, Debug, Serialize)]
@@ -16,8 +17,9 @@ pub struct Messzelle {
 
 /// Konvertierung der Messzellen Trait Objekte des Servers `::messzelle::Messzelle`
 ///
-impl<'a> From<&'a BoxedMesszelle> for Messzelle {
-    fn from(messzelle: &'a BoxedMesszelle) -> Self {
+impl From<Arc<Mutex<BoxedMesszelle>>> for Messzelle {
+    fn from(messzelle: Arc<Mutex<BoxedMesszelle>>) -> Self {
+        let messzelle = messzelle.lock().unwrap();
         // Wert aus der Referenz auspacken
         // let value = match messzelle.get_value() {
         //     Some(ref x) => Some(**x),

@@ -1,5 +1,6 @@
 use ::messzelle::{
     BoxedMesszelle,
+    MesszelleList,
     MesszelleType,
     MetzConnectCI4Analog420,
     RaGasCOMod,
@@ -12,6 +13,7 @@ use ::sensor::{
     SensorType,
     TestSensor,
 };
+use std::sync::{Arc, Mutex};
 
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -24,25 +26,25 @@ pub struct Sensor {
 /// Konvertierung in das Sensor Trait Objekt
 ///
 /// Diese impl konvertiert die bincode Daten, der Laufzeitinformationen, in das entsprechenden
-/// `Sensor` Trait Objekt.
+/// `::sensor::Sensor` Trait Objekt.
 ///
 impl From<Sensor> for RaGasCONO2Mod {
     fn from(sensor: Sensor) -> Self {
         // Restauriere Messzellen
-        let mut messzellen: Vec<BoxedMesszelle> = vec![];
+        let mut messzellen: MesszelleList = vec![];
         for m in sensor.messzellen {
             match m.messzelle_type {
                 MesszelleType::RaGasNO2Mod => {
                     let messzelle: RaGasNO2Mod = m.into();
-                    messzellen.push(Box::new(messzelle));
+                    messzellen.push(Arc::new(Mutex::new(Box::new(messzelle))));
                 },
                 MesszelleType::RaGasCOMod => {
                     let messzelle: RaGasCOMod = m.into();
-                    messzellen.push(Box::new(messzelle));
+                    messzellen.push(Arc::new(Mutex::new(Box::new(messzelle))));
                 },
                 MesszelleType::MetzConnectCI4Analog420 => {
                     let messzelle: MetzConnectCI4Analog420 = m.into();
-                    messzellen.push(Box::new(messzelle));
+                    messzellen.push(Arc::new(Mutex::new(Box::new(messzelle))));
                 },
             }
         }
@@ -61,20 +63,20 @@ impl From<Sensor> for RaGasCONO2Mod {
 impl From<Sensor> for MetzConnectCI4 {
     fn from(sensor: Sensor) -> Self {
         // Restauriere Messzellen
-        let mut messzellen: Vec<BoxedMesszelle> = vec![];
+        let mut messzellen: MesszelleList = vec![];
         for m in sensor.messzellen {
             match m.messzelle_type {
                 MesszelleType::RaGasNO2Mod => {
                     let messzelle: RaGasNO2Mod = m.into();
-                    messzellen.push(Box::new(messzelle));
+                    messzellen.push(Arc::new(Mutex::new(Box::new(messzelle))));
                 },
                 MesszelleType::RaGasCOMod => {
                     let messzelle: RaGasCOMod = m.into();
-                    messzellen.push(Box::new(messzelle));
+                    messzellen.push(Arc::new(Mutex::new(Box::new(messzelle))));
                 },
                 MesszelleType::MetzConnectCI4Analog420 => {
                     let messzelle: MetzConnectCI4Analog420 = m.into();
-                    messzellen.push(Box::new(messzelle));
+                    messzellen.push(Arc::new(Mutex::new(Box::new(messzelle))));
                 },
             }
         }
@@ -93,20 +95,20 @@ impl From<Sensor> for MetzConnectCI4 {
 impl From<Sensor> for TestSensor {
     fn from(sensor: Sensor) -> Self {
         // Restauriere Messzellen
-        let mut messzellen: Vec<BoxedMesszelle> = vec![];
+        let mut messzellen: MesszelleList = vec![];
         for m in sensor.messzellen {
             match m.messzelle_type {
                 MesszelleType::RaGasNO2Mod => {
                     let messzelle: RaGasNO2Mod = m.into();
-                    messzellen.push(Box::new(messzelle));
+                    messzellen.push(Arc::new(Mutex::new(Box::new(messzelle))));
                 },
                 MesszelleType::RaGasCOMod => {
                     let messzelle: RaGasCOMod = m.into();
-                    messzellen.push(Box::new(messzelle));
+                    messzellen.push(Arc::new(Mutex::new(Box::new(messzelle))));
                 },
                 MesszelleType::MetzConnectCI4Analog420 => {
                     let messzelle: MetzConnectCI4Analog420 = m.into();
-                    messzellen.push(Box::new(messzelle));
+                    messzellen.push(Arc::new(Mutex::new(Box::new(messzelle))));
                 },
             }
         }
@@ -121,8 +123,9 @@ impl From<Sensor> for TestSensor {
 /// Konvertierung von den Sensor Trait Objekten `server::Sensor`
 ///
 ///
-impl<'a> From<&'a BoxedSensor> for Sensor {
-    fn from(sensor: &'a BoxedSensor) -> Self {
+impl From<Arc<Mutex<BoxedSensor>>> for Sensor {
+    fn from(sensor: Arc<Mutex<BoxedSensor>>) -> Self {
+        let sensor = sensor.lock().unwrap();
         // Kontruiere Messzellen
         let mut messzellen: Vec<::runtime_info::Messzelle> = vec![];
         for messzelle in sensor.get_messzellen() {
