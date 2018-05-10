@@ -14,7 +14,7 @@ pub struct Server {
     configuration_path: String,
     // FIXME: Evtl. sollte dieser Pfad nicht öffentlich sein
     runtime_info_path: String,
-    pub sensors: Vec<::api::sensor::Sensor>,
+    sensors: Vec<::api::sensor::Sensor>,
 }
 
 impl Server {

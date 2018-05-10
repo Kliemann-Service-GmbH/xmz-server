@@ -11,7 +11,7 @@ use xmz_server::prelude::*;
 
 /// Konstruiert eine Server Instanz
 ///
-/// 
+///
 fn build_server(cfg: &Config) -> Result<Server, ServerError> {
     // Wenn die konfiguriert Laufzeitinformation gefunden wurde ...
     let server = if cfg.runtime_info_available() {

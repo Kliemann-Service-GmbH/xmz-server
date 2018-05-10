@@ -19,15 +19,15 @@ pub struct Messzelle {
 ///
 impl From<Arc<Mutex<BoxedMesszelle>>> for Messzelle {
     fn from(messzelle: Arc<Mutex<BoxedMesszelle>>) -> Self {
-        let messzelle = messzelle.lock().unwrap();
         // Wert aus der Referenz auspacken
-        // let value = match messzelle.get_value() {
-        //     Some(ref x) => Some(**x),
-        //     None => None,
-        // };
+        let messzelle = messzelle.lock().unwrap();
+        let value = match messzelle.get_value() {
+            Some(ref x) => Some(**x),
+            None => None,
+        };
         println!("{:?}", messzelle);
         Messzelle {
-            value: None, //value,
+            value: value,
             messzelle_type: messzelle.get_messzelle_type(),
         }
     }

@@ -82,13 +82,13 @@ impl Sensor for RaGasCONO2Mod {
     // Update Sensor Platine via BUS
     fn update(&self) {
         debug!("Update Sensor: '{}'", &self);
-        // let messzellen = &self.messzellen.clone();
-        // for messzelle in messzellen {
-        //     if let Ok(mut messzelle) = messzelle.lock() {
-        //         messzelle.update()
-        //     }
-        // }
-        ::std::thread::sleep(::std::time::Duration::from_secs(1));
+        let messzellen = &self.messzellen.clone();
+        for messzelle in messzellen {
+            if let Ok(mut messzelle) = messzelle.lock() {
+                messzelle.update()
+            }
+        }
+        thread::sleep(Duration::from_secs(1));
     }
 
     fn get_id(&self) -> u32 {

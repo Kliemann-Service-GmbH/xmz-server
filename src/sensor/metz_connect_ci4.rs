@@ -54,7 +54,6 @@ impl Sensor for MetzConnectCI4 {
     // Update Sensor Platine via BUS
     fn update(&self) {
         debug!("Update Sensor: '{}'", &self);
-
         let messzellen = &self.messzellen.clone();
         for messzelle in messzellen {
             if let Ok(mut messzelle) = messzelle.lock() {

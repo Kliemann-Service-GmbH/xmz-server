@@ -34,10 +34,7 @@ impl Server {
         file.read_to_string(&mut s)?;
 
         match bincode::deserialize(&s.as_bytes()) {
-            Ok(server) => {
-                debug!("{:?}", server);
-                Ok(server)
-            },
+            Ok(server) => { Ok(server) },
             Err(err) => Err(ServerError::CouldNotBuildFromRuntime(err)),
         }
     }
@@ -54,7 +51,7 @@ impl From<Server> for ::server::Server {
         for s in server.sensors {
             match s.sensor_type {
                 SensorType::RaGasCONO2Mod => {
-                    let sensor: RaGasCONO2Mod = s.clone().into();
+                    let sensor: RaGasCONO2Mod = s.into();
                     sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
                 },
                 SensorType::MetzConnectCI4 => {

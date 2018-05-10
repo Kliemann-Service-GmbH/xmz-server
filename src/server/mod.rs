@@ -164,7 +164,7 @@ impl Server {
     /// assert_eq!(server.get_sensors().len(), 3);
     /// ```
     ///
-    pub fn update_sensors(&self) -> thread::JoinHandle<bool> {
+    pub fn update_sensors(&self) -> thread::JoinHandle<()> {
         let sensors = self.sensors.clone();
         thread::spawn(move || loop {
             for sensor in sensors.clone() {

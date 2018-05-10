@@ -30,15 +30,16 @@ fn index(server: State<::api::server::Server>) -> Json<Vec<Sensor>> {
 /// Diese Konvertierung wird indirekt vom Server, ein Modul weiter oben, aufgerufen.
 impl From<Arc<Mutex<BoxedSensor>>> for Sensor {
     fn from(sensor: Arc<Mutex<BoxedSensor>>) -> Self {
+        // Rekonstruiere Messzellen
         let sensor = sensor.lock().unwrap();
-        // // Kontruiere Messzellen
-        // let mut messzellen: Vec<::api::messzelle::Messzelle> = vec![];
-        // for messzelle in sensor.get_messzellen() {
-        //     messzellen.push(messzelle.into())
-        // }
+        // Kontruiere Messzellen
+        let mut messzellen: Vec<::api::messzelle::Messzelle> = vec![];
+        for messzelle in sensor.get_messzellen() {
+            messzellen.push(messzelle.into())
+        }
         Sensor {
             id: sensor.get_id(),
-            messzellen: vec![],
+            messzellen: messzellen,
             sensor_type: sensor.get_sensor_type(),
         }
     }
