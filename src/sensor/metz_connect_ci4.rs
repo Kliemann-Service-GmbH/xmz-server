@@ -28,10 +28,10 @@ impl MetzConnectCI4 {
 impl Default for MetzConnectCI4 {
     fn default() -> Self {
         let messzellen: MesszelleList = vec![
-            Arc::new(Mutex::new(Box::new(MetzConnectCI4Analog420::new()))),
-            Arc::new(Mutex::new(Box::new(MetzConnectCI4Analog420::new()))),
-            Arc::new(Mutex::new(Box::new(MetzConnectCI4Analog420::new()))),
-            Arc::new(Mutex::new(Box::new(MetzConnectCI4Analog420::new()))),
+            Arc::new(RwLock::new(Box::new(MetzConnectCI4Analog420::new()))),
+            Arc::new(RwLock::new(Box::new(MetzConnectCI4Analog420::new()))),
+            Arc::new(RwLock::new(Box::new(MetzConnectCI4Analog420::new()))),
+            Arc::new(RwLock::new(Box::new(MetzConnectCI4Analog420::new()))),
         ];
 
         MetzConnectCI4 {
@@ -56,7 +56,7 @@ impl Sensor for MetzConnectCI4 {
         debug!("Update Sensor: '{}'", &self);
         let messzellen = &self.messzellen.clone();
         for messzelle in messzellen {
-            if let Ok(mut messzelle) = messzelle.lock() {
+            if let Ok(mut messzelle) = messzelle.write() {
                 messzelle.update()
             }
         }
@@ -71,11 +71,11 @@ impl Sensor for MetzConnectCI4 {
         self.sensor_type.clone()
     }
 
-    fn get_messzellen(&self) -> Vec<Arc<Mutex<BoxedMesszelle>>> {
+    fn get_messzellen(&self) -> Vec<Arc<RwLock<BoxedMesszelle>>> {
         self.messzellen.clone()
     }
 
-    fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
+    fn get_messzelle(&self, num: usize) -> Option<&Arc<RwLock<BoxedMesszelle>>> {
         let messzelle = self.messzellen.get(num);
         messzelle
     }

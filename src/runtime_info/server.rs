@@ -12,7 +12,7 @@ use error::ServerError;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, RwLock};
 
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -52,15 +52,15 @@ impl From<Server> for ::server::Server {
             match s.sensor_type {
                 SensorType::RaGasCONO2Mod => {
                     let sensor: RaGasCONO2Mod = s.into();
-                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
+                    sensors.push(Arc::new(RwLock::new(Box::new(sensor))));
                 },
                 SensorType::MetzConnectCI4 => {
                     let sensor: MetzConnectCI4 = s.into();
-                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
+                    sensors.push(Arc::new(RwLock::new(Box::new(sensor))));
                 },
                 SensorType::TestSensor => {
                     let sensor: TestSensor = s.into();
-                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
+                    sensors.push(Arc::new(RwLock::new(Box::new(sensor))));
                 },
             }
         }

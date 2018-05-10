@@ -27,7 +27,7 @@ impl RaGasCONO2Mod {
         let co_messzelle = RaGasCOMod::new();
 
         let messzellen: MesszelleList = vec![
-            Arc::new(Mutex::new(Box::new(co_messzelle))),
+            Arc::new(RwLock::new(Box::new(co_messzelle))),
         ];
 
         RaGasCONO2Mod {
@@ -41,7 +41,7 @@ impl RaGasCONO2Mod {
         let no2_messzelle = RaGasNO2Mod::new();
 
         let messzellen: MesszelleList = vec![
-            Arc::new(Mutex::new(Box::new(no2_messzelle))),
+            Arc::new(RwLock::new(Box::new(no2_messzelle))),
         ];
 
         RaGasCONO2Mod {
@@ -58,8 +58,8 @@ impl Default for RaGasCONO2Mod {
         let co_messzelle = RaGasCOMod::new();
 
         let messzellen: MesszelleList = vec![
-            Arc::new(Mutex::new(Box::new(no2_messzelle))),
-            Arc::new(Mutex::new(Box::new(co_messzelle))),
+            Arc::new(RwLock::new(Box::new(no2_messzelle))),
+            Arc::new(RwLock::new(Box::new(co_messzelle))),
         ];
 
         RaGasCONO2Mod {
@@ -84,7 +84,7 @@ impl Sensor for RaGasCONO2Mod {
         debug!("Update Sensor: '{}'", &self);
         let messzellen = &self.messzellen.clone();
         for messzelle in messzellen {
-            if let Ok(mut messzelle) = messzelle.lock() {
+            if let Ok(mut messzelle) = messzelle.write() {
                 messzelle.update()
             }
         }
@@ -99,11 +99,11 @@ impl Sensor for RaGasCONO2Mod {
         self.sensor_type.clone()
     }
 
-    fn get_messzellen(&self) -> Vec<Arc<Mutex<BoxedMesszelle>>> {
+    fn get_messzellen(&self) -> Vec<Arc<RwLock<BoxedMesszelle>>> {
         self.messzellen.clone()
     }
 
-    fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
+    fn get_messzelle(&self, num: usize) -> Option<&Arc<RwLock<BoxedMesszelle>>> {
         let messzelle = self.messzellen.get(num);
         messzelle
     }

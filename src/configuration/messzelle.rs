@@ -1,5 +1,5 @@
 use messzelle::{BoxedMesszelle, MesszelleType};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, RwLock};
 use std::time::SystemTime;
 
 
@@ -67,9 +67,9 @@ impl From<Messzelle> for ::messzelle::MetzConnectCI4Analog420 {
 
 /// Konvertierung der Messzellen Trait Objekte des Servers `::messzelle::Messzelle`
 ///
-impl From<Arc<Mutex<BoxedMesszelle>>> for Messzelle {
-    fn from(messzelle: Arc<Mutex<BoxedMesszelle>>) -> Self {
-        let messzelle = messzelle.lock().unwrap();
+impl From<Arc<RwLock<BoxedMesszelle>>> for Messzelle {
+    fn from(messzelle: Arc<RwLock<BoxedMesszelle>>) -> Self {
+        let messzelle = messzelle.read().unwrap();
         Messzelle {
             values: messzelle.get_values(),
             messzelle_type: messzelle.get_messzelle_type(),

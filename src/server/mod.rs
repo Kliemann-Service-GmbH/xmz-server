@@ -26,9 +26,9 @@ impl Default for Server {
     ///
     fn default() -> Self {
         let sensors: SensorList = vec![
-            Arc::new(Mutex::new(Box::new(RaGasCONO2Mod::new()))),
-            Arc::new(Mutex::new(Box::new(MetzConnectCI4::new()))),
-            Arc::new(Mutex::new(Box::new(TestSensor::new()))),
+            Arc::new(RwLock::new(Box::new(RaGasCONO2Mod::new()))),
+            Arc::new(RwLock::new(Box::new(MetzConnectCI4::new()))),
+            Arc::new(RwLock::new(Box::new(TestSensor::new()))),
         ];
         Server {
             service_interval: 365,
@@ -82,7 +82,7 @@ impl Server {
     /// let server = Server::default();
     /// assert_eq!(server.get_sensors().len(), 3);
     /// ```
-    pub fn get_sensors(&self) -> Vec<Arc<Mutex<BoxedSensor>>> {
+    pub fn get_sensors(&self) -> Vec<Arc<RwLock<BoxedSensor>>> {
         self.sensors.clone()
     }
 
@@ -95,7 +95,7 @@ impl Server {
     /// let server = Server::default();
     /// assert_eq!(server.get_sensors().len(), 3);
     /// ```
-    pub fn get_sensor(&self, num: usize) -> Option<&Arc<Mutex<BoxedSensor>>> {
+    pub fn get_sensor(&self, num: usize) -> Option<&Arc<RwLock<BoxedSensor>>> {
         let sensor = self.sensors.get(num);
         sensor
     }
@@ -110,7 +110,7 @@ impl Server {
     /// assert_eq!(server.get_sensors().len(), 3);
     /// ```
     pub fn add_sensor(&mut self, sensor: BoxedSensor) {
-        self.sensors.push(Arc::new(Mutex::new(sensor)));
+        self.sensors.push(Arc::new(RwLock::new(sensor)));
     }
 
     /// Serialize Server Instanz in das Bincode format
@@ -168,7 +168,7 @@ impl Server {
         let sensors = self.sensors.clone();
         thread::spawn(move || loop {
             for sensor in sensors.clone() {
-                if let Ok(sensor) = sensor.lock() {
+                if let Ok(sensor) = sensor.read() {
                     sensor.update();
                 }
             }

@@ -1,5 +1,5 @@
 use prelude::*;
-    
+
 
 /// Test Sensor
 ///
@@ -43,7 +43,7 @@ impl Sensor for TestSensor {
         debug!("Update Sensor: '{}'", &self);
         let messzellen = &self.messzellen.clone();
         for messzelle in messzellen {
-            if let Ok(mut messzelle) = messzelle.lock() {
+            if let Ok(mut messzelle) = messzelle.write() {
                 messzelle.update()
             }
         }
@@ -58,11 +58,11 @@ impl Sensor for TestSensor {
         self.sensor_type.clone()
     }
 
-    fn get_messzellen(&self) -> Vec<Arc<Mutex<BoxedMesszelle>>> {
+    fn get_messzellen(&self) -> Vec<Arc<RwLock<BoxedMesszelle>>> {
         self.messzellen.clone()
     }
 
-    fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
+    fn get_messzelle(&self, num: usize) -> Option<&Arc<RwLock<BoxedMesszelle>>> {
         let messzelle = self.messzellen.get(num);
         messzelle
     }

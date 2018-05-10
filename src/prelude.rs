@@ -20,7 +20,7 @@ pub use runtime_info;
 pub use sensor::{BoxedSensor, MetzConnectCI4, RaGasCONO2Mod, Sensor, SensorList, SensorType, TestSensor};
 pub use server::Server;
 pub use std::error::Error;
-pub use std::sync::{Arc, Mutex};
+pub use std::sync::{Arc, Mutex, RwLock};
 pub use std::thread;
 pub use zone::Zone;
 
