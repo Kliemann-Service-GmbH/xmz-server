@@ -25,6 +25,17 @@ impl Server {
     pub fn get_sensors(&self) -> Vec<::api::sensor::Sensor> {
         self.sensors.clone()
     }
+
+    /// Liefert ein Sensor des Servers
+    ///
+    /// Diese Funktion wird in `::api::sensor::Sensor` aufgerufen.
+    ///
+    pub fn get_sensor(&self, id: usize) -> Option<::api::sensor::Sensor> {
+        match self.sensors.clone().get(id) {
+            Some(sensor) => Some(sensor.clone()),
+            None => None,
+        }
+    }
 }
 
 /// Konvertiert den `::server::Server` in die API Version `::api::server::Server`

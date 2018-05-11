@@ -24,6 +24,14 @@ fn index(server: State<::server::Server>) -> Json<Vec<Sensor>> {
     let server: ::api::server::Server = server.inner().clone().into();
     Json(server.get_sensors().clone())
 }
+#[get("/<id>")]
+fn get(id: usize, server: State<::server::Server>) -> Option<Json<Sensor>> {
+    let server: ::api::server::Server = server.inner().clone().into();
+    match server.get_sensor(id) {
+        Some(sensor) => Some(Json(sensor)),
+        None => None,
+    }
+}
 
 
 /// Konvertierung von den Sensor Trait Objekten `server::Sensor`
@@ -62,12 +70,13 @@ mod test {
     }
 
     #[test]
-    fn get_messzellen() {
-        let sensor = Sensor {
-            id: 0,
-            sensor_type: ::sensor::SensorType::TestSensor,
-            messzellen: Vec::new(),
-        };
-        assert_eq!(sensor.get_messzellen().len(), 0);
+    fn get() {
+        // Server nicht mit `Server::new()` erstellt! `Server::default()` erstellt ein Server mit
+        // sinnvoller Default Konfiguration.
+        let server = ::server::Server::default();
+        assert!(server.get_sensors().len() > 0);
+        let client = Client::new(::api::rocket(server.into())).expect("valid rocket instance");
+        let response = client.get("/sensor/1").dispatch();
+        assert_eq!(response.status(), Status::Ok);
     }
 }

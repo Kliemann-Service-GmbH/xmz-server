@@ -33,6 +33,7 @@ fn rocket(server: ::server::Server) -> Rocket {
     rocket::ignite()
     .mount("/", routes![server::index])
     .mount("/sensors", routes![sensor::index])
+    .mount("/sensor", routes![sensor::get])
     // .mount("/sensor/<id>", routes![sensor::index])
     .manage(server.clone())
 }
