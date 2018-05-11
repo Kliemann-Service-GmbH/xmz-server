@@ -40,7 +40,6 @@ impl Server {
     }
 }
 
-
 /// Konvertierung des `runtime_info::Server` nach `server::Server`
 ///
 /// Stellt den `server::Server` aus den Daten der Laufzeitinformationen wieder her.

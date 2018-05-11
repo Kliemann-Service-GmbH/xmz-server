@@ -9,7 +9,7 @@ use std::path::PathBuf;
 
 
 /// Struktur der Server Komponente
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Server {
     /// Wartungsintervall in Tagen
     pub service_interval: u32,
@@ -125,7 +125,7 @@ impl Server {
     /// ```
     ///
     pub fn serialize_to_bincode(&self) -> Result<Vec<u8>, ServerError> {
-        let server: runtime_info::Server = self.clone().into();
+        let server: runtime_info::Server = self.into();
         debug!("{:?}", &server);
 
         match bincode::serialize(&server) {
