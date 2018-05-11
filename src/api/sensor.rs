@@ -89,47 +89,45 @@ impl From<Arc<RwLock<BoxedSensor>>> for Sensor {
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use rocket::http::Status;
     use rocket::local::Client;
 
 
     #[test]
-    fn index() {
+    fn index_json() {
         let server = ::server::Server::new();
         let client = Client::new(::api::rocket(server.into())).expect("valid rocket instance");
-        let response = client.get("/sensors").dispatch();
+        let response = client.get("/api/sensors").dispatch();
         assert_eq!(response.status(), Status::Ok);
     }
 
     #[test]
-    fn get() {
+    fn get_json() {
         // Server nicht mit `Server::new()` erstellt! `Server::default()` erstellt ein Server mit
         // sinnvoller Default Konfiguration.
         let server = ::server::Server::default();
         assert!(server.get_sensors().len() > 0);
         let client = Client::new(::api::rocket(server.into())).expect("valid rocket instance");
-        let response = client.get("/sensor/1").dispatch();
+        let response = client.get("/api/sensor/1").dispatch();
         assert_eq!(response.status(), Status::Ok);
     }
 
     #[test]
-    fn get_messzellen() {
+    fn get_messzellen_json() {
         let server = ::server::Server::default();
         assert!(server.get_sensors().len() > 0);
         let client = Client::new(::api::rocket(server.into())).expect("valid rocket instance");
-        let response = client.get("/sensor/1/messzellen").dispatch();
+        let response = client.get("/api/sensor/1/messzellen").dispatch();
         assert_eq!(response.status(), Status::Ok);
     }
 
 
     #[test]
-    fn get_messzelle() {
-        use ::sensor::Sensor;
+    fn get_messzelle_json() {
         let server = ::server::Server::default();
         assert!(server.get_sensors().len() > 0);
         let client = Client::new(::api::rocket(server.into())).expect("valid rocket instance");
-        let response = client.get("/sensor/1/messzelle/0").dispatch();
+        let response = client.get("/api/sensor/1/messzelle/0").dispatch();
         assert_eq!(response.status(), Status::Ok);
     }
 }

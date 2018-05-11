@@ -87,10 +87,18 @@ mod test {
     use rocket::local::Client;
 
     #[test]
-    fn index() {
+    fn index_txt() {
         let server = ::server::Server::new();
         let client = Client::new(::api::rocket(server.clone())).expect("valid rocket instance");
         let response = client.get("/").dispatch();
+        assert_eq!(response.status(), Status::Ok);
+    }
+
+    #[test]
+    fn index_json() {
+        let server = ::server::Server::new();
+        let client = Client::new(::api::rocket(server.clone())).expect("valid rocket instance");
+        let response = client.get("/api").dispatch();
         assert_eq!(response.status(), Status::Ok);
     }
 }
