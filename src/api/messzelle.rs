@@ -1,6 +1,6 @@
 use std::time::SystemTime;
 use messzelle::{BoxedMesszelle};
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::{Arc, RwLock};
 
 
 #[derive(Clone, Debug, Serialize)]

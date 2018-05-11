@@ -1,7 +1,7 @@
 use ::sensor::BoxedSensor;
 use rocket_contrib::Json;
 use rocket::State;
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::{Arc, RwLock};
 
 
 #[derive(Clone, Debug, Serialize)]

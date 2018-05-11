@@ -1,5 +1,4 @@
 use ::messzelle::{
-    BoxedMesszelle,
     MesszelleList,
     MesszelleType,
     MetzConnectCI4Analog420,
@@ -7,13 +6,12 @@ use ::messzelle::{
     RaGasNO2Mod,
 };
 use ::sensor::{
-    BoxedSensor,
     MetzConnectCI4,
     RaGasCONO2Mod,
     SensorType,
     TestSensor,
 };
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::{Arc, RwLock};
 
 
 #[derive(Clone, Debug, Deserialize, Serialize)]

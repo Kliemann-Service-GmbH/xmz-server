@@ -7,7 +7,6 @@ mod messzelle;
 mod sensor;
 mod server;
 
-use api;
 use rocket;
 use rocket::Rocket;
 

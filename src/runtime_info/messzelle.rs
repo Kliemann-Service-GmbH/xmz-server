@@ -6,7 +6,7 @@ use ::messzelle::{
     RaGasNO2Mod,
 };
 use std::time::SystemTime;
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::{Arc, RwLock};
 
 
 #[derive(Clone, Debug, Deserialize, Serialize)]

@@ -1,5 +1,4 @@
 use ::sensor::{
-    BoxedSensor,
     SensorList,
     MetzConnectCI4,
     RaGasCONO2Mod,
@@ -11,7 +10,7 @@ use error::ServerError;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::{Arc, RwLock};
 use toml;
 
 
