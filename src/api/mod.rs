@@ -16,8 +16,8 @@ use rocket::Rocket;
 ///
 /// Diese statische Funktion `launch` erwartet eine Server Instanz, diese wird dann bei der
 /// Übergabe an die `rocket` Funktion in eine `api::server::Server` Instanz konvertiert.
-pub fn launch(server: &::server::Server) {
-    rocket(server.into()).launch();
+pub fn launch(server: ::server::Server) {
+    rocket(server.clone()).launch();
 }
 
 /// Helper, Konstruiert die Rocket Instanz
@@ -30,10 +30,10 @@ pub fn launch(server: &::server::Server) {
 /// Die Unit Tests benötiten jedoch die `Rocket` Instanz für die Tests. In Unit Tests kann diese
 /// Funktion direkt verwendet werden.
 ///
-fn rocket(server: api::server::Server) -> Rocket {
+fn rocket(server: ::server::Server) -> Rocket {
     rocket::ignite()
     .mount("/", routes![server::index])
     .mount("/sensors", routes![sensor::index])
     // .mount("/sensor/<id>", routes![sensor::index])
-    .manage(server)
+    .manage(server.clone())
 }

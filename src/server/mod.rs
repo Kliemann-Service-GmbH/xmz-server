@@ -66,12 +66,6 @@ impl Server {
         }
     }
 
-    /// Startet die Api (Json, Web)
-    ///
-    pub fn launch_api(&self) {
-        api::launch(self);
-    }
-
     /// Liefert eine Referenz auf die Liste der Sensoren
     ///
     /// # Example
@@ -175,6 +169,13 @@ impl Server {
             thread::sleep(Duration::from_millis(100));
         })
     }
+
+    /// Startet die Api (Json, Web)
+    ///
+    pub fn launch_api(&self) {
+        api::launch(self.clone());
+    }
+
 
     /// Started alle Komponenten des Servers
     ///

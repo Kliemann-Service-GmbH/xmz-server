@@ -27,12 +27,7 @@ impl Server {
     }
 }
 
-/// Konvertierung des `server::Server` nach `configuration::Server`
-///
-/// Konvertiert den `server::Server` in ein Format das in der Laufzeitinformation
-/// gespeichert werden kann.
-///
-/// Diese Funktion ist analog zu der Konvertierung des `server::Server` nach [`runtime_info::Server`](../runtime_info/struct.Server.html)
+/// Konvertierung des `server::Server` nach `api::Server`
 ///
 impl<'s> From<&'s server::Server> for Server {
     fn from(server: &'s server::Server) -> Self {
@@ -90,8 +85,8 @@ impl From<server::Server> for Server {
 }
 
 #[get("/")]
-fn index(server: State<::api::server::Server>) -> Json<::api::server::Server> {
-    Json(server.clone())
+fn index(server: State<::server::Server>) -> Json<::api::server::Server> {
+    Json(server.clone().into())
 }
 
 #[cfg(test)]
@@ -102,7 +97,7 @@ mod test {
     #[test]
     fn index() {
         let server = ::server::Server::new();
-        let client = Client::new(::api::rocket(server.into())).expect("valid rocket instance");
+        let client = Client::new(::api::rocket(server.clone())).expect("valid rocket instance");
         let response = client.get("/").dispatch();
         assert_eq!(response.status(), Status::Ok);
     }
