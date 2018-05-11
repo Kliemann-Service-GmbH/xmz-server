@@ -14,14 +14,15 @@ pub struct Sensor {
 impl Sensor {
     /// Liefert eine Vector der Messzellen
     ///
-    pub fn get_messzellen(&self) -> &Vec<::api::messzelle::Messzelle> {
-        &self.messzellen
+    pub fn get_messzellen(&self) -> Vec<::api::messzelle::Messzelle> {
+        self.messzellen.clone()
     }
 }
 
 #[get("/")]
-fn index(server: State<::api::server::Server>) -> Json<Vec<Sensor>> {
-    Json(server.clone().get_sensors().clone())
+fn index(server: State<::server::Server>) -> Json<Vec<Sensor>> {
+    let server: ::api::server::Server = server.inner().clone().into();
+    Json(server.get_sensors().clone())
 }
 
 

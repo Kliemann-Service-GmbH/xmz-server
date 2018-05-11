@@ -18,45 +18,19 @@ pub struct Server {
 }
 
 impl Server {
-    // FIXME: `&` entfernen
     /// Liefert ein Vector mit den Sensoren des Servers
     ///
-    /// Diese Funktion wird in ::api::sensor::Sensor aufgerufen.
-    pub fn get_sensors(&self) -> &Vec<::api::sensor::Sensor> {
-        &self.sensors
+    /// Diese Funktion wird in `::api::sensor::Sensor` aufgerufen.
+    ///
+    pub fn get_sensors(&self) -> Vec<::api::sensor::Sensor> {
+        self.sensors.clone()
     }
 }
 
-/// Konvertierung des `server::Server` nach `api::Server`
+/// Konvertiert den `::server::Server` in die API Version `::api::server::Server`
 ///
-impl<'s> From<&'s server::Server> for Server {
-    fn from(server: &'s server::Server) -> Self {
-        // Restauriere Sensoren
-        let mut sensors: Vec<::api::sensor::Sensor> = Vec::new();
-        for sensor in server.get_sensors() {
-            sensors.push(sensor.into());
-        }
-
-        let configuration_path = match &server.configuration_path {
-            Some(path) => path.to_string_lossy().to_string(),
-            None => "not set".to_string(),
-        };
-        let runtime_info_path = match &server.runtime_info_path {
-            Some(path) => path.to_string_lossy().to_string(),
-            None => "not set".to_string(),
-        };
-        Server {
-            service_interval: server.service_interval,
-            configuration_path: configuration_path,
-            runtime_info_path: runtime_info_path,
-            sensors: sensors,
-        }
-    }
-}
-
-/// Alternative Konvertierung
+/// Diese Funktion wird in der `index()` Funktion, dieses Modules, aufgerufen.
 ///
-/// TODO: Checken ob das besser ist
 impl From<server::Server> for Server {
     fn from(server: server::Server) -> Self {
         let mut sensors: Vec<::api::sensor::Sensor> = Vec::new();
@@ -64,8 +38,9 @@ impl From<server::Server> for Server {
             sensors.push(sensor.into());
         }
 
-        // In den Unit Tests kann es vorkommen das die Pfade `configuration_path` und `runtime_info_path`
-        // `None` sind.
+        // In den Unit Tests kann es vorkommen das die Pfade
+        // `configuration_path` und `runtime_info_path`, `None` sind.
+        //
         let configuration_path = match server.configuration_path {
             Some(path) => path,
             None => PathBuf::from(""),
