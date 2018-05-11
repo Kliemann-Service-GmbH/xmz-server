@@ -31,9 +31,10 @@ pub fn launch(server: ::server::Server) {
 ///
 fn rocket(server: ::server::Server) -> Rocket {
     rocket::ignite()
-    .mount("/", routes![server::index])
-    .mount("/sensors", routes![sensor::index])
-    .mount("/sensor", routes![sensor::get, sensor::get_messzellen, sensor::get_messzelle])
+    .mount("/", routes![server::index_txt])
+    .mount("/api/", routes![server::index])
+    .mount("/api/sensors", routes![sensor::index])
+    .mount("/api/sensor", routes![sensor::get, sensor::get_messzellen, sensor::get_messzelle])
     // .mount("/sensor/<id>", routes![sensor::index])
     .manage(server.clone())
 }

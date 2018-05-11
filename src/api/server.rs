@@ -75,6 +75,12 @@ fn index(server: State<::server::Server>) -> Json<::api::server::Server> {
     Json(server.clone().into())
 }
 
+#[get("/")]
+fn index_txt(server: State<::server::Server>) -> String {
+    let server: ::api::server::Server = server.clone().into();
+    format!("{:#?}", server)
+}
+
 #[cfg(test)]
 mod test {
     use rocket::http::Status;
