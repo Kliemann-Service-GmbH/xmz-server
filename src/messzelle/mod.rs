@@ -6,7 +6,6 @@
 
 use prelude::*;
 use std::fmt;
-use std::sync::{Arc, Mutex};
 use std::time::SystemTime;
 
 mod error;
@@ -20,10 +19,11 @@ pub use self::metz_connect_analog_420::MetzConnectCI4Analog420;
 pub use self::ra_gas_co_mod::RaGasCOMod;
 pub use self::ra_gas_no2_mod::RaGasNO2Mod;
 
-pub type BoxedMesszelle = Box<Messzelle + Send + 'static>;
-pub type MesszellenList = Vec<Arc<Mutex<BoxedMesszelle>>>;
-pub type MesszellenRefList<'a> = Vec<&'a Messzelle>;
+pub type BoxedMesszelle = Box<Messzelle + Send + Sync>;
+pub type MesszelleList = Vec<Arc<RwLock<BoxedMesszelle>>>;
 
+
+pub const MAX_VALUES_FOR_N_MINUTES: u64 = 60;
 
 /// Verfügbare Messzellen Typen
 ///
@@ -41,7 +41,7 @@ pub enum MesszelleType {
 
 /// Basis Trait das die Eigenschaften einer Messzelle beschreibt
 ///
-/// Jede Messzelle hat einen Direktwert (`value()`) sowie ein Mittelwert (`average(minutes)`).
+/// Jede Messzelle hat einen Direktwert (`get_value()`) sowie ein Mittelwert (`average(minutes)`).
 /// Der Mittelwert Funktion kann ein Parameter übergeben werden mit dem die Dauer des zu
 /// berechnendem Mittelwertes angegeben werden kann.
 pub trait Messzelle: AsAny + fmt::Debug + fmt::Display {
@@ -49,9 +49,9 @@ pub trait Messzelle: AsAny + fmt::Debug + fmt::Display {
     ///
     /// Jede Messzelle verfügt über ein Liste mit einem oder mehreren Paaren, Messwerten und den
     /// Timestamps die bei der Ermittlung dieses Messwertes erstellt werden.
-    /// Die Implementierung der `value()` Funktion muss den letzten dieser Wertepaare ausgeben.
+    /// Die Implementierung der `get_value()` Funktion muss den letzten dieser Wertepaare ausgeben.
     /// Ist kein Messwert vorhanden wird `None` zurückgegeben.
-    fn value(&self) -> Option<&(f64, SystemTime)>;
+    fn get_value(&self) -> Option<&(f64, SystemTime)>;
 
     /// Liefert alle Werte zurück
     ///

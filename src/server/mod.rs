@@ -2,44 +2,37 @@
 //!
 use api;
 use bincode;
-use error::ServerError;
 use prelude::*;
-use sensor::BoxedSensor;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex};
-use std::thread;
-
-
-/// Liste der Sensoren
-///
-/// Diese Liste ist ein `Vector` von shared (`Arc`), mutablen (`Mutex`)
-/// Sensor Trait Objekten (`BoxedSensor`).
-pub type SensorsList = Vec<Arc<Mutex<BoxedSensor>>>;
 
 
 /// Struktur der Server Komponente
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Debug)]
 pub struct Server {
     /// Wartungsintervall in Tagen
     pub service_interval: u32,
     /// Liste der Sensoren die dieser Server verwaltet
-    #[serde(skip)]
-    pub sensors: SensorsList,
+    pub sensors: SensorList,
     pub configuration_path: Option<PathBuf>,
     pub runtime_info_path: Option<PathBuf>,
 }
 
 impl Default for Server {
+    /// Default Konfiguration des Servers
+    ///
+    /// Die `default()` Konfiguration des Servers mit den sinnvollsten Werten.
+    ///
     fn default() -> Self {
+        let sensors: SensorList = vec![
+            Arc::new(RwLock::new(Box::new(RaGasCONO2Mod::new()))),
+            Arc::new(RwLock::new(Box::new(MetzConnectCI4::new()))),
+            Arc::new(RwLock::new(Box::new(TestSensor::new()))),
+        ];
         Server {
             service_interval: 365,
-            sensors: vec![
-                Arc::new(Mutex::new(Box::new(RaGasCONO2Mod::new()))),
-                Arc::new(Mutex::new(Box::new(MetzConnectCI4::new()))),
-                Arc::new(Mutex::new(Box::new(TestSensor::new()))),
-            ],
+            sensors: sensors,
             // zones: vec![],
             configuration_path: None,
             runtime_info_path: None,
@@ -49,33 +42,28 @@ impl Default for Server {
 
 impl Server {
     /// Erstellt eine neue Server Instanz
+    ///
+    /// Die `new()` Funktion erstellt eine "leere" neue Server Instanz. Das heist alle Member sind
+    /// Null oder leer, entsprechenden ihres Datentypes.
+    /// Die `default()` Implementation hingegen liefert einen "kompletten" Server. Das bedeutet
+    /// alle Member des Servers sind mit sinnvollen default Werten gefüllt. So sind zum
+    /// Beispiel alle unterstützten Sensoren, Messzellen jeweils einmal verfügbar.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let server = Server::default();
+    /// assert_eq!(server.get_sensors().len(), 3);
+    /// ```
+    ///
     pub fn new() -> Self {
         Server {
             service_interval: 0,
-            sensors: Vec::new(),
+            sensors: vec![],
             ..Default::default()
         }
-    }
-
-    /// Aktualisiert der Reihe nach jeden Sensor
-    ///
-    pub fn update_sensors(&self) -> thread::JoinHandle<bool> {
-        let sensors = self.sensors.clone();
-        let guard = thread::spawn(move || loop {
-            for sensor in sensors.clone() {
-                if let Ok(mut sensor) = sensor.lock() {
-                    sensor.update();
-                }
-            }
-        });
-
-        guard
-    }
-
-    /// Startet die Api (Json, Web)
-    ///
-    pub fn launch_api(&self) {
-        api::launch(self.clone());
     }
 
     /// Liefert eine Referenz auf die Liste der Sensoren
@@ -88,22 +76,51 @@ impl Server {
     /// let server = Server::default();
     /// assert_eq!(server.get_sensors().len(), 3);
     /// ```
-    pub fn get_sensors(&self) -> &SensorsList {
-        &self.sensors
+    pub fn get_sensors(&self) -> Vec<Arc<RwLock<BoxedSensor>>> {
+        self.sensors.clone()
     }
 
-    pub fn get_sensor(&self, num: usize) -> Option<&Arc<Mutex<BoxedSensor>>> {
-        self.sensors.get(num)
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let server = Server::default();
+    /// assert_eq!(server.get_sensors().len(), 3);
+    /// ```
+    pub fn get_sensor(&self, num: usize) -> Option<&Arc<RwLock<BoxedSensor>>> {
+        let sensor = self.sensors.get(num);
+        sensor
     }
 
-    pub fn add_sensor(&mut self, sensor: Arc<Mutex<BoxedSensor>>) {
-        self.sensors.push(sensor);
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let server = Server::default();
+    /// assert_eq!(server.get_sensors().len(), 3);
+    /// ```
+    pub fn add_sensor(&mut self, sensor: BoxedSensor) {
+        self.sensors.push(Arc::new(RwLock::new(sensor)));
     }
 
     /// Serialize Server Instanz in das Bincode format
     ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let server = Server::default();
+    /// assert_eq!(server.get_sensors().len(), 3);
+    /// ```
+    ///
     pub fn serialize_to_bincode(&self) -> Result<Vec<u8>, ServerError> {
-        let server: runtime_info::Server = self.clone().into();
+        let server: runtime_info::Server = self.into();
+        debug!("{:?}", &server);
 
         match bincode::serialize(&server) {
             Ok(data) => {
@@ -130,26 +147,52 @@ impl Server {
         }
     }
 
+    /// Aktualisiert der Reihe nach jeden Sensor
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let server = Server::default();
+    /// assert_eq!(server.get_sensors().len(), 3);
+    /// ```
+    ///
+    pub fn update_sensors(&self) -> thread::JoinHandle<()> {
+        let sensors = self.sensors.clone();
+        thread::spawn(move || loop {
+            for sensor in sensors.clone() {
+                if let Ok(sensor) = sensor.read() {
+                    sensor.update();
+                }
+            }
+            thread::sleep(Duration::from_millis(100));
+        })
+    }
+
+    /// Startet die Api (Json, Web)
+    ///
+    pub fn launch_api(&self) {
+        api::launch(self.clone());
+    }
+
+
+    /// Started alle Komponenten des Servers
+    ///
+    /// Viele Teile des Servers werden in eigenen Threads gestarted.
     pub fn start(&self) -> Result<(), ServerError> {
         // Laufzeit Informationen speichern
         self.store_runtime_information()?;
 
         // Sensor Update Thread starten
-        let server_update_guard = self.update_sensors();
+        self.update_sensors();
 
         // JSON Api (rocket) starten
         self.launch_api();
 
-        // Der Sensor Update Thread wird gejoint, somit läuft der Server solange dieser Thread
-        // läuft.
-        server_update_guard
-            .join()
-            .expect("Fehler im Sensor Update Guard");
-
         Ok(())
     }
 }
-
 
 
 #[cfg(test)]

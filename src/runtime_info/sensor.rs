@@ -1,35 +1,120 @@
+use ::messzelle::{
+    MesszelleList,
+    MesszelleType,
+    MetzConnectCI4Analog420,
+    RaGasCOMod,
+    RaGasNO2Mod,
+};
+use ::sensor::{
+    BoxedSensor,
+    MetzConnectCI4,
+    RaGasCONO2Mod,
+    SensorType,
+    TestSensor,
+};
+use std::sync::{Arc, RwLock};
 
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Sensor {
     id: u32,
-    pub sensor_type: ::sensor::SensorType,
+    pub sensor_type: SensorType,
     messzellen: Vec<::runtime_info::Messzelle>,
 }
 
-impl From<Sensor> for ::sensor::RaGasCONO2Mod {
-    fn from(_sensor: Sensor) -> Self {
-        ::sensor::RaGasCONO2Mod {
-            sensor_type: ::sensor::SensorType::RaGasCONO2Mod,
-            messzellen: Vec::new(),
+/// Konvertierung in das Sensor Trait Objekt
+///
+/// Diese impl konvertiert die bincode Daten, der Laufzeitinformationen, in das entsprechenden
+/// `::sensor::Sensor` Trait Objekt.
+///
+impl From<Sensor> for RaGasCONO2Mod {
+    fn from(sensor: Sensor) -> Self {
+        // Restauriere Messzellen
+        let mut messzellen: MesszelleList = vec![];
+        for m in sensor.messzellen {
+            match m.messzelle_type {
+                MesszelleType::RaGasNO2Mod => {
+                    let messzelle: RaGasNO2Mod = m.into();
+                    messzellen.push(Arc::new(RwLock::new(Box::new(messzelle))));
+                },
+                MesszelleType::RaGasCOMod => {
+                    let messzelle: RaGasCOMod = m.into();
+                    messzellen.push(Arc::new(RwLock::new(Box::new(messzelle))));
+                },
+                MesszelleType::MetzConnectCI4Analog420 => {
+                    let messzelle: MetzConnectCI4Analog420 = m.into();
+                    messzellen.push(Arc::new(RwLock::new(Box::new(messzelle))));
+                },
+            }
+        }
+        RaGasCONO2Mod {
+            id: sensor.id,
+            sensor_type: SensorType::RaGasCONO2Mod,
+            messzellen: messzellen,
         }
     }
 }
-
-impl From<Sensor> for ::sensor::MetzConnectCI4 {
-    fn from(_sensor: Sensor) -> Self {
-        ::sensor::MetzConnectCI4 {
-            sensor_type: ::sensor::SensorType::MetzConnectCI4,
-            messzellen: Vec::new(),
+/// Konvertierung in das Sensor Trait Objekt
+///
+/// Diese impl konvertiert die bincode Daten, der Laufzeitinformationen, in das entsprechenden
+/// `Sensor` Trait Objekt.
+///
+impl From<Sensor> for MetzConnectCI4 {
+    fn from(sensor: Sensor) -> Self {
+        // Restauriere Messzellen
+        let mut messzellen: MesszelleList = vec![];
+        for m in sensor.messzellen {
+            match m.messzelle_type {
+                MesszelleType::RaGasNO2Mod => {
+                    let messzelle: RaGasNO2Mod = m.into();
+                    messzellen.push(Arc::new(RwLock::new(Box::new(messzelle))));
+                },
+                MesszelleType::RaGasCOMod => {
+                    let messzelle: RaGasCOMod = m.into();
+                    messzellen.push(Arc::new(RwLock::new(Box::new(messzelle))));
+                },
+                MesszelleType::MetzConnectCI4Analog420 => {
+                    let messzelle: MetzConnectCI4Analog420 = m.into();
+                    messzellen.push(Arc::new(RwLock::new(Box::new(messzelle))));
+                },
+            }
+        }
+        MetzConnectCI4 {
+            id: sensor.id,
+            sensor_type: SensorType::RaGasCONO2Mod,
+            messzellen: messzellen,
         }
     }
 }
-
-impl From<Sensor> for ::sensor::TestSensor {
-    fn from(_sensor: Sensor) -> Self {
-        ::sensor::TestSensor {
-            sensor_type: ::sensor::SensorType::TestSensor,
-            messzellen: Vec::new(),
+/// Konvertierung in das Sensor Trait Objekt
+///
+/// Diese impl konvertiert die bincode Daten, der Laufzeitinformationen, in das entsprechenden
+/// `Sensor` Trait Objekt.
+///
+impl From<Sensor> for TestSensor {
+    fn from(sensor: Sensor) -> Self {
+        // Restauriere Messzellen
+        let mut messzellen: MesszelleList = vec![];
+        for m in sensor.messzellen {
+            match m.messzelle_type {
+                MesszelleType::RaGasNO2Mod => {
+                    let messzelle: RaGasNO2Mod = m.into();
+                    messzellen.push(Arc::new(RwLock::new(Box::new(messzelle))));
+                },
+                MesszelleType::RaGasCOMod => {
+                    let messzelle: RaGasCOMod = m.into();
+                    messzellen.push(Arc::new(RwLock::new(Box::new(messzelle))));
+                },
+                MesszelleType::MetzConnectCI4Analog420 => {
+                    let messzelle: MetzConnectCI4Analog420 = m.into();
+                    messzellen.push(Arc::new(RwLock::new(Box::new(messzelle))));
+                },
+            }
+        }
+        TestSensor {
+            id: sensor.id,
+            sensor_type: SensorType::RaGasCONO2Mod,
+            messzellen: messzellen,
         }
     }
 }
@@ -37,17 +122,16 @@ impl From<Sensor> for ::sensor::TestSensor {
 /// Konvertierung von den Sensor Trait Objekten `server::Sensor`
 ///
 ///
-impl<'a> From<&'a Box<::sensor::Sensor + Send>> for Sensor {
-    fn from(sensor: &'a Box<::sensor::Sensor + Send>) -> Self {
+impl From<Arc<RwLock<BoxedSensor>>> for Sensor {
+    fn from(sensor: Arc<RwLock<BoxedSensor>>) -> Self {
+        let sensor = sensor.read().unwrap();
         // Kontruiere Messzellen
         let mut messzellen: Vec<::runtime_info::Messzelle> = vec![];
         for messzelle in sensor.get_messzellen() {
-            if let Ok(messzelle) = messzelle.lock() {
-                messzellen.push((&*messzelle).into())
-            }
+            messzellen.push(messzelle.into())
         }
         Sensor {
-            id: 0,
+            id: sensor.get_id(),
             messzellen: messzellen,
             sensor_type: sensor.get_sensor_type(),
         }

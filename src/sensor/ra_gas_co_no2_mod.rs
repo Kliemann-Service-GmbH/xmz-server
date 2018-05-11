@@ -1,7 +1,6 @@
-use messzelle::{BoxedMesszelle, MesszellenList, RaGasCOMod, RaGasNO2Mod};
-use sensor::{Sensor, SensorType};
-use std::fmt;
-use std::sync::{Arc, Mutex};
+use prelude::*;
+
+
 
 /// RA-GAS GmbH CO/ NO₂ Kombisensor mit Modbus Interface
 ///
@@ -9,10 +8,12 @@ use std::sync::{Arc, Mutex};
 /// Diese Kombigeräte mit 2 Messzellen werden über ein Modbus RTU BUS abgefragt.
 #[derive(Debug)]
 pub struct RaGasCONO2Mod {
+    /// Sensor ID
+    pub id: u32,
     /// Sensor Type
     pub sensor_type: SensorType,
     /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
-    pub messzellen: MesszellenList,
+    pub messzellen: MesszelleList,
 }
 
 impl RaGasCONO2Mod {
@@ -25,8 +26,12 @@ impl RaGasCONO2Mod {
     pub fn new_co() -> Self {
         let co_messzelle = RaGasCOMod::new();
 
+        let messzellen: MesszelleList = vec![
+            Arc::new(RwLock::new(Box::new(co_messzelle))),
+        ];
+
         RaGasCONO2Mod {
-            messzellen: vec![Arc::new(Mutex::new(Box::new(co_messzelle)))],
+            messzellen: messzellen,
             ..Default::default()
         }
     }
@@ -35,8 +40,12 @@ impl RaGasCONO2Mod {
     pub fn new_no2() -> Self {
         let no2_messzelle = RaGasNO2Mod::new();
 
+        let messzellen: MesszelleList = vec![
+            Arc::new(RwLock::new(Box::new(no2_messzelle))),
+        ];
+
         RaGasCONO2Mod {
-            messzellen: vec![Arc::new(Mutex::new(Box::new(no2_messzelle)))],
+            messzellen: messzellen,
             ..Default::default()
         }
     }
@@ -45,15 +54,18 @@ impl RaGasCONO2Mod {
 /// Standardmäßig ist ein Kombisenor mit einer NO2 und einer CO Messzelle betückt.
 impl Default for RaGasCONO2Mod {
     fn default() -> Self {
-        let co_messzelle = RaGasCOMod::new();
         let no2_messzelle = RaGasNO2Mod::new();
+        let co_messzelle = RaGasCOMod::new();
+
+        let messzellen: MesszelleList = vec![
+            Arc::new(RwLock::new(Box::new(no2_messzelle))),
+            Arc::new(RwLock::new(Box::new(co_messzelle))),
+        ];
 
         RaGasCONO2Mod {
+            id: 0,
             sensor_type: SensorType::RaGasCONO2Mod,
-            messzellen: vec![
-                Arc::new(Mutex::new(Box::new(co_messzelle))),
-                Arc::new(Mutex::new(Box::new(no2_messzelle))),
-            ],
+            messzellen: messzellen,
         }
     }
 }
@@ -64,29 +76,36 @@ impl fmt::Display for RaGasCONO2Mod {
     }
 }
 
+/// Implementation des Sensor Traits
+///
 impl Sensor for RaGasCONO2Mod {
     // Update Sensor Platine via BUS
     fn update(&self) {
         debug!("Update Sensor: '{}'", &self);
         let messzellen = &self.messzellen.clone();
         for messzelle in messzellen {
-            if let Ok(mut messzelle) = messzelle.lock() {
+            if let Ok(mut messzelle) = messzelle.write() {
                 messzelle.update()
             }
         }
-        ::std::thread::sleep(::std::time::Duration::from_secs(1));
+        thread::sleep(Duration::from_secs(1));
+    }
+
+    fn get_id(&self) -> u32 {
+        self.id
     }
 
     fn get_sensor_type(&self) -> SensorType {
         self.sensor_type.clone()
     }
 
-    fn get_messzellen(&self) -> &Vec<Arc<Mutex<BoxedMesszelle>>> {
-        &self.messzellen
+    fn get_messzellen(&self) -> Vec<Arc<RwLock<BoxedMesszelle>>> {
+        self.messzellen.clone()
     }
 
-    fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
-        self.messzellen.get(num)
+    fn get_messzelle(&self, num: usize) -> Option<&Arc<RwLock<BoxedMesszelle>>> {
+        let messzelle = self.messzellen.get(num);
+        messzelle
     }
 }
 

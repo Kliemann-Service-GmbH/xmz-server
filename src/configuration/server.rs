@@ -1,10 +1,17 @@
+use ::sensor::{
+    SensorList,
+    MetzConnectCI4,
+    RaGasCONO2Mod,
+    SensorType,
+    TestSensor,
+};
 use config::Config;
 use error::ServerError;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
+use std::sync::{Arc, RwLock};
 use toml;
-use std::sync::{Arc, Mutex};
 
 
 /// Server Representation zum Speichern/ Wiederherstellen einer Konfigurationsdatei
@@ -22,8 +29,9 @@ pub struct Server {
 impl Server {
     /// Bildet eine Server Instanz aus der Konfigurationsdatei
     ///
-    /// Die Funktion liefert ein `Result` mit einer `ServerBuilder` Instanz, oder liefert ein
+    /// Die Funktion liefert ein `Result` mit einer `::configuration::Server` Instanz, oder liefert ein
     /// `ServerError`.
+    ///
     pub fn from_config_file(cfg: &Config) -> Result<Server, ServerError> {
         let mut file = File::open(&cfg.configuration_path)?;
         let mut s = String::new();
@@ -45,29 +53,30 @@ impl Server {
 /// Konvertierung des `configuration::Server` nach `server::Server`
 ///
 /// Stellt den `server::Server` aus den Daten der Konfigurationsdatei wieder her.
+///
 impl From<Server> for ::server::Server {
     fn from(server: Server) -> Self {
-        let mut sensors: Vec<Arc<Mutex<Box<::sensor::Sensor + Send + 'static>>>> = vec![];
+        // Restauriere Sensoren
+        let mut sensors: SensorList = vec![];
         for s in server.sensors {
             match s.sensor_type {
-                ::sensor::SensorType::RaGasCONO2Mod => {
-                    let sensor: ::sensor::RaGasCONO2Mod = s.clone().into();
-                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
+                SensorType::RaGasCONO2Mod => {
+                    let sensor: RaGasCONO2Mod = s.into();
+                    sensors.push(Arc::new(RwLock::new(Box::new(sensor))));
                 },
-                ::sensor::SensorType::MetzConnectCI4 => {
-                    let sensor: ::sensor::MetzConnectCI4 = s.into();
-                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
+                SensorType::MetzConnectCI4 => {
+                    let sensor: MetzConnectCI4 = s.into();
+                    sensors.push(Arc::new(RwLock::new(Box::new(sensor))));
                 },
-                ::sensor::SensorType::TestSensor => {
-                    let sensor: ::sensor::TestSensor = s.into();
-                    sensors.push(Arc::new(Mutex::new(Box::new(sensor))));
+                SensorType::TestSensor => {
+                    let sensor: TestSensor = s.into();
+                    sensors.push(Arc::new(RwLock::new(Box::new(sensor))));
                 },
             }
         }
-
         ::server::Server {
             service_interval: server.service_interval,
-            sensors: sensors,
+            sensors:  sensors,
             // zones: vec![],
             configuration_path: server.configuration_path,
             runtime_info_path: server.runtime_info_path,

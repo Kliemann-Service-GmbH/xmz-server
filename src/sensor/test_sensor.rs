@@ -1,17 +1,16 @@
-use messzelle::{BoxedMesszelle, MesszellenList};
-use sensor::{Sensor, SensorType};
-use std::fmt;
-use std::sync::{Arc, Mutex};
+use prelude::*;
 
 
 /// Test Sensor
 ///
 #[derive(Debug)]
 pub struct TestSensor {
+    /// Sensor ID
+    pub id: u32,
     /// Sensor Type
     pub sensor_type: SensorType,
     /// Liste der Messzellen die vom Sensor Ausgelesen werden können.
-    pub messzellen: MesszellenList,
+    pub messzellen: MesszelleList,
 }
 
 impl TestSensor {
@@ -22,8 +21,8 @@ impl TestSensor {
 
 impl Default for TestSensor {
     fn default() -> Self {
-
         TestSensor {
+            id: 0,
             sensor_type: SensorType::TestSensor,
             messzellen: vec![],
         }
@@ -36,30 +35,39 @@ impl fmt::Display for TestSensor {
     }
 }
 
+/// Implementation des Sensor Traits
+///
 impl Sensor for TestSensor {
+    // Update Sensor Platine via BUS
     fn update(&self) {
         debug!("Update Sensor: '{}'", &self);
         let messzellen = &self.messzellen.clone();
         for messzelle in messzellen {
-            if let Ok(mut messzelle) = messzelle.lock() {
+            if let Ok(mut messzelle) = messzelle.write() {
                 messzelle.update()
             }
         }
-        ::std::thread::sleep(::std::time::Duration::from_secs(1));
+        thread::sleep(Duration::from_secs(1));
+    }
+
+    fn get_id(&self) -> u32 {
+        self.id
     }
 
     fn get_sensor_type(&self) -> SensorType {
         self.sensor_type.clone()
     }
 
-    fn get_messzellen(&self) -> &Vec<Arc<Mutex<BoxedMesszelle>>> {
-        &self.messzellen
+    fn get_messzellen(&self) -> Vec<Arc<RwLock<BoxedMesszelle>>> {
+        self.messzellen.clone()
     }
 
-    fn get_messzelle(&self, num: usize) -> Option<&Arc<Mutex<BoxedMesszelle>>> {
-        self.messzellen.get(num)
+    fn get_messzelle(&self, num: usize) -> Option<&Arc<RwLock<BoxedMesszelle>>> {
+        let messzelle = self.messzellen.get(num);
+        messzelle
     }
 }
+
 
 #[cfg(test)]
 mod tests {
