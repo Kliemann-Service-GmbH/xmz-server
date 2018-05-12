@@ -15,7 +15,7 @@ fn default() {
     let server = Server::default();
 
     assert_eq!(server.service_interval, 365);
-    assert_eq!(server.sensors.len(), 2);
+    assert_eq!(server.sensors.len(), 3);
 }
 
 //
