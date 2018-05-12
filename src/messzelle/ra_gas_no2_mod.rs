@@ -1,22 +1,37 @@
-use messzelle::{Messzelle, MesszelleError};
+use messzelle::{
+    MAX_VALUES_FOR_N_MINUTES,
+    Messzelle,
+    MesszelleError,
+    MesszelleType,
+};
 use std::fmt;
 use std::time::Duration;
 use std::time::SystemTime;
 
+// Die `pub` Public members sind nötig, da die Felder von den Konvertierungen (Configuration, RuntimInfo,
+// und Api) gesetzt werden.
 /// NO2 Messzelle eines 'RA-GAS GmbH CO/NO2 Kombisensor mit Modbus Interface'
 ///
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct RaGasNO2Mod {
+    pub messzelle_type: MesszelleType,
     pub values: Vec<(f64, SystemTime)>,
-    pub max_values_for_n_minutes: u64, // in Sekunden
 }
 
 impl RaGasNO2Mod {
+    /// Erstellt eine neue Messzelle
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = RaGasNO2Mod::new();
+    /// ```
     pub fn new() -> Self {
         RaGasNO2Mod {
+            messzelle_type: MesszelleType::RaGasNO2Mod,
             values: vec![],
-            // max_values_for_n_minutes: 5 * 60 * 60,    // Normale Messzellen arbeiten mit Minuten Werten
-            max_values_for_n_minutes: 5, // Simulator Messzellen arbeiten mit Sekunden Werten
         }
     }
 }
@@ -27,17 +42,41 @@ impl Messzelle for RaGasNO2Mod {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
+    /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasNO2Mod::new();
-    /// assert!(messzelle.value().is_none());
+    /// assert!(messzelle.get_value().is_none());
     /// ```
-    fn value(&self) -> Option<&(f64, SystemTime)> {
+    fn get_value(&self) -> Option<&(f64, SystemTime)> {
         self.values.last()
     }
 
+    /// Liefert alle Werte der Messzelle
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = RaGasNO2Mod::new();
+    /// assert_eq!(messzelle.get_values().len(), 0);
+    /// ```
     fn get_values(&self) -> Vec<(f64, SystemTime)> {
         self.values.clone()
+    }
+
+    /// Liefert den Typ der Messzelle
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let messzelle = RaGasNO2Mod::new();
+    /// assert_eq!(messzelle.get_messzelle_type(), MesszelleType::RaGasNO2Mod);
+    /// ```
+    fn get_messzelle_type(&self) -> MesszelleType {
+        self.messzelle_type.clone()
     }
 
     /// Mittelwert der letzten `min` Minuten
@@ -45,10 +84,10 @@ impl Messzelle for RaGasNO2Mod {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
+    /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasNO2Mod::new();
-    /// assert!(messzelle.value().is_none());
+    /// assert!(messzelle.get_value().is_none());
     /// ```
     fn average(&self, minutes: u64) -> Result<f64, MesszelleError> {
         let mut values = self.values.clone();
@@ -92,13 +131,13 @@ impl Messzelle for RaGasNO2Mod {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
+    /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasNO2Mod::new();
-    /// assert!(messzelle.value().is_none());
+    /// assert!(messzelle.get_value().is_none());
     /// ```
     fn update(&mut self) {
-        let last_value = match self.value() {
+        let last_value = match self.get_value() {
             Some(&(value, _timestamp)) => value,
             None => 0.0,
         };
@@ -107,7 +146,7 @@ impl Messzelle for RaGasNO2Mod {
         debug!("|-- Update Messzelle: '{}'", &self);
     }
 
-    /// Entfernt alle Wert/Zeistempel Paare die älter als `Messzelle::max_values_for_n_minutes` sind.
+    /// Entfernt alle Wert/Zeistempel Paare die älter als `Messzelle::MAX_VALUES_FOR_N_MINUTES` sind.
     ///
     /// Diese Funktion besteht aus 2 Tests. Der erste Spezialfall tritt ein wenn nur ein
     /// Wert/Zeitstempel Paar vorhanden ist. Hier muss getestet werden ob dieses veraltete Daten
@@ -120,10 +159,10 @@ impl Messzelle for RaGasNO2Mod {
     /// # Examples
     ///
     /// ```rust
-    /// use xmz_server::messzelle::{Messzelle, RaGasNO2Mod};
+    /// use xmz_server::prelude::*;
     ///
     /// let messzelle = RaGasNO2Mod::new();
-    /// assert!(messzelle.value().is_none());
+    /// assert!(messzelle.get_value().is_none());
     /// ```
     fn shrink_values(&mut self) {
         // 1. Spezialfall, ist nur ein Wert/Zeitstempel Paar vorhanden muss dieses zuerst
@@ -133,7 +172,7 @@ impl Messzelle for RaGasNO2Mod {
         if self.values.len() == 1 {
             if let Some(&(_value, timestamp)) = self.values.get(0) {
                 if let Ok(duration) = timestamp.elapsed() {
-                    if duration > Duration::from_secs(self.max_values_for_n_minutes) {
+                    if duration > Duration::from_secs(MAX_VALUES_FOR_N_MINUTES) {
                         self.values.clear();
                     }
                 }
@@ -148,10 +187,10 @@ impl Messzelle for RaGasNO2Mod {
         // mit der Funktion [`split_off()`](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_off)
         // zu teilen.
         if let Some(index) = self.values.iter().position(|&(_value, timestamp)| {
-            timestamp.elapsed().unwrap() < Duration::from_secs(self.max_values_for_n_minutes)
+            timestamp.elapsed().unwrap() < Duration::from_secs(MAX_VALUES_FOR_N_MINUTES)
         }) {
             // Mit `split_off()` wird der Vector geteilt, es bleiben nur noch die
-            // Wert/Zeitstempel Paare der letzten `max_values_for_n_minutes` Minuten übrig.
+            // Wert/Zeitstempel Paare der letzten `MAX_VALUES_FOR_N_MINUTES` Minuten übrig.
             //
             // **Dieser Rest wird wieder als `values` übernommen, alle "alten" Werte werden so verworfen.**
             self.values = self.values.split_off(index);
@@ -161,7 +200,7 @@ impl Messzelle for RaGasNO2Mod {
 
 impl fmt::Display for RaGasNO2Mod {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "NO2")
+        write!(f, "RA-GAS GmbH NO₂")
     }
 }
 
@@ -173,13 +212,18 @@ mod tests {
     fn new() {
         let messzelle = RaGasNO2Mod::new();
         assert_eq!(messzelle.values.len(), 0);
-        assert_eq!(messzelle.max_values_for_n_minutes, 5);
     }
 
     #[test]
-    fn value() {
+    fn get_value() {
         let messzelle = RaGasNO2Mod::new();
-        assert!(messzelle.value().is_none());
+        assert!(messzelle.get_value().is_none());
+    }
+
+    #[test]
+    fn get_values() {
+        let messzelle = RaGasNO2Mod::new();
+        assert_eq!(messzelle.get_values().len(), 0);
     }
 
     #[test]
