@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["SensorType","Verfügbare Sensor Typen"]],"struct":[["MetzConnectCI4","Metz Connect CI4 Modul"],["RaGasCONO2Mod","RA-GAS GmbH CO/ NO₂ Kombisensor mit Modbus Interface"],["TestSensor","Test Sensor"]],"trait":[["Sensor","Trait das die Eigenschaften aller Sensoren beschreibt."]],"type":[["BoxedSensor",""],["SensorList",""]]});

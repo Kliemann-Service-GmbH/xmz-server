@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Messzelle",""],["Sensor",""],["Server","Server Representation zum Speichern/ Wiederherstellen einer Konfigurationsdatei"]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"macro":[["use_config_from",""],["use_default_config",""]],"mod":[["source","Controlling the source of configuration."]],"struct":[["DeserializeError","Error when a `Serializer` or `Deserializer` trait object fails."]],"trait":[["Configure","A configuration struct which can be generated from the environment."]]});

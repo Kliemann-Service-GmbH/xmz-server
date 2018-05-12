@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `prelude` mod in crate `xmz_server`."><meta name="keywords" content="rust, rustlang, rust-lang, prelude"><title>xmz_server::prelude - Rust</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><link rel="shortcut icon" href="https://zzeroo.github.io/share/favicon.ico"></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../xmz_server/index.html'><img src='https://zzeroo.github.io/share/zzeroo-logo.png' alt='logo' width='100'></a><p class='location'>Module prelude</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../index.html'>xmz_server</a></p><script>window.sidebarCurrent = {name: 'prelude', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>xmz_server</a>::<wbr><a class="mod" href=''>prelude</a></span><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../../src/xmz_server/prelude.rs.html#1-55' title='goto source code'>[src]</a></span></h1><div class='docblock'><p>Nützliche Traits und Funktionen die alle Teile dieses Projekts verwenden</p>
+<h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">xmz_server</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;</pre>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
+<table><tr><td><code>pub use <a class="mod" href="../../xmz_server/configuration/index.html" title="mod xmz_server::configuration">configuration</a>;</code></td></tr><tr><td><code>pub use messzelle::<a class="type" href="../../xmz_server/messzelle/type.BoxedMesszelle.html" title="type xmz_server::messzelle::BoxedMesszelle">BoxedMesszelle</a>;</code></td></tr><tr><td><code>pub use messzelle::<a class="trait" href="../../xmz_server/messzelle/trait.Messzelle.html" title="trait xmz_server::messzelle::Messzelle">Messzelle</a>;</code></td></tr><tr><td><code>pub use messzelle::<a class="type" href="../../xmz_server/messzelle/type.MesszelleList.html" title="type xmz_server::messzelle::MesszelleList">MesszelleList</a>;</code></td></tr><tr><td><code>pub use messzelle::<a class="enum" href="../../xmz_server/messzelle/enum.MesszelleType.html" title="enum xmz_server::messzelle::MesszelleType">MesszelleType</a>;</code></td></tr><tr><td><code>pub use messzelle::<a class="struct" href="../../xmz_server/messzelle/metz_connect_analog_420/struct.MetzConnectCI4Analog420.html" title="struct xmz_server::messzelle::metz_connect_analog_420::MetzConnectCI4Analog420">MetzConnectCI4Analog420</a>;</code></td></tr><tr><td><code>pub use messzelle::<a class="struct" href="../../xmz_server/messzelle/ra_gas_no2_mod/struct.RaGasNO2Mod.html" title="struct xmz_server::messzelle::ra_gas_no2_mod::RaGasNO2Mod">RaGasNO2Mod</a>;</code></td></tr><tr><td><code>pub use messzelle::<a class="struct" href="../../xmz_server/messzelle/ra_gas_co_mod/struct.RaGasCOMod.html" title="struct xmz_server::messzelle::ra_gas_co_mod::RaGasCOMod">RaGasCOMod</a>;</code></td></tr><tr><td><code>pub use <a class="mod" href="../../xmz_server/runtime_info/index.html" title="mod xmz_server::runtime_info">runtime_info</a>;</code></td></tr><tr><td><code>pub use sensor::<a class="type" href="../../xmz_server/sensor/type.BoxedSensor.html" title="type xmz_server::sensor::BoxedSensor">BoxedSensor</a>;</code></td></tr><tr><td><code>pub use sensor::<a class="trait" href="../../xmz_server/sensor/trait.Sensor.html" title="trait xmz_server::sensor::Sensor">Sensor</a>;</code></td></tr><tr><td><code>pub use sensor::<a class="type" href="../../xmz_server/sensor/type.SensorList.html" title="type xmz_server::sensor::SensorList">SensorList</a>;</code></td></tr><tr><td><code>pub use sensor::<a class="enum" href="../../xmz_server/sensor/enum.SensorType.html" title="enum xmz_server::sensor::SensorType">SensorType</a>;</code></td></tr><tr><td><code>pub use server::<a class="struct" href="../../xmz_server/server/struct.Server.html" title="struct xmz_server::server::Server">Server</a>;</code></td></tr><tr><td><code>pub use zone::<a class="struct" href="../../xmz_server/zone/struct.Zone.html" title="struct xmz_server::zone::Zone">Zone</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="fmt/index.html"
+                                  title='mod xmz_server::prelude::fmt'>fmt</a></td>
+                           <td class='docblock-short'>
+                                <p>Utilities for formatting and printing <code>String</code>s.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="thread/index.html"
+                                  title='mod xmz_server::prelude::thread'>thread</a></td>
+                           <td class='docblock-short'>
+                                <p>Native threads.</p>
+
+                           </td>
+                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Arc.html"
+                                  title='struct xmz_server::prelude::Arc'>Arc</a></td>
+                           <td class='docblock-short'>
+                                <p>A thread-safe reference-counting pointer. 'Arc' stands for 'Atomically
+Reference Counted'.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Config.html"
+                                  title='struct xmz_server::prelude::Config'>Config</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Duration.html"
+                                  title='struct xmz_server::prelude::Duration'>Duration</a></td>
+                           <td class='docblock-short'>
+                                <p>A <code>Duration</code> type to represent a span of time, typically used for system
+timeouts.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.MetzConnectCI4.html"
+                                  title='struct xmz_server::prelude::MetzConnectCI4'>MetzConnectCI4</a></td>
+                           <td class='docblock-short'>
+                                <p>Metz Connect CI4 Modul</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Mutex.html"
+                                  title='struct xmz_server::prelude::Mutex'>Mutex</a></td>
+                           <td class='docblock-short'>
+                                <p>A mutual exclusion primitive useful for protecting shared data</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.RaGasCONO2Mod.html"
+                                  title='struct xmz_server::prelude::RaGasCONO2Mod'>RaGasCONO2Mod</a></td>
+                           <td class='docblock-short'>
+                                <p>RA-GAS GmbH CO/ NO₂ Kombisensor mit Modbus Interface</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.RwLock.html"
+                                  title='struct xmz_server::prelude::RwLock'>RwLock</a></td>
+                           <td class='docblock-short'>
+                                <p>A reader-writer lock</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.TestSensor.html"
+                                  title='struct xmz_server::prelude::TestSensor'>TestSensor</a></td>
+                           <td class='docblock-short'>
+                                <p>Test Sensor</p>
+
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.ServerError.html"
+                                  title='enum xmz_server::prelude::ServerError'>ServerError</a></td>
+                           <td class='docblock-short'>
+                                <p>Mögliche Server Fehler</p>
+
+                           </td>
+                       </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.AsAny.html"
+                                  title='trait xmz_server::prelude::AsAny'>AsAny</a></td>
+                           <td class='docblock-short'>
+                                <p>Dieser Trait ist für das Upcasting nötig</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.Error.html"
+                                  title='trait xmz_server::prelude::Error'>Error</a></td>
+                           <td class='docblock-short'>
+                                <p><code>Error</code> is a trait representing the basic expectations for error values,
+i.e. values of type <code>E</code> in <a href="../result/enum.Result.html"><code>Result&lt;T, E&gt;</code></a>. Errors must describe
+themselves through the <a href="../fmt/trait.Display.html"><code>Display</code></a> and [<code>Debug</code>] traits, and may provide
+cause chain information:</p>
+
+                           </td>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.id.html"
+                                  title='fn xmz_server::prelude::id'>id</a></td>
+                           <td class='docblock-short'>
+                                <p>Die <code>id</code> Funktion liefert genau den Wert zurück der auch in die Funktion gegeben wurde.</p>
+
+                           </td>
+                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "xmz_server";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>
