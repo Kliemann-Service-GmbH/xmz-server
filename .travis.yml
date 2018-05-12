@@ -8,14 +8,6 @@ matrix:
       #- rust: stable
       #- rust: beta
   - rust: nightly
-    after_success: |
-      [ $TRAVIS_BRANCH = master ] &&
-      [ $TRAVIS_PULL_REQUEST = false ] &&
-      cargo doc &&
-      echo "<meta http-equiv=refresh content=0;url=xmz_server/index.html>" > target/doc/index.html &&
-      sudo pip install ghp-import &&
-      ghp-import -n target/doc &&
-      git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
 
     after_success: |
       wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
@@ -31,6 +23,15 @@ matrix:
       for file in target/debug/xmz-server-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
       bash <(curl -s https://codecov.io/bash) &&
       echo "Uploaded code coverage"
+
+    after_success: |
+      [ $TRAVIS_BRANCH = master ] &&
+      [ $TRAVIS_PULL_REQUEST = false ] &&
+      cargo doc &&
+      echo "<meta http-equiv=refresh content=0;url=xmz_server/index.html>" > target/doc/index.html &&
+      sudo pip install ghp-import &&
+      ghp-import -n target/doc &&
+      git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
 
 before_script: |
   cp xmz-server.toml.example xmz-server.toml
