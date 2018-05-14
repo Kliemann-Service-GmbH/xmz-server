@@ -31,4 +31,5 @@ rocket_contrib = "0.3.6"
 serde = "1"
 serde_derive = "1"
 serde_json = "1"
+sysfs_gpio = "0.5"
 toml = "^0.4" # Konfigurationsdatei Format

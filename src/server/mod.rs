@@ -14,6 +14,7 @@ pub struct Server {
     /// Wartungsintervall in Tagen
     pub service_interval: u32,
     /// Liste der Sensoren die dieser Server verwaltet
+    /// `pub type SensorList = Vec<Arc<RwLock<BoxedSensor>>>;`
     pub sensors: SensorList,
     pub configuration_path: Option<PathBuf>,
     pub runtime_info_path: Option<PathBuf>,

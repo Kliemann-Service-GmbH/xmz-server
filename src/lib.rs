@@ -41,10 +41,11 @@ extern crate log;
 extern crate serde_derive;
 extern crate bincode;
 extern crate rand;
-extern crate rocket;
 extern crate rocket_contrib;
-extern crate serde;
+extern crate rocket;
 extern crate serde_json;
+extern crate serde;
+extern crate sysfs_gpio;
 extern crate toml;
 
 mod api;
