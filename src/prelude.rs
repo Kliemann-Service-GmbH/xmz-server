@@ -16,6 +16,8 @@ pub use config::Config;
 pub use configuration;
 pub use error::ServerError;
 pub use messzelle::{BoxedMesszelle, Messzelle, MesszelleList, MesszelleType, MetzConnectCI4Analog420, RaGasNO2Mod, RaGasCOMod};
+pub use output;
+pub use output::{Output, OutputError};
 pub use runtime_info;
 pub use sensor::{BoxedSensor, MetzConnectCI4, RaGasCONO2Mod, Sensor, SensorList, SensorType, TestSensor};
 pub use server::Server;
