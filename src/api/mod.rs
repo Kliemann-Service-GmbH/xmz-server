@@ -3,7 +3,11 @@
 //! Dieses Modul ist ähnlich wie die Module `configuration` und `runtime_info` aufgebaut.
 //! Auch hier wird der `server::Server` in eine andere Struktur gewandelt (via Rust `From` Trait)
 //!
+
+// runtime_info und api Module sind sehr ähnlich
+
 mod messzelle;
+mod output;
 mod sensor;
 mod server;
 

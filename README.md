@@ -1,3 +1,5 @@
+https://wireless.wiki.kernel.org/en/users/Drivers/brcm80211
+
 # Serverteil der 'xMZ-Plattform'
 
 |||

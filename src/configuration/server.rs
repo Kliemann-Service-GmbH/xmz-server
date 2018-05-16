@@ -1,16 +1,7 @@
-use ::sensor::{
-    SensorList,
-    MetzConnectCI4,
-    RaGasCONO2Mod,
-    SensorType,
-    TestSensor,
-};
-use config::Config;
-use error::ServerError;
+use prelude::*;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
-use std::sync::{Arc, RwLock};
 use toml;
 
 
@@ -24,6 +15,7 @@ pub struct Server {
     pub configuration_path: Option<PathBuf>,
     #[serde(skip)]
     pub runtime_info_path: Option<PathBuf>,
+    outputs: Vec<::configuration::output::Output>,
 }
 
 impl Server {
@@ -50,9 +42,15 @@ impl Server {
     }
 }
 
+// TODO: Finde einen Weg die Konvertierung der Sensoren, Output Liste 'in Place' durchzuführen,
+//  von Vec<::configuration::output::Output> nach `Vec<Arc<RwLock<Box<Output + Send + Sync>>>>`
 /// Konvertierung des `configuration::Server` nach `server::Server`
 ///
-/// Stellt den `server::Server` aus den Daten der Konfigurationsdatei wieder her.
+/// konstruiert den `server::Server` aus den Daten der Konfigurationsdatei. Die Daten stammen aus
+/// der Funktion `from_config_file()`, diese liefert ein `::configuration::Server` zurück.
+///
+/// Die Herausforderungen sind die Trait Objekte des `::server::Server` wie die `::sensor::Sensor`
+/// oder `::output::Output`, diese müssen in die konkreten Typen gewandelt werden.
 ///
 impl From<Server> for ::server::Server {
     fn from(server: Server) -> Self {
@@ -74,10 +72,34 @@ impl From<Server> for ::server::Server {
                 },
             }
         }
+        // Restauriere Outputs
+        // von:
+        //  `Vec<::configuration::output::Output>`
+        // nach
+        //  `Vec<Arc<RwLock<Box<Output + Send + Sync>>>>`
+        //
+        let mut outputs: OutputList = vec![];
+        for o in server.outputs {
+            match o.output_type {
+                OutputType::MetzConnectMRDO4 => {
+                    let output: MetzConnectMRDO4 = o.into();
+                    outputs.push(Arc::new(RwLock::new(Box::new(output))));
+                },
+                OutputType::XMZBoden100 => {
+                    let output: XMZBoden100 = o.into();
+                    outputs.push(Arc::new(RwLock::new(Box::new(output))));
+                },
+                OutputType::XMZDeckel100 => {
+                    let output: XMZDeckel100 = o.into();
+                    outputs.push(Arc::new(RwLock::new(Box::new(output))));
+                },
+            }
+        }
         ::server::Server {
             service_interval: server.service_interval,
             sensors:  sensors,
             // zones: vec![],
+            outputs: outputs,
             configuration_path: server.configuration_path,
             runtime_info_path: server.runtime_info_path,
         }

@@ -6,3 +6,8 @@
 - DEMO Server, evtl. wenn keine Laufzeitinformation und keine Konfig vorhanden
   ist. **Nachteil ist das das nicht sehr explizit ist.** Server darf auf alle
   Fälle nicht in produktion aus Versehen im DEMO Modus laufen.
+
+# Misc
+
+- Metz Connect CI4 Komponenten umbenennen
+  - der richtige Produkt Name ist MR-CI4

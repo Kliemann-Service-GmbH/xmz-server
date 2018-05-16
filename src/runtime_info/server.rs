@@ -1,25 +1,18 @@
-use ::sensor::{
-    SensorList,
-    MetzConnectCI4,
-    RaGasCONO2Mod,
-    SensorType,
-    TestSensor,
-};
 use bincode;
-use config::Config;
-use error::ServerError;
+use prelude::*;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
-use std::sync::{Arc, RwLock};
 
 
+// Alle Member sind public, so das der Server aus `::server::Server` gebildet werden kann
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Server {
-    service_interval: u32,
-    sensors: Vec<::runtime_info::sensor::Sensor>,
-    configuration_path: String,
-    runtime_info_path: String,
+    pub service_interval: u32,
+    pub sensors: Vec<::runtime_info::sensor::Sensor>,
+    pub outputs: Vec<::runtime_info::output::Output>,
+    pub configuration_path: String,
+    pub runtime_info_path: String,
 }
 
 impl Server {
@@ -39,6 +32,7 @@ impl Server {
     }
 }
 
+// Diese Funktion wird von der eigentlichen Server binary `src/bin/main.rs` verwendet
 /// Konvertierung des `runtime_info::Server` nach `server::Server`
 ///
 /// Stellt den `server::Server` aus den Daten der Laufzeitinformationen wieder her.
@@ -62,45 +56,29 @@ impl From<Server> for ::server::Server {
                 },
             }
         }
+        let mut outputs: OutputList = vec![];
+        for o in server.outputs {
+            match o.output_type {
+                OutputType::MetzConnectMRDO4 => {
+                    let output: MetzConnectMRDO4 = o.into();
+                    outputs.push(Arc::new(RwLock::new(Box::new(output))));
+                },
+                OutputType::XMZBoden100 => {
+                    let output: XMZBoden100 = o.into();
+                    outputs.push(Arc::new(RwLock::new(Box::new(output))));
+                },
+                OutputType::XMZDeckel100 => {
+                    let output: XMZDeckel100 = o.into();
+                    outputs.push(Arc::new(RwLock::new(Box::new(output))));
+                },
+            }
+        }
         ::server::Server {
             service_interval: server.service_interval,
             configuration_path: Some(PathBuf::from(server.configuration_path)),
             runtime_info_path: Some(PathBuf::from(server.runtime_info_path)),
             sensors: sensors,
-            // zones: vec![],
-        }
-    }
-}
-
-/// Konvertierung des `server::Server` nach `runtime_info::Server`
-///
-/// Konvertiert den `server::Server` in ein Format das in der Laufzeitinformation
-/// gespeichert werden kann.
-///
-/// Diese Funktion ist analog zu der Konvertierung des `server::Server` nach [`configuration::Server`](../configuration/struct.Server.html)
-///
-impl<'r> From<&'r ::server::Server> for Server {
-    fn from(server: &'r ::server::Server) -> Self {
-        // Restauriere Sensoren
-        let mut sensors: Vec<::runtime_info::Sensor> = Vec::new();
-        for sensor in server.get_sensors() {
-            sensors.push(sensor.into());
-        }
-
-        // Restauriere Pfade
-        let configuration_path = match &server.configuration_path {
-            Some(path) => path.to_string_lossy().to_string(),
-            None => "not set".to_string(),
-        };
-        let runtime_info_path = match &server.runtime_info_path {
-            Some(path) => path.to_string_lossy().to_string(),
-            None => "not set".to_string(),
-        };
-        Server {
-            service_interval: server.service_interval,
-            configuration_path: configuration_path,
-            runtime_info_path: runtime_info_path,
-            sensors: sensors,
+            outputs: outputs,
             // zones: vec![],
         }
     }

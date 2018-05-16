@@ -1,5 +1,47 @@
-[Server]
+# Server mit folgenden Parametern
+#   - Service Intervall in 365 Tagen
+#   - 2 Modbus Kombisensoren von RA-GAS
+#   - die NO2 Messzellen sind der Alarmzone 1 zugewiesen
+#   - die CO Messzellen sind der Alarmzone 2 zugewiesen
+
 # Wartungsintervall in Tagen
-service_interval = 1
-# URL der json API
-api_url = "0.0.0.0:3000"
+service_interval = 365
+
+[[sensors]]
+id = 1
+sensor_type = "RA-GAS GmbH CO/ NO₂ Kombisensor mit Modbus Interface"
+
+  [[sensors.messzellen]]
+  sensor_id = 1
+  messzelle_type = "RA-GAS GmbH NO₂"
+  zones = [2]
+
+  [[sensors.messzellen]]
+  sensor_id = 1
+  messzelle_type = "RA-GAS GmbH CO"
+  zones = [1]
+
+
+[[sensors]]
+id = 2
+sensor_type = "Metz Connect CI4 Modul"
+
+  [[sensors.messzellen]]
+  sensor_id = 2
+  messzelle_type = "Analog 4-20mA Sensor an Metz Connect DI4"
+  zones = [1]
+
+  [[sensors.messzellen]]
+  sensor_id = 2
+  messzelle_type = "Analog 4-20mA Sensor an Metz Connect DI4"
+  zones = [1]
+
+  [[sensors.messzellen]]
+  sensor_id = 2
+  messzelle_type = "Analog 4-20mA Sensor an Metz Connect DI4"
+  zones = [2]
+
+  [[sensors.messzellen]]
+  sensor_id = 2
+  messzelle_type = "Analog 4-20mA Sensor an Metz Connect DI4"
+  zones = [2]
