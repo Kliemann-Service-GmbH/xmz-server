@@ -8,11 +8,12 @@ use prelude::*;
 /// - <https://www.metz-connect.com/en/products/1108361321>
 ///
 #[derive(Debug)]
+#[derive(Clone)] // Clone damit die Datenstruktur in `server.get_outputs()` gecloned werden kann
 pub struct MetzConnectMRDO4 {
     name: String,
     output_type: OutputType,
     pins: usize,
-    data: RwLock<usize>,
+    data: usize,
 }
 
 impl MetzConnectMRDO4 {
@@ -115,7 +116,7 @@ impl Default for MetzConnectMRDO4 {
             name: "Metz Connect MR-DO4".to_string(),
             output_type: OutputType::MetzConnectMRDO4,
             pins: 4,
-            data: RwLock::new(0),
+            data: 0,
         }
     }
 }
@@ -146,6 +147,28 @@ impl Output for MetzConnectMRDO4 {
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
     fn clear(&self, num:usize) -> Result<(), OutputError> {
         Err(OutputError::CouldNotUnset)
+    }
+
+    /// Liefert den Typen des Ausgangs
+    ///
+    fn get_output_type(&self) -> OutputType {
+        self.output_type.clone()
+    }
+
+    /// Liefert den Name des Ausgangs
+    ///
+    /// Diese Getter Funktion wird bei der Konvertierung von/zu den Laufzeitinformationen benötigt.
+    /// Siehe `runtime_info/output.rs`
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+
+    /// Liefert die Anzahl der Pinks des Ausgangs
+    ///
+    /// Diese Getter Funktion wird bei der Konvertierung von/zu den Laufzeitinformationen benötigt.
+    /// Siehe `runtime_info/output.rs`
+    fn get_pins(&self) -> usize {
+        self.pins
     }
 }
 

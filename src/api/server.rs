@@ -15,6 +15,7 @@ pub struct Server {
     // FIXME: Evtl. sollte dieser Pfad nicht öffentlich sein
     runtime_info_path: String,
     sensors: Vec<::api::sensor::Sensor>,
+    outputs: Vec<::api::output::Output>,
 }
 
 impl Server {
@@ -36,6 +37,25 @@ impl Server {
             None => None,
         }
     }
+
+    /// Liefert ein Vector mit den Outputs des Servers
+    ///
+    /// Diese Funktion wird in `::api::output::Output` aufgerufen.
+    ///
+    pub fn get_outputs(&self) -> Vec<::api::output::Output> {
+        self.outputs.clone()
+    }
+
+    /// Liefert den Output mit der `id` des Servers
+    ///
+    /// Diese Funktion wird in `::api::output::Output` aufgerufen.
+    ///
+    pub fn get_output(&self, id: usize) -> Option<::api::output::Output> {
+        match self.outputs.clone().get(id) {
+            Some(output) => Some(output.clone()),
+            None => None,
+        }
+    }
 }
 
 /// Konvertiert den `::server::Server` in die API Version `::api::server::Server`
@@ -49,23 +69,29 @@ impl From<server::Server> for Server {
             sensors.push(sensor.into());
         }
 
+        // **Nicht einfach `.unwrap()`'en!!**
         // In den Unit Tests kann es vorkommen das die Pfade
         // `configuration_path` und `runtime_info_path`, `None` sind.
-        //
-        let configuration_path = match server.configuration_path {
-            Some(path) => path,
+        let configuration_path = match &server.configuration_path {
+            Some(ref path) => path.clone(),
             None => PathBuf::from(""),
         };
-        let runtime_info_path = match server.runtime_info_path {
-            Some(path) => path,
+        let runtime_info_path = match &server.runtime_info_path {
+            Some(ref path) => path.clone(),
             None => PathBuf::from(""),
         };
+
+        let mut outputs: Vec<::api::output::Output> = Vec::new();
+        for output in server.get_outputs() {
+            outputs.push(output.into());
+        }
 
         Server {
             service_interval: server.service_interval,
             sensors: sensors,
             configuration_path: configuration_path.to_string_lossy().to_string(),
             runtime_info_path: runtime_info_path.to_string_lossy().to_string(),
+            outputs: outputs,
         }
     }
 }

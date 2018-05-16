@@ -6,6 +6,7 @@ pub struct Output {
     name: String,
     pub output_type: OutputType, // public für `::configuration::Server::From<Server>`
     pins: usize,
+    modbus_address: Option<usize>,
 }
 
 /// Konvertierung in das Output Trait Objekt
@@ -15,7 +16,10 @@ pub struct Output {
 ///
 impl From<Output> for XMZDeckel100 {
     fn from(output: Output) -> Self {
-        XMZDeckel100::new_with_pins(output.pins)
+        XMZDeckel100::new()
+            .init_name(output.name)
+            .init_pins(output.pins)
+            .build()
     }
 }
 
@@ -26,7 +30,10 @@ impl From<Output> for XMZDeckel100 {
 ///
 impl From<Output> for XMZBoden100 {
     fn from(output: Output) -> Self {
-        XMZBoden100::new_with_pins(output.pins)
+        XMZBoden100::new()
+            .init_name(output.name)
+            .init_pins(output.pins)
+            .build()
     }
 }
 
@@ -37,6 +44,9 @@ impl From<Output> for XMZBoden100 {
 ///
 impl From<Output> for MetzConnectMRDO4 {
     fn from(output: Output) -> Self {
-        MetzConnectMRDO4::new_with_pins(output.pins)
+        MetzConnectMRDO4::new()
+            .init_name(output.name)
+            .init_pins(output.pins)
+            .build()
     }
 }

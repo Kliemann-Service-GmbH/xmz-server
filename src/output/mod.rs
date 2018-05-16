@@ -18,7 +18,7 @@ pub use self::xmz_bodenplatine_100::XMZBoden100;
 pub use self::xmz_deckelplatine_100::XMZDeckel100;
 
 pub type BoxedOutput = Box<Output + Send + Sync>;
-pub type OutputList = Vec<Arc<BoxedOutput>>;
+pub type OutputList = Vec<Arc<RwLock<BoxedOutput>>>;
 
 
 /// Verfügbare Output Typen
@@ -54,4 +54,26 @@ pub trait Output: fmt::Debug + fmt::Display {
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
     fn clear(&self, num:usize) -> Result<(), OutputError>;
+
+    // Einige Setter sind direk im Trait definiert, andere dagegen mit Absicht nicht.
+    // So haben zum Beispiel die Modbus Bauteile Modbus Adresse usw. die getter für diese sind in
+    // den konkreten Implementation diese Typen zu finden.
+
+    /// Liefert den Typen des Ausgangs
+    ///
+    /// Diese Getter Funktion wird bei der Konvertierung von/zu den Laufzeitinformationen benötigt.
+    /// Siehe `runtime_info/output.rs`
+    fn get_output_type(&self) -> OutputType;
+
+    /// Liefert den Name des Ausgangs
+    ///
+    /// Diese Getter Funktion wird bei der Konvertierung von/zu den Laufzeitinformationen benötigt.
+    /// Siehe `runtime_info/output.rs`
+    fn get_name(&self) -> String;
+
+    /// Liefert die Anzahl der Pinks des Ausgangs
+    ///
+    /// Diese Getter Funktion wird bei der Konvertierung von/zu den Laufzeitinformationen benötigt.
+    /// Siehe `runtime_info/output.rs`
+    fn get_pins(&self) -> usize;
 }

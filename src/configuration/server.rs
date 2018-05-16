@@ -43,6 +43,7 @@ impl Server {
 }
 
 // TODO: Finde einen Weg die Konvertierung der Sensoren, Output Liste 'in Place' durchzuführen,
+//  von Vec<::configuration::output::Output> nach `Vec<Arc<RwLock<Box<Output + Send + Sync>>>>`
 /// Konvertierung des `configuration::Server` nach `server::Server`
 ///
 /// konstruiert den `server::Server` aus den Daten der Konfigurationsdatei. Die Daten stammen aus
@@ -72,20 +73,25 @@ impl From<Server> for ::server::Server {
             }
         }
         // Restauriere Outputs
+        // von:
+        //  `Vec<::configuration::output::Output>`
+        // nach
+        //  `Vec<Arc<RwLock<Box<Output + Send + Sync>>>>`
+        //
         let mut outputs: OutputList = vec![];
         for o in server.outputs {
             match o.output_type {
                 OutputType::MetzConnectMRDO4 => {
                     let output: MetzConnectMRDO4 = o.into();
-                    outputs.push(Arc::new(Box::new(output)));
+                    outputs.push(Arc::new(RwLock::new(Box::new(output))));
                 },
                 OutputType::XMZBoden100 => {
                     let output: XMZBoden100 = o.into();
-                    outputs.push(Arc::new(Box::new(output)));
+                    outputs.push(Arc::new(RwLock::new(Box::new(output))));
                 },
                 OutputType::XMZDeckel100 => {
                     let output: XMZDeckel100 = o.into();
-                    outputs.push(Arc::new(Box::new(output)));
+                    outputs.push(Arc::new(RwLock::new(Box::new(output))));
                 },
             }
         }

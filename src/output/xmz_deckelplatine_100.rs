@@ -7,11 +7,12 @@ use prelude::*;
 /// angeschlossen ist.
 ///
 #[derive(Debug)]
+#[derive(Clone)] // Clone damit die Datenstruktur in `server.get_outputs()` gecloned werden kann
 pub struct XMZDeckel100 {
     name: String,
     output_type: OutputType,
     pins: usize,
-    data: RwLock<usize>,
+    data: usize,
     oe_pin: usize,
     ds_pin: usize,
     clock_pin: usize,
@@ -168,6 +169,16 @@ impl XMZDeckel100 {
     /// Finale Funktion des Builder Patterns
     ///
     /// Accumuliert alle init_ Funktionen
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let schaltmodul = XMZDeckel100::new()
+    ///         // beliebige Anzahl an `init_()` Funktionen wie `.init_latch_pin(1)`
+    ///         .build();
+    /// ```
     pub fn build(&self) -> Self {
         XMZDeckel100 {
             name: self.name.clone(),
@@ -210,7 +221,7 @@ impl Default for XMZDeckel100 {
             name: "xMZ-Mod-Touch-Deckelplatine v1.0.0".to_string(),
             output_type: OutputType::XMZDeckel100,
             pins: 20,
-            data: RwLock::new(0),
+            data: 0,
             oe_pin: 276,
             ds_pin: 38,
             clock_pin: 44,
@@ -245,6 +256,27 @@ impl Output for XMZDeckel100 {
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
     fn clear(&self, num:usize) -> Result<(), OutputError> {
         Err(OutputError::CouldNotUnset)
+    }
+
+    /// Liefert den Typen des Ausgangs
+    ///
+    fn get_output_type(&self) -> OutputType {
+        self.output_type.clone()
+    }
+    /// Liefert den Name des Ausgangs
+    ///
+    /// Diese Getter Funktion wird bei der Konvertierung von/zu den Laufzeitinformationen benötigt.
+    /// Siehe `runtime_info/output.rs`
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+
+    /// Liefert die Anzahl der Pinks des Ausgangs
+    ///
+    /// Diese Getter Funktion wird bei der Konvertierung von/zu den Laufzeitinformationen benötigt.
+    /// Siehe `runtime_info/output.rs`
+    fn get_pins(&self) -> usize {
+        self.pins
     }
 }
 

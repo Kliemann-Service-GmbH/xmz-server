@@ -1,4 +1,8 @@
 //! Objekt Representation aus der Laufzeitinformation
+//!
+
+// runtime_info und api Module sind sehr ähnlich
+
 mod messzelle;
 mod output;
 mod sensor;

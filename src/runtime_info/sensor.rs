@@ -105,8 +105,8 @@ impl From<Sensor> for TestSensor {
     }
 }
 
+// Diese Funktion wird im `server::Server` in der Runtime `From` Implementation `impl<'r> From<&'r Server> for ::runtime_info::Server` aufgerufen
 /// Konvertierung von den Sensor Trait Objekten `server::Sensor`
-///
 ///
 impl From<Arc<RwLock<BoxedSensor>>> for Sensor {
     fn from(sensor: Arc<RwLock<BoxedSensor>>) -> Self {

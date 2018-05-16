@@ -21,7 +21,9 @@ pub struct Server {
     /// Liste der Ausgänge die vom Server geschalten werden können
     /// `OutputList = Vec<Arc<Box<Output + Send + Sync>>>`
     pub outputs: OutputList,
+    // FIXME: eine Server Instanz kann nicht ohne diese Pfade erstellt werden, `Option` ist nicht nötig
     pub configuration_path: Option<PathBuf>,
+    // FIXME: eine Server Instanz kann nicht ohne diese Pfade erstellt werden, `Option` ist nicht nötig
     pub runtime_info_path: Option<PathBuf>,
 }
 
@@ -37,9 +39,9 @@ impl Default for Server {
             Arc::new(RwLock::new(Box::new(TestSensor::new()))),
         ];
         let outputs: OutputList = vec![
-            Arc::new(Box::new(MetzConnectMRDO4::new())),
-            Arc::new(Box::new(XMZBoden100::new())),
-            Arc::new(Box::new(XMZDeckel100::new())),
+            Arc::new(RwLock::new(Box::new(MetzConnectMRDO4::new()))),
+            Arc::new(RwLock::new(Box::new(XMZBoden100::new()))),
+            Arc::new(RwLock::new(Box::new(XMZDeckel100::new()))),
         ];
         Server {
             service_interval: 365,
@@ -89,7 +91,9 @@ impl Server {
         }
     }
 
-    /// Liefert eine Referenz auf die Liste der Sensoren
+    /// Liefert eine Liste der Sensoren
+    ///
+    /// Diese funktion wird unter Anderen in der Konvertierung in das Bincode Format verwendet.
     ///
     /// # Example
     ///
@@ -101,6 +105,22 @@ impl Server {
     /// ```
     pub fn get_sensors(&self) -> Vec<Arc<RwLock<BoxedSensor>>> {
         self.sensors.clone()
+    }
+
+    /// Liefert eine Liste der Sensoren
+    ///
+    /// Diese funktion wird unter Anderen in der Konvertierung in das Bincode Format verwendet.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let server = Server::default();
+    /// assert_eq!(server.get_outputs().len(), 3);
+    /// ```
+    pub fn get_outputs(&self) -> OutputList {
+        self.outputs.clone()
     }
 
     ///
@@ -214,6 +234,51 @@ impl Server {
         self.launch_api();
 
         Ok(())
+    }
+}
+
+
+/// Konvertierung eine `&server::Server` Referenz nach `runtime_info::Server`
+///
+/// Konvertiert den `server::Server` in ein Format das in der Laufzeitinformation
+/// gespeichert werden kann.
+///
+/// Diese Funktion wird in `serialize_to_bincode()` verwendet
+///
+/// Diese Funktion ist analog zu der Konvertierung des `server::Server`
+///  nach [`configuration::Server`](../configuration/struct.Server.html)
+///
+impl<'r> From<&'r Server> for ::runtime_info::Server {
+    fn from(server: &'r Server) -> Self {
+        // Restauriere Sensoren
+        let mut sensors: Vec<::runtime_info::Sensor> = vec![];
+        for sensor in server.get_sensors() {
+            sensors.push(sensor.into());
+        }
+
+        // Restauriere Pfade
+        let configuration_path = match &server.configuration_path {
+            Some(path) => path.to_string_lossy().to_string(),
+            None => "not set".to_string(),
+        };
+        let runtime_info_path = match &server.runtime_info_path {
+            Some(path) => path.to_string_lossy().to_string(),
+            None => "not set".to_string(),
+        };
+
+        // Restauriere Outputs
+        let mut outputs: Vec<::runtime_info::Output> = vec![];
+        for output in server.get_outputs() {
+            outputs.push(output.into());
+        }
+        ::runtime_info::Server {
+            service_interval: server.service_interval,
+            configuration_path: configuration_path,
+            runtime_info_path: runtime_info_path,
+            sensors: sensors,
+            outputs: outputs,
+            // zones: vec![],
+        }
     }
 }
 

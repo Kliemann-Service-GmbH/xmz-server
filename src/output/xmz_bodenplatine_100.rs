@@ -5,13 +5,14 @@ use prelude::*;
 ///
 /// 9 Relais die über Shift Register (diese sind in der xMZ-Mod-Touch-Deckelplatine v1.0.0 verbaut)
 /// gesteuert werden können.
-/// 
+///
 #[derive(Debug)]
+#[derive(Clone)] // Clone damit die Datenstruktur in `server.get_outputs()` gecloned werden kann
 pub struct XMZBoden100 {
     name: String,
     output_type: OutputType,
     pins: usize,
-    data: RwLock<usize>,
+    data: usize,
     oe_pin: usize,
     ds_pin: usize,
     clock_pin: usize,
@@ -213,7 +214,7 @@ impl Default for XMZBoden100 {
             name: "xMZ-Mod-Touch-Bodenplatine v1.0.0".to_string(),
             output_type: OutputType::XMZBoden100,
             pins: 9,
-            data: RwLock::new(0),
+            data: 0,
             oe_pin: 277,
             ds_pin: 45,
             clock_pin: 39,
@@ -248,6 +249,28 @@ impl Output for XMZBoden100 {
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
     fn clear(&self, num:usize) -> Result<(), OutputError> {
         Err(OutputError::CouldNotUnset)
+    }
+
+    /// Liefert den Typen des Ausgangs
+    ///
+    fn get_output_type(&self) -> OutputType {
+        self.output_type.clone()
+    }
+
+    /// Liefert den Name des Ausgangs
+    ///
+    /// Diese Getter Funktion wird bei der Konvertierung von/zu den Laufzeitinformationen benötigt.
+    /// Siehe `runtime_info/output.rs`
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+
+    /// Liefert die Anzahl der Pinks des Ausgangs
+    ///
+    /// Diese Getter Funktion wird bei der Konvertierung von/zu den Laufzeitinformationen benötigt.
+    /// Siehe `runtime_info/output.rs`
+    fn get_pins(&self) -> usize {
+        self.pins
     }
 }
 
