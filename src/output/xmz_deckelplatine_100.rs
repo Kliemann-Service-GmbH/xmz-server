@@ -241,6 +241,7 @@ impl Output for XMZDeckel100 {
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
     fn set(&self, num: usize) -> Result<(), OutputError> {
+        println!("{:?} set Pin: {}", self.output_type, num);
         Err(OutputError::CouldNotSet)
     }
 
@@ -248,6 +249,7 @@ impl Output for XMZDeckel100 {
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht gelesen werden konnte
     fn get(&self, num: usize) -> Result<bool, OutputError> {
+        println!("{:?} get Pin: {}", self.output_type, num);
         Err(OutputError::CouldNotGet)
     }
 
@@ -255,6 +257,7 @@ impl Output for XMZDeckel100 {
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
     fn clear(&self, num:usize) -> Result<(), OutputError> {
+        println!("{:?} clear Pin: {}", self.output_type, num);
         Err(OutputError::CouldNotUnset)
     }
 
