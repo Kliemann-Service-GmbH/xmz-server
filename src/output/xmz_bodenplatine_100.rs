@@ -5,11 +5,11 @@ use prelude::*;
 ///
 /// 9 Relais die über Shift Register (diese sind in der xMZ-Mod-Touch-Deckelplatine v1.0.0 verbaut)
 /// gesteuert werden können.
-/// /// xMZ-Mod-Touch-Deckelplatine v1.0.0
-///
-/// 9 schaltbare Ausgänge an der eine Folie mit eingebauten LED angeschlossen ist.
-///
+/// 
+#[derive(Debug)]
 pub struct XMZBoden100 {
+    name: String,
+    output_type: OutputType,
     pins: usize,
     data: RwLock<usize>,
     oe_pin: usize,
@@ -36,6 +36,155 @@ impl XMZBoden100 {
         Default::default()
     }
 
+    /// Überschreibt den Namen
+    ///
+    /// Diese Funktion ist Teil des Builder Patterns mit dem der Output gebildet werden kann.
+    /// Siehe dazu <https://abronan.com/rust-trait-objects-box-and-rc/>
+    ///
+    /// Wichtig ist das, wenn diese Funktion verwendet werden soll, im Anschluss, die Funktion
+    /// `build()` verwendet wird. Siehe folgendes Beispiel:
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let schaltmodul = XMZBoden100::new()
+    ///         .init_name("Relais".to_string())
+    ///         .build();
+    /// ```
+    pub fn init_name(&mut self, name: String) -> &mut Self {
+        self.name = name;
+        self
+    }
+
+    /// Überschreibt die Anzahl der Pins
+    ///
+    /// Diese Funktion ist Teil des Builder Patterns mit dem der Output gebildet werden kann.
+    /// Siehe dazu <https://abronan.com/rust-trait-objects-box-and-rc/>
+    ///
+    /// Wichtig ist das, wenn diese Funktion verwendet werden soll, im Anschluss, die Funktion
+    /// `build()` verwendet wird. Siehe folgendes Beispiel:
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let schaltmodul = XMZBoden100::new()
+    ///         .init_pins(1)
+    ///         .build();
+    /// ```
+    pub fn init_pins(&mut self, pins: usize) -> &mut Self {
+        self.pins = pins;
+        self
+    }
+
+    /// Überschreibt den OE Pin des Shift Registers
+    ///
+    /// Diese Funktion ist Teil des Builder Patterns mit dem der Output gebildet werden kann.
+    /// Siehe dazu <https://abronan.com/rust-trait-objects-box-and-rc/>
+    ///
+    /// Wichtig ist das, wenn diese Funktion verwendet werden soll, im Anschluss, die Funktion
+    /// `build()` verwendet wird. Siehe folgendes Beispiel:
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let schaltmodul = XMZBoden100::new()
+    ///         .init_oe_pin(1)
+    ///         .build();
+    /// ```
+    pub fn init_oe_pin(&mut self, oe_pin: usize) -> &mut Self {
+        self.oe_pin = oe_pin;
+        self
+    }
+
+    /// Überschreibt den DS Pin des Shift Registers
+    ///
+    /// Diese Funktion ist Teil des Builder Patterns mit dem der Output gebildet werden kann.
+    /// Siehe dazu <https://abronan.com/rust-trait-objects-box-and-rc/>
+    ///
+    /// Wichtig ist das, wenn diese Funktion verwendet werden soll, im Anschluss, die Funktion
+    /// `build()` verwendet wird. Siehe folgendes Beispiel:
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let schaltmodul = XMZBoden100::new()
+    ///         .init_ds_pin(1)
+    ///         .build();
+    /// ```
+    pub fn init_ds_pin(&mut self, ds_pin: usize) -> &mut Self {
+        self.ds_pin = ds_pin;
+        self
+    }
+
+    /// Überschreibt den CLOCK Pin des Shift Registers
+    ///
+    /// Diese Funktion ist Teil des Builder Patterns mit dem der Output gebildet werden kann.
+    /// Siehe dazu <https://abronan.com/rust-trait-objects-box-and-rc/>
+    ///
+    /// Wichtig ist das, wenn diese Funktion verwendet werden soll, im Anschluss, die Funktion
+    /// `build()` verwendet wird. Siehe folgendes Beispiel:
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let schaltmodul = XMZBoden100::new()
+    ///         .init_clock_pin(1)
+    ///         .build();
+    /// ```
+    pub fn init_clock_pin(&mut self, clock_pin: usize) -> &mut Self {
+        self.clock_pin = clock_pin;
+        self
+    }
+
+    /// Überschreibt den LATCH Pin des Shift Registers
+    ///
+    /// Diese Funktion ist Teil des Builder Patterns mit dem der Output gebildet werden kann.
+    /// Siehe dazu <https://abronan.com/rust-trait-objects-box-and-rc/>
+    ///
+    /// Wichtig ist das, wenn diese Funktion verwendet werden soll, im Anschluss, die Funktion
+    /// `build()` verwendet wird. Siehe folgendes Beispiel:
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let schaltmodul = XMZBoden100::new()
+    ///         .init_latch_pin(1)
+    ///         .build();
+    /// ```
+    pub fn init_latch_pin(&mut self, latch_pin: usize) -> &mut Self {
+        self.latch_pin = latch_pin;
+        self
+    }
+
+    /// Finale Funktion des Builder Patterns
+    ///
+    /// Accumuliert alle init_ Funktionen
+    pub fn build(&self) -> Self {
+        XMZBoden100 {
+            name: self.name.clone(),
+            pins: self.pins.clone(),
+            oe_pin: self.oe_pin.clone(),
+            ds_pin: self.ds_pin.clone(),
+            clock_pin: self.clock_pin.clone(),
+            latch_pin: self.latch_pin.clone(),
+            ..Default::default()
+        }
+    }
+
+
+    // FIXME: Kann sicher weg, wenn das Builder Pattern mit den `init_` Funktionen funktioniert
     /// Erzeugt eine Instanz einer 'xMZ-Mod-Touch-Bodenplatine v1.0.0' mit beliebiger Pin Anzahl
     ///
     /// Dieser Funktion können die Anzahl der verfügbaren Pin (Relais) übergeben werden.
@@ -61,6 +210,8 @@ impl XMZBoden100 {
 impl Default for XMZBoden100 {
     fn default() -> Self {
         XMZBoden100 {
+            name: "xMZ-Mod-Touch-Bodenplatine v1.0.0".to_string(),
+            output_type: OutputType::XMZBoden100,
             pins: 9,
             data: RwLock::new(0),
             oe_pin: 277,
@@ -111,10 +262,81 @@ mod tests {
     }
 
     #[test]
+    fn init_name() {
+        let schaltmodul = XMZBoden100::new()
+            .init_name("Relais".to_string())
+            .build();
+
+        assert_eq!(schaltmodul.name, "Relais".to_string());
+    }
+
+    #[test]
+    fn init_pins() {
+        let schaltmodul = XMZBoden100::new()
+            .init_pins(1)
+            .build();
+
+        assert_eq!(schaltmodul.pins, 1);
+    }
+
+    #[test]
+    fn init_oe_pin() {
+        let schaltmodul = XMZBoden100::new()
+            .init_oe_pin(1)
+            .build();
+
+        assert_eq!(schaltmodul.oe_pin, 1);
+    }
+
+    #[test]
+    fn init_ds_pin() {
+        let schaltmodul = XMZBoden100::new()
+            .init_ds_pin(1)
+            .build();
+
+        assert_eq!(schaltmodul.ds_pin, 1);
+    }
+
+    #[test]
+    fn init_clock_pin() {
+        let schaltmodul = XMZBoden100::new()
+            .init_clock_pin(1)
+            .build();
+
+        assert_eq!(schaltmodul.clock_pin, 1);
+    }
+
+    #[test]
+    fn init_latch_pin() {
+        let schaltmodul = XMZBoden100::new()
+            .init_latch_pin(1)
+            .build();
+
+        assert_eq!(schaltmodul.latch_pin, 1);
+    }
+
+    #[test]
+    fn combined_init_() {
+        let schaltmodul = XMZBoden100::new()
+            .init_name("Relais".to_string())
+            .init_pins(1)
+            .init_oe_pin(1)
+            .init_ds_pin(1)
+            .init_clock_pin(1)
+            .init_latch_pin(1)
+            .build();
+
+        assert_eq!(schaltmodul.name, "Relais".to_string());
+        assert_eq!(schaltmodul.pins, 1);
+        assert_eq!(schaltmodul.oe_pin, 1);
+        assert_eq!(schaltmodul.ds_pin, 1);
+        assert_eq!(schaltmodul.clock_pin, 1);
+        assert_eq!(schaltmodul.latch_pin, 1);
+    }
+
+    #[test]
     fn new_with_pins() {
         let bodenplaine = XMZBoden100::new_with_pins(4);
         assert_eq!(bodenplaine.pins, 4);
     }
-
-
 }

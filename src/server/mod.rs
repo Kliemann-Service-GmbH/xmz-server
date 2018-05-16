@@ -11,11 +11,16 @@ use std::path::PathBuf;
 /// Struktur der Server Komponente
 #[derive(Clone, Debug)]
 pub struct Server {
+    // GOODTOKNOW: Die Member des Servers sind alle `pub` so das der Server in den configruation
+    // und runtime_info Teilen so konstruiert werden kann `let server = Server { member: x, member: y, ...}`
     /// Wartungsintervall in Tagen
     pub service_interval: u32,
     /// Liste der Sensoren die dieser Server verwaltet
-    /// `pub type SensorList = Vec<Arc<RwLock<BoxedSensor>>>;`
+    /// `SensorList = Vec<Arc<RwLock<Box<Sensor + Send + Sync>>>>`
     pub sensors: SensorList,
+    /// Liste der Ausgänge die vom Server geschalten werden können
+    /// `OutputList = Vec<Arc<Box<Output + Send + Sync>>>`
+    pub outputs: OutputList,
     pub configuration_path: Option<PathBuf>,
     pub runtime_info_path: Option<PathBuf>,
 }
@@ -31,9 +36,15 @@ impl Default for Server {
             Arc::new(RwLock::new(Box::new(MetzConnectCI4::new()))),
             Arc::new(RwLock::new(Box::new(TestSensor::new()))),
         ];
+        let outputs: OutputList = vec![
+            Arc::new(Box::new(MetzConnectMRDO4::new())),
+            Arc::new(Box::new(XMZBoden100::new())),
+            Arc::new(Box::new(XMZDeckel100::new())),
+        ];
         Server {
             service_interval: 365,
             sensors: sensors,
+            outputs: outputs,
             // zones: vec![],
             configuration_path: None,
             runtime_info_path: None,
@@ -55,6 +66,16 @@ impl Server {
     /// ```rust
     /// use xmz_server::prelude::*;
     ///
+    /// let server = Server::new();
+    /// assert_eq!(server.get_sensors().len(), 0);
+    /// ```
+    ///
+    /// Alternativ kann die `default()` Funktion des Servers verwendet werden, hier werden alle
+    /// Komponenten gefüllt.
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
     /// let server = Server::default();
     /// assert_eq!(server.get_sensors().len(), 3);
     /// ```
@@ -63,6 +84,7 @@ impl Server {
         Server {
             service_interval: 0,
             sensors: vec![],
+            outputs: vec![],
             ..Default::default()
         }
     }

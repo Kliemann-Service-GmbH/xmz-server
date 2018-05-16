@@ -18,19 +18,21 @@
 //! Sensor-Messzellen und das Schalten der diversen Ausgänge (Outputs), wie etwa Relais, LEDs und
 //! angeschlossene IO Module.
 //!
-//! * **Dokumentation:** [https://kliemann-service-gmbh.github.io/xmz-server](https://kliemann-service-gmbh.github.io/xmz-server)
-//! * **Quellcode:** [https://github.com/Kliemann-Service-GmbH/xmz-server](https://github.com/Kliemann-Service-GmbH/xmz-server)
+//! * **Dokumentation:** <https://kliemann-service-gmbh.github.io/xmz-doc-development>
+//! * API Dokumentation (dieses Dokument): <https://kliemann-service-gmbh.github.io/xmz-server>
+//! * **Quellcode:** <https://github.com/Kliemann-Service-GmbH/xmz-server>
 //!
 //! # Struktur des Servers
 //!
 //! * Server
 //!     * `<Sensor>`        - Ein `Server` kann n Sensoren verwalten
-//!         * `<Messzelle>` - ein `Sensor` besizt n `Messzelle`e
+//!         * `<Messzelle>` - ein `Sensor` besizt n `Messzelle`
+//!     * `<Output>`        - ein `Server` steuert n Ausgänge (`Output`)
 //!     * `<Zonen>`
-//!         * `<&Messzellen`> - eine `Zone` besitzt n Verweise auf `Messzelle`n
-//!         * `<Schaltpunkt>` - eine `Zone` besitzt n `Schaltpunkt`e
-//!             * `<Schwellwert>` - ein `Schaltpunkt` besitzt n `Schwellwert`e
-//!             * `<Aktion>`  - ein `Schaltpunkt` besitzt n `Aktion`en
+//!         * `<&Messzellen`> - eine `Zone` besitzt n Verweise auf `Messzelle`
+//!         * `<Schaltpunkt>` - eine `Zone` besitzt n `Schaltpunkt`
+//!             * `<Schwellwert>` - ein `Schaltpunkt` besitzt n `Schwellwert`
+//!             * `<Aktion>`  - ein `Schaltpunkt` besitzt n `Aktion`
 //!
 
 #[macro_use]

@@ -3,9 +3,9 @@
 //! Die Outputs sind ganz ähnlich wie die Sensoren implementiert.
 //! - Der Server besitzt n Outputs (Vector aus Tait Objekten)
 //!     - die Output Trait Objekte sind in Arc Container gekapselt damit sie thread safe werden
-//!     -
+//!     - Im Unterschied zu den Sensoren sind die Trait Objekte nicht auch noch in ein `Rwock`
 
-use std::sync::Arc;
+use prelude::*;
 
 mod error;
 mod metz_connect_mr_do4;
@@ -21,11 +21,25 @@ pub type BoxedOutput = Box<Output + Send + Sync>;
 pub type OutputList = Vec<Arc<BoxedOutput>>;
 
 
+/// Verfügbare Output Typen
+///
+/// Von der 'xMZ-Plattform' unterstützte Output Module.
+///
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub enum OutputType {
+    #[serde(rename="xMZ-Mod-Touch-Deckelplatine v1.0.0")]
+    XMZDeckel100,
+    #[serde(rename="xMZ-Mod-Touch-Bodenplatine v1.0.0")]
+    XMZBoden100,
+    #[serde(rename="Metz Connect MR-DO4")]
+    MetzConnectMRDO4,
+}
+
 /// Alle Äusgänge müssen diesen Trait implementieren
 ///
 /// Ausgänge sind z.B. die ShiftRegister der xMZ-Mod-Touch-Bodenplatine v1.0.0 die die Relais
 /// dieser Platine steuern. Oder Metz Connect MR-DO4 Schaltmodule mit je 4 schaltbaren Relais.
-pub trait Output {
+pub trait Output: fmt::Debug + fmt::Display {
     /// Schaltet den `num` Ausgang, ein
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte

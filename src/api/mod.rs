@@ -4,6 +4,7 @@
 //! Auch hier wird der `server::Server` in eine andere Struktur gewandelt (via Rust `From` Trait)
 //!
 mod messzelle;
+mod output;
 mod sensor;
 mod server;
 

@@ -7,7 +7,10 @@ use prelude::*;
 /// - <https://www.metz-connect.com/de/products/1108361321>
 /// - <https://www.metz-connect.com/en/products/1108361321>
 ///
+#[derive(Debug)]
 pub struct MetzConnectMRDO4 {
+    name: String,
+    output_type: OutputType,
     pins: usize,
     data: RwLock<usize>,
 }
@@ -27,6 +30,63 @@ impl MetzConnectMRDO4 {
         Default::default()
     }
 
+    /// Überschreibt den Namen
+    ///
+    /// Diese Funktion ist Teil des Builder Patterns mit dem der Output gebildet werden kann.
+    /// Siehe dazu <https://abronan.com/rust-trait-objects-box-and-rc/>
+    ///
+    /// Wichtig ist das, wenn diese Funktion verwendet werden soll, im Anschluss, die Funktion
+    /// `build()` verwendet wird. Siehe folgendes Beispiel:
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let schaltmodul = MetzConnectMRDO4::new()
+    ///         .init_name("Relais".to_string())
+    ///         .build();
+    /// ```
+    pub fn init_name(&mut self, name: String) -> &mut Self {
+        self.name = name;
+        self
+    }
+
+    /// Überschreibt die Anzahl der Pins
+    ///
+    /// Diese Funktion ist Teil des Builder Patterns mit dem der Output gebildet werden kann.
+    /// Siehe dazu <https://abronan.com/rust-trait-objects-box-and-rc/>
+    ///
+    /// Wichtig ist das, wenn diese Funktion verwendet werden soll, im Anschluss, die Funktion
+    /// `build()` verwendet wird. Siehe folgendes Beispiel:
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use xmz_server::prelude::*;
+    ///
+    /// let schaltmodul = MetzConnectMRDO4::new()
+    ///         .init_pins(1)
+    ///         .build();
+    /// ```
+    pub fn init_pins(&mut self, pins: usize) -> &mut Self {
+        self.pins = pins;
+        self
+    }
+
+    /// Finale Funktion des Builder Patterns
+    ///
+    /// Accumuliert alle init_ Funktionen
+    pub fn build(&self) -> Self {
+        MetzConnectMRDO4 {
+            name: self.name.clone(),
+            pins: self.pins.clone(),
+            ..Default::default()
+        }
+    }
+
+
+    // FIXME: Kann sicher weg, wenn das Builder Pattern mit den `init_` Funktionen funktioniert
     /// Erzeugt eine Instanz eines 'Metz Connect MR-DO4' Schaltmodule mit beliebiger Pin Anzahl
     ///
     /// Dieser Funktion können die Anzahl der verfügbaren Pin (Relais) übergeben werden.
@@ -52,6 +112,8 @@ impl MetzConnectMRDO4 {
 impl Default for MetzConnectMRDO4 {
     fn default() -> Self {
         MetzConnectMRDO4 {
+            name: "Metz Connect MR-DO4".to_string(),
+            output_type: OutputType::MetzConnectMRDO4,
             pins: 4,
             data: RwLock::new(0),
         }
@@ -95,8 +157,39 @@ mod tests {
     #[test]
     fn new() {
         let schaltmodul = MetzConnectMRDO4::new();
+        assert_eq!(schaltmodul.name, "Metz Connect MR-DO4".to_string());
         assert_eq!(schaltmodul.pins, 4);
     }
+
+    #[test]
+    fn init_name() {
+        let schaltmodul = MetzConnectMRDO4::new()
+            .init_name("Relais".to_string())
+            .build();
+
+        assert_eq!(schaltmodul.name, "Relais".to_string());
+    }
+
+    #[test]
+    fn init_pins() {
+        let schaltmodul = MetzConnectMRDO4::new()
+            .init_pins(1)
+            .build();
+
+        assert_eq!(schaltmodul.pins, 1);
+    }
+
+    #[test]
+    fn init_name_and_pins() {
+        let schaltmodul = MetzConnectMRDO4::new()
+            .init_name("Relais".to_string())
+            .init_pins(1)
+            .build();
+
+        assert_eq!(schaltmodul.name, "Relais".to_string());
+        assert_eq!(schaltmodul.pins, 1);
+    }
+
 
     #[test]
     fn new_with_pins() {
