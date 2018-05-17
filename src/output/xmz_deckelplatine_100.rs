@@ -1,5 +1,5 @@
 use prelude::*;
-
+use output::backends::ShiftRegister;
 
 /// 'xMZ-Mod-Touch-Deckelplatine v1.0.0'
 ///
@@ -17,6 +17,7 @@ pub struct XMZDeckel100 {
     ds_pin: usize,
     clock_pin: usize,
     latch_pin: usize,
+    backend: ShiftRegister,
 }
 
 impl XMZDeckel100 {
@@ -226,6 +227,7 @@ impl Default for XMZDeckel100 {
             ds_pin: 38,
             clock_pin: 44,
             latch_pin: 40,
+            backend: ShiftRegister::new(276, 38, 44, 40),
         }
     }
 }
@@ -240,22 +242,32 @@ impl Output for XMZDeckel100 {
     /// Schaltet den `num` Ausgang, ein
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
-    fn set(&self, num: usize) -> Result<(), OutputError> {
-        Err(OutputError::CouldNotSet)
+    fn set(&mut self, num: usize) -> Result<(), OutputError> {
+        println!("{:?} set Pin: {}", self.output_type, num);
+        self.data |= 1 << (num - 1);
+        self.backend.shift_out(self.data.clone())?;
+        Ok(())
     }
 
     /// Liefer den aktuellen Status des `num` Ausgang, liefert ein boolean Wert
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht gelesen werden konnte
     fn get(&self, num: usize) -> Result<bool, OutputError> {
-        Err(OutputError::CouldNotGet)
+        println!("{:?} get Pin: {}", self.output_type, num);
+        match (self.data >> (num -1)) & 1 {
+            0 => Ok(false),
+            _ => Ok(true),
+        }
     }
 
     /// Schaltet den `num` Ausgang, aus
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
-    fn clear(&self, num:usize) -> Result<(), OutputError> {
-        Err(OutputError::CouldNotUnset)
+    fn unset(&mut self, num:usize) -> Result<(), OutputError> {
+        println!("{:?} Unset Pin: {}", self.output_type, num);
+        self.data &= !(1 << (num - 1));
+        self.backend.shift_out(self.data.clone())?;
+        Ok(())
     }
 
     /// Liefert den Typen des Ausgangs

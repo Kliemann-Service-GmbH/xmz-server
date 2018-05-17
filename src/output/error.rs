@@ -1,3 +1,4 @@
+use output::backends::ShiftRegisterError;
 use std::error::Error;
 use std::fmt;
 
@@ -12,14 +13,16 @@ pub enum OutputError {
     CouldNotGet,
     // Ausgang konnte nicht ausgeschalten werden
     CouldNotUnset,
+    ShiftRegister(ShiftRegisterError),
 }
 
 impl fmt::Display for OutputError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            OutputError::CouldNotSet => write!(f, "Could not set Output"),
-            OutputError::CouldNotGet => write!(f, "Could not get Output"),
-            OutputError::CouldNotUnset => write!(f, "Could not unset Output"),
+            OutputError::CouldNotSet => write!(f, "Konnte den Ausgang nicht schreiben"),
+            OutputError::CouldNotGet => write!(f, "Konnte den Ausgang nicht nicht lesen"),
+            OutputError::CouldNotUnset => write!(f, "Konnte den Ausgang nicht löschen"),
+            OutputError::ShiftRegister(ref err) => write!(f, "Fehler beim Schreiben des ShiftRegisters: {}", err)
         }
     }
 }
@@ -27,9 +30,10 @@ impl fmt::Display for OutputError {
 impl Error for OutputError {
     fn description(&self) -> &str {
         match *self {
-            OutputError::CouldNotSet => "Could not set Output",
-            OutputError::CouldNotGet => "Could not get Output",
-            OutputError::CouldNotUnset => "Could not unset Output",
+            OutputError::CouldNotSet => "Konnte den Ausgang nicht schreiben",
+            OutputError::CouldNotGet => "Konnte den Ausgang nicht nicht lesen",
+            OutputError::CouldNotUnset => "Konnte den Ausgang nicht löschen",
+            OutputError::ShiftRegister(ref err) => err.description(),
         }
     }
 
@@ -38,6 +42,14 @@ impl Error for OutputError {
             OutputError::CouldNotSet => None,
             OutputError::CouldNotGet => None,
             OutputError::CouldNotUnset => None,
+            OutputError::ShiftRegister(ref err) => Some(err),
         }
+    }
+}
+
+
+impl From<ShiftRegisterError> for OutputError {
+    fn from(error: ShiftRegisterError) -> Self {
+        OutputError::ShiftRegister(error)
     }
 }

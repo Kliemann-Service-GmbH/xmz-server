@@ -131,7 +131,7 @@ impl Output for MetzConnectMRDO4 {
     /// Schaltet den `num` Ausgang, ein
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
-    fn set(&self, num: usize) -> Result<(), OutputError> {
+    fn set(&mut self, num: usize) -> Result<(), OutputError> {
         Err(OutputError::CouldNotSet)
     }
 
@@ -145,7 +145,7 @@ impl Output for MetzConnectMRDO4 {
     /// Schaltet den `num` Ausgang, aus
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
-    fn clear(&self, num:usize) -> Result<(), OutputError> {
+    fn unset(&mut self, num:usize) -> Result<(), OutputError> {
         Err(OutputError::CouldNotUnset)
     }
 

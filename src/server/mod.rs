@@ -192,16 +192,7 @@ impl Server {
 
     /// Aktualisiert der Reihe nach jeden Sensor
     ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use xmz_server::prelude::*;
-    ///
-    /// let server = Server::default();
-    /// assert_eq!(server.get_sensors().len(), 3);
-    /// ```
-    ///
-    pub fn update_sensors(&self) -> thread::JoinHandle<()> {
+    fn update_sensors(&self) -> thread::JoinHandle<()> {
         let sensors = self.sensors.clone();
         thread::spawn(move || loop {
             for sensor in sensors.clone() {
@@ -213,12 +204,30 @@ impl Server {
         })
     }
 
+    /// Prüft die Regeln des Servers
+    ///
+    fn check_rules(&self) -> thread::JoinHandle<()> {
+        let server = self.clone();
+        thread::spawn(move || loop {
+            // Power LED an
+            let outputs = server.get_outputs();
+            let leds = outputs.get(0).unwrap();
+
+            // Blinken Lights
+            leds.write().unwrap().set(1);
+            println!("LED ist: {:?}", leds.read().unwrap().get(1));
+            thread::sleep(Duration::from_millis(1000));
+            leds.write().unwrap().unset(1);
+            println!("LED ist: {:?}", leds.read().unwrap().get(1));
+            thread::sleep(Duration::from_millis(1000));
+        })
+    }
+
     /// Startet die Api (Json, Web)
     ///
     pub fn launch_api(&self) {
         api::launch(self.clone());
     }
-
 
     /// Started alle Komponenten des Servers
     ///
@@ -229,6 +238,9 @@ impl Server {
 
         // Sensor Update Thread starten
         self.update_sensors();
+
+        // Regeln prüfen
+        self.check_rules();
 
         // JSON Api (rocket) starten
         self.launch_api();

@@ -7,6 +7,7 @@
 
 use prelude::*;
 
+mod backends;
 mod error;
 mod metz_connect_mr_do4;
 mod xmz_bodenplatine_100;
@@ -43,7 +44,7 @@ pub trait Output: fmt::Debug + fmt::Display {
     /// Schaltet den `num` Ausgang, ein
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
-    fn set(&self, num: usize) -> Result<(), OutputError>;
+    fn set(&mut self, num: usize) -> Result<(), OutputError>;
 
     /// Liefer den aktuellen Status des `num` Ausgang, liefert ein boolean Wert
     ///
@@ -53,7 +54,7 @@ pub trait Output: fmt::Debug + fmt::Display {
     /// Schaltet den `num` Ausgang, aus
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
-    fn clear(&self, num:usize) -> Result<(), OutputError>;
+    fn unset(&mut self, num:usize) -> Result<(), OutputError>;
 
     // Einige Setter sind direk im Trait definiert, andere dagegen mit Absicht nicht.
     // So haben zum Beispiel die Modbus Bauteile Modbus Adresse usw. die getter für diese sind in
