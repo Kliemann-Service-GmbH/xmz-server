@@ -11,7 +11,7 @@ impl Default for Config {
     fn default() -> Self {
         Config {
             configuration_path: PathBuf::from("/boot/xmz-server.toml"),
-            runtime_info_path: PathBuf::from("/var/cache/xmz-server/status"),
+            runtime_info_path: PathBuf::from("/var/run/xmz-server"),
         }
     }
 }
