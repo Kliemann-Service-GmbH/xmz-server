@@ -211,14 +211,12 @@ impl Server {
         thread::spawn(move || loop {
             // Power LED an
             let outputs = server.get_outputs();
-            let leds = outputs.get(0).unwrap();
+            let output1 = outputs.get(0).unwrap();
 
-            // Blinken Lights
-            leds.write().unwrap().set(1);
-            println!("LED ist: {:?}", leds.read().unwrap().get(1));
+            // Blinken Lights an Ausgang1, kann inital in der Konfigurationsdatei festgelegt werden
+            output1.write().unwrap().set(1);
             thread::sleep(Duration::from_millis(1000));
-            leds.write().unwrap().unset(1);
-            println!("LED ist: {:?}", leds.read().unwrap().get(1));
+            output1.write().unwrap().unset(1);
             thread::sleep(Duration::from_millis(1000));
         })
     }
