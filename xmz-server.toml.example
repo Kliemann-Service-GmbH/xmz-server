@@ -1,23 +1,39 @@
 # Server mit folgenden Parametern
-#   - Service Intervall in 365 Tagen
+#   - Service Intervall in einem Tag
 #   - 2 Modbus Kombisensoren von RA-GAS
 #   - die NO2 Messzellen sind der Alarmzone 1 zugewiesen
 #   - die CO Messzellen sind der Alarmzone 2 zugewiesen
 
 # Wartungsintervall in Tagen
-service_interval = 365
+service_interval = 1
+
+[[outputs]]
+name = "LED"
+output_type = "xMZ-Mod-Touch-Deckelplatine v1.0.0"
+pins = 20
+
+[[outputs]]
+name = "RELAIS"
+output_type = "xMZ-Mod-Touch-Bodenplatine v1.0.0"
+pins = 9
+
+[[outputs]]
+name = "Schaltmodul 1"
+output_type = "Metz Connect MR-DO4"
+pins = 4
+modbus_address = 34
+
+
 
 [[sensors]]
 id = 1
 sensor_type = "RA-GAS GmbH CO/ NO₂ Kombisensor mit Modbus Interface"
 
   [[sensors.messzellen]]
-  sensor_id = 1
   messzelle_type = "RA-GAS GmbH NO₂"
   zones = [2]
 
   [[sensors.messzellen]]
-  sensor_id = 1
   messzelle_type = "RA-GAS GmbH CO"
   zones = [1]
 
@@ -27,21 +43,17 @@ id = 2
 sensor_type = "Metz Connect CI4 Modul"
 
   [[sensors.messzellen]]
-  sensor_id = 2
   messzelle_type = "Analog 4-20mA Sensor an Metz Connect DI4"
   zones = [1]
 
   [[sensors.messzellen]]
-  sensor_id = 2
   messzelle_type = "Analog 4-20mA Sensor an Metz Connect DI4"
   zones = [1]
 
   [[sensors.messzellen]]
-  sensor_id = 2
   messzelle_type = "Analog 4-20mA Sensor an Metz Connect DI4"
   zones = [2]
 
   [[sensors.messzellen]]
-  sensor_id = 2
   messzelle_type = "Analog 4-20mA Sensor an Metz Connect DI4"
   zones = [2]
