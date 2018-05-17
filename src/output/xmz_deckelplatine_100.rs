@@ -243,7 +243,7 @@ impl Output for XMZDeckel100 {
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
     fn set(&mut self, num: usize) -> Result<(), OutputError> {
-        println!("{:?} set Pin: {}", self.output_type, num);
+        debug!("{:?} set pin: {}", self.output_type, num);
         self.data |= 1 << (num - 1);
         self.backend.shift_out(self.data.clone())?;
         Ok(())
@@ -253,7 +253,7 @@ impl Output for XMZDeckel100 {
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht gelesen werden konnte
     fn get(&self, num: usize) -> Result<bool, OutputError> {
-        println!("{:?} get Pin: {}", self.output_type, num);
+        debug!("{:?} get pin: {}", self.output_type, num);
         match (self.data >> (num -1)) & 1 {
             0 => Ok(false),
             _ => Ok(true),
@@ -264,7 +264,7 @@ impl Output for XMZDeckel100 {
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
     fn unset(&mut self, num:usize) -> Result<(), OutputError> {
-        println!("{:?} Unset Pin: {}", self.output_type, num);
+        debug!("{:?} unset pin: {}", self.output_type, num);
         self.data &= !(1 << (num - 1));
         self.backend.shift_out(self.data.clone())?;
         Ok(())

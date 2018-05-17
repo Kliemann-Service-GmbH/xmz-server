@@ -1,4 +1,5 @@
 use prelude::*;
+use output::backends::ShiftRegister;
 
 
 /// 'xMZ-Mod-Touch-Bodenplatine v1.0.0'
@@ -17,6 +18,7 @@ pub struct XMZBoden100 {
     ds_pin: usize,
     clock_pin: usize,
     latch_pin: usize,
+    backend: ShiftRegister,
 }
 
 impl XMZBoden100 {
@@ -219,6 +221,7 @@ impl Default for XMZBoden100 {
             ds_pin: 45,
             clock_pin: 39,
             latch_pin: 37,
+            backend: ShiftRegister::new(277, 45, 39, 37, ),
         }
     }
 }
@@ -234,21 +237,31 @@ impl Output for XMZBoden100 {
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
     fn set(&mut self, num: usize) -> Result<(), OutputError> {
-        Err(OutputError::CouldNotSet)
+        debug!("{:?} set pin: {}", self.output_type, num);
+        self.data |= 1 << (num - 1);
+        self.backend.shift_out(self.data.clone())?;
+        Ok(())
     }
 
     /// Liefer den aktuellen Status des `num` Ausgang, liefert ein boolean Wert
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht gelesen werden konnte
     fn get(&self, num: usize) -> Result<bool, OutputError> {
-        Err(OutputError::CouldNotGet)
+        debug!("{:?} get pin: {}", self.output_type, num);
+        match (self.data >> (num -1)) & 1 {
+            0 => Ok(false),
+            _ => Ok(true),
+        }
     }
 
     /// Schaltet den `num` Ausgang, aus
     ///
     /// Die Implementation muss ein Fehler zurück geben, wenn der Ausgang nicht geschalten werden konnte
     fn unset(&mut self, num:usize) -> Result<(), OutputError> {
-        Err(OutputError::CouldNotUnset)
+        debug!("{:?} unset pin: {}", self.output_type, num);
+        self.data &= !(1 << (num - 1));
+        self.backend.shift_out(self.data.clone())?;
+        Ok(())
     }
 
     /// Liefert den Typen des Ausgangs
