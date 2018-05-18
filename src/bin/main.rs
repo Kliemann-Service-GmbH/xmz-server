@@ -68,5 +68,7 @@ fn main() {
         if let Some(cause) = e.cause() {
             println!("Cause: {}", cause);
         }
+        // Im Fehlerfall wird der Exit Code 1 zurück gegeben
+        std::process::exit(1);
     }
 }
